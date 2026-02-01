@@ -5,20 +5,23 @@
 extends CharacterBody2D
 
 
-var collide: bool = false # Destroys enemies and monitors when true, like a shockwave
-@onready var damage_area: Area2D = $DamageArea # The damage area is referenced here so that the properties can be easily changed externally
+## Destroys enemies and monitors that collide with it when true
+var collide: bool = true
+
+## The damage area is referenced here so that the properties can be easily changed externally
+@onready var damage_area: Area2D = $DamageArea
 
 
 # Set collision and mask values to true if the collide property is true
-func _ready() -> void:
-	set_collision_layer_value(24,collide)
-	set_collision_mask_value(24,collide)
+#func _ready() -> void:
+	#damage_area.set_collision_layer_value(24,collide)
+	#damage_area.set_collision_mask_value(24,collide)
 
 func _physics_process(_delta: float) -> void:
 	if velocity: # Check if the velocity is set (totally not by external means hehe lol..)
 		move_and_slide() # Moves.. (For real, what else to expect? Just move and slide xd..)
 	
-	
+	#print(damage_area.get_collision_layer_value(24))
 	await get_child(0).animation_finished
 	queue_free() # Free the particle after animation is finished
 

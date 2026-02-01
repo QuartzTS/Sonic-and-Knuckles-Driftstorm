@@ -42,7 +42,7 @@ func _process(delta):
 				# cut the script short
 				return false
 			# if destroying the enemy fails and hit player exists then hit player
-			if (i.has_method("hit_player")):
+			if i.has_method("hit_player"):
 				i.hit_player(global_position,damageType)
 	# move
 	if defaultMovement:
@@ -50,13 +50,13 @@ func _process(delta):
 
 func _on_body_entered(body):
 	# add to player list
-	if (!playerHit.has(body)):
+	if !playerHit.has(body):
 		playerHit.append(body)
 
 
 func _on_body_exited(body):
 	# remove from player list
-	if (playerHit.has(body)):
+	if playerHit.has(body):
 		playerHit.erase(body)
 
 func _on_DamageArea_area_entered(area):

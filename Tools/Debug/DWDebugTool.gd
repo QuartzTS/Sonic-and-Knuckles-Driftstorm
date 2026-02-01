@@ -62,11 +62,9 @@ func try_cheat():
 		return KEY_M
 		
 	if Input.is_key_pressed(KEY_COMMA):
-		var shieldID = Global.players[0].shield + 1
-		if Global.players[0].water and (shieldID == 2 or shieldID == 3):  
-			Global.players[0].set_shield(Global.players[0].SHIELDS.BUBBLE)
-		else:
-			Global.players[0].set_shield(shieldID % Global.players[0].SHIELDS.COUNT)
+		var shield_id: PlayerChar.SHIELDS = Global.players[0].shield + 1 as PlayerChar.SHIELDS
+		Global.players[0].set_shield(Global.players[0].SHIELDS.BUBBLE if Global.players[0].water and \
+			(shield_id == PlayerChar.SHIELDS.FIRE or shield_id == PlayerChar.SHIELDS.ELEC) else shield_id % Global.players[0].SHIELDS.COUNT)
 		return KEY_COMMA
 		
 	# Place the test block below the player and make it move upwards

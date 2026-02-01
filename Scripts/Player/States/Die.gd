@@ -48,4 +48,6 @@ func _physics_process(delta):
 func state_exit():
 	parent.allowTranslate = false
 	parent.z_index = parent.defaultZIndex
+	parent.collision_layer = parent.defaultLayer
+	parent.collision_mask = parent.defaultMask
 	Main.sceneCanPause = true

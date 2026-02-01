@@ -145,7 +145,7 @@ func reset_game_values():
 	Global.attract_reel = false
 	Global.emeralds = 0
 	Global.specialStageID = 0
-	Globsl.checkPoints.clear()
+	Global.checkPoints.clear()
 	Global.checkPointTime = 0
 	Global.currentCheckPoint = -1
 	Global.cool_value = 10000

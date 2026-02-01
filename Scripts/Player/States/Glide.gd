@@ -149,19 +149,22 @@ func _physics_process(delta):
 			# set direction
 			if parent.movement.x != 0:
 				parent.direction = sign(parent.movement.x)
+				#if abs(parent.movement.x) >= 6*60:
+					#parent.camShake = Vector2(4*120*delta,0)
 			parent.sprite.flip_h = (parent.direction < 0)
 			
 			parent.set_state(parent.STATES.WALLCLIMB,parent.currentHitbox.GLIDE)
 			# play grab sound
 			parent.sfx[26].play()
 			parent.animator.play("climb")
-			parent.movement = Vector2.ZERO
+			#parent.movement = Vector2.ZERO
+			
 		
 		# prevent getting stuck on corners
 		parent.horizontalSensor.position.y = (parent.get_node("HitBox").shape.size.y/2)-1
-		parent.horizontalSensor.force_raycast_update()
-		if parent.horizontalSensor.is_colliding() and !parent.ground:
-			parent.movement.x = 0
+		#parent.horizontalSensor.force_raycast_update()
+		#if parent.horizontalSensor.is_colliding() and !parent.ground:
+			#parent.movement.x = 0
 	
 	# if sliding then do sliding routine
 	elif sliding:

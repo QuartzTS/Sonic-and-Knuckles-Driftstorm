@@ -1,1 +1,1 @@
-# Sonic-Driftstorm
+# Sonic-and-Knuckles-Driftstorm

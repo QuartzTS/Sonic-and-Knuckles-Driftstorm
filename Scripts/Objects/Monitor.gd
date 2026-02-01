@@ -86,7 +86,7 @@ func destroy():
 	$SFX/Destroy.play()
 	Global.nodeMemory.append(get_path()) # Save the monitor destruction state to the node memory, so that it self-destructs when the player respawns
 	# Set swap cooldown to the length of monitor destruction animation so that no character switching occurs before playerTouch obtains the item
-	playerTouch.swapCooldown = $Animator.current_animation_length
+	playerTouch.swap_cooldown = $Animator.current_animation_length
 	#print(playerTouch.STATES.find_key(playerTouch.currentState))
 	# Now make a tween so that we can change the global position of the icon outside of the influence of the monitor body, and without using an animation player.
 	# But was that even needed anyway? I don't know..
@@ -154,13 +154,12 @@ func set_destroyed():
 
 
 func _physics_process(delta):
-	if !Engine.is_editor_hint():
-		# if physics are on make em fall
-		if physics:
-			var collide = monitor_body.move_and_collide(Vector2(0,yspeed)*delta)
-			yspeed += grv/GlobalFunctions.div_by_delta(delta)
-			if collide and yspeed > 0:
-				physics = false
+	# if physics are on make em fall
+	if !Engine.is_editor_hint() and physics:
+		var collide = monitor_body.move_and_collide(Vector2(0,yspeed*delta))
+		yspeed += grv/GlobalFunctions.div_by_delta(delta)
+		if collide and yspeed > 0:
+			physics = false
 
 # physics collision check, see physics object
 # Actually, nevermind.. I moved the function to the monitor body script, see that instead..
@@ -202,8 +201,8 @@ func _physics_process(delta):
 
 
 # Store the code for monitor bouncing in a function so that it's called easily whenever the camera shakes
-func monitor_bounce():
-	# First, Check if on-screen and the physics flag isn't already true
+func monitor_bounce() -> void:
+	# First, Check if on-screen, so that off-screen monitors don't fall on the ground
 	if $MonitorBody/VisibleOnScreenNotifier2D.is_on_screen():
 		yspeed = -1.5*60
 		physics = true
@@ -217,3 +216,4 @@ func _on_DamageArea_area_entered(area):
 		elif area.get_collision_layer_value(24):
 			playerTouch = Global.players[0]
 		destroy()
+	print("Destroyed")

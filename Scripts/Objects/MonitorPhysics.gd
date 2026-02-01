@@ -15,6 +15,9 @@ func destroy():
 
 # Again, this is the node other nodes collide with, and not the parent node.. (This function is called from PhysicsObject.gd, btw..)
 func physics_collision(body, hitVector):
+	# Does anybody even need that? I put that here to fix the bug where monitors are destroyed after the player lands on the ground,
+	# but the bug still exists and idk why it even happens..
+	await get_tree().process_frame
 	# Monitor head bouncing
 	if hitVector.y < 0:
 		parent.monitor_bounce()

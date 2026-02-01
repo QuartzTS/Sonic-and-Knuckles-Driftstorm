@@ -10,7 +10,7 @@ var ringacceleration = [0.75,0.1875]
 var Particle = preload("res://Entities/Misc/GenericParticle.tscn")
 
 func _ready():
-	if Global.nodeMemory.has(get_path()):
+	if Global.nodeMemory.has(get_path()) and Global.players[0].currentState != PlayerChar.STATES.DEBUG:
 		queue_free()
 
 func _process(delta):

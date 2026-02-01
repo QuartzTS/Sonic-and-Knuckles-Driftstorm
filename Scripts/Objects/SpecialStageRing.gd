@@ -9,7 +9,7 @@ var player = null
 func _ready():
 	# check that the current ring hasn't already been collected and all 7 emeralds aren't collected
 	# the emerald check is so that it'll spawn if you have all emeralds anyway
-	if Global.nodeMemory.has(get_path()) and Global.emeralds < 127:
+	if Global.nodeMemory.has(get_path()) and Global.emeralds < 127 and Global.players[0].currentState != PlayerChar.STATES.DEBUG:
 		queue_free()
 
 func _process(delta):

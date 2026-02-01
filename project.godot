@@ -8,13 +8,17 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="Sonic & Knuckles Driftstorm"
 config/description="This is a very early beta of the starter project for Team SuperOrion and most of the content are from the base framework and needs change"
 config/version="REV03"
 run/main_scene="res://Scene/Presentation/PoweredByWorlds.tscn"
-config/features=PackedStringArray("4.5")
+config/features=PackedStringArray("4.6")
 boot_splash/bg_color=Color(0.078431375, 0.078431375, 0.078431375, 1)
 boot_splash/show_image=false
 config/icon="res://icon.png"
@@ -43,7 +47,11 @@ project/assembly_name="Sonic Worlds Next"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/discord-rpc-gd/plugin.cfg")
+enabled=PackedStringArray("res://addons/GDQuest_GDScript_formatter/plugin.cfg", "res://addons/discord-rpc-gd/plugin.cfg")
+
+[gdunit4]
+
+ui/toolbar/run_overall=true
 
 [gui]
 

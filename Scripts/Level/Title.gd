@@ -28,7 +28,7 @@ func _process(delta):
 		if !titleEnd:
 			titleEnd = true
 			Global.attract_reel = true
-			Main.change_scene(Global.level_paths[Global.attract_reelID].path)
+			Main.change_scene(Global.level_paths[Global.attract_reel_id].path)
 	
 
 func _input(event):
@@ -43,5 +43,5 @@ func _input(event):
 	elif event.is_action_pressed("gm_action") and $CanvasLayer/Labels.visible and !titleEnd:
 		titleEnd = true
 		Global.attract_reel = true
-		Main.change_scene(Global.level_paths[Global.attract_reelID].path)
+		Main.change_scene(Global.level_paths[Global.attract_reel_id].path)
 		

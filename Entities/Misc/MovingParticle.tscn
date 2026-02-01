@@ -604,8 +604,8 @@ shape = SubResource("RectangleShape2D_2pqym")
 disabled = true
 
 [node name="DamageArea" type="Area2D" parent="."]
-collision_layer = 8388608
-collision_mask = 8388608
+collision_layer = 8912896
+collision_mask = 0
 
 [node name="HitBox" type="CollisionShape2D" parent="DamageArea"]
 modulate = Color(1, 0, 0, 1)

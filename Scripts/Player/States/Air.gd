@@ -175,7 +175,7 @@ func _physics_process(delta):
 	# Change parent direction
 	# Check that lock direction isn't on
 	if !lockDir and parent.inputs[parent.INPUTS.XINPUT] != 0:
-			parent.direction = parent.inputs[parent.INPUTS.XINPUT]
+		parent.direction = parent.inputs[parent.INPUTS.XINPUT]
 	
 	# set facing direction
 	parent.sprite.flip_h = parent.direction < 0
@@ -221,7 +221,8 @@ func _physics_process(delta):
 					# Lag camera
 					@warning_ignore("narrowing_conversion")
 					parent.lock_camera(16.0/60.0)
-					
+					if parent.isSuper:
+						parent.shake_camera(delta, Vector2(6,6))
 					# drop dash dust
 					var dust = parent.Particle.instantiate()
 					dust.play("DropDash")

@@ -101,17 +101,22 @@ var PlayerChar1 = CHARACTERS.SONIC
 var PlayerChar2 = CHARACTERS.KNUCKLES
 
 
-## Enum for levels
-enum LEVELS {BZ1,BZ2,EHZ}
+## Enum for levels (Documenting the enum elements is gonna be preferred)
+enum LEVELS {
+	BZ1, ## Base Zone Act 1
+	BZ2, ## Base Zone Act 2
+	EHZ ## Emerald Hill Zone
+	}
+## A dictionary that references levels with their labels and paths
 var level_paths: Dictionary[LEVELS, Dictionary] = {
-	LEVELS.BZ1: {path = "res://Scene/Zones/BaseZone.tscn", label = "Baze Zone Act 1"},
-	LEVELS.BZ2: {path = "res://Scene/Zones/BaseZoneAct2.tscn", label = "Baze Zone Act 2"},
-	LEVELS.EHZ: {path = "res://Scene/Zones/emerald_hill_zone.tscn", label = "Emerald Hill Zone"}
+	LEVELS.BZ1: {path = "res://Scene/Zones/BaseZone.tscn", label = "Base Zone Act 1"}, ## Base Zone Act 1
+	LEVELS.BZ2: {path = "res://Scene/Zones/BaseZoneAct2.tscn", label = "Base Zone Act 2"}, ## Base Zone Act 2
+	LEVELS.EHZ: {path = "res://Scene/Zones/emerald_hill_zone.tscn", label = "Emerald Hill Zone"} ## Emerald Hill Zone
 }
 ## ID of levels
-var levelID: LEVELS = LEVELS.BZ1
-## Same as levelID, but for attract reel mode only
-var attract_reelID: LEVELS = levelID
+var level_id: LEVELS = LEVELS.BZ1
+## Same as level_id, but for attract reel mode only
+var attract_reel_id: LEVELS = level_id
 ## Variable for attract reel mode
 var attract_reel: bool = false
 
@@ -154,6 +159,7 @@ enum HAZARDS {NORMAL, FIRE, ELEC, WATER}
 # Layers references
 enum LAYERS {LOW, HIGH}
 
+
 func _ready():
 	# set sound settings
 	add_child(soundChannel)
@@ -161,6 +167,7 @@ func _ready():
 	# load game data
 	load_settings()
 	get_tree().paused = false
+	
 
 func _process(delta):
 	# do a check for certain variables, if it's all clear then count the level timer up

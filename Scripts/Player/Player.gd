@@ -35,12 +35,10 @@ var invTime = 0
 var supTime = 0
 var isSuper = false
 var isDebug = false
-var isVictory = false # This boolear for preventing the victory animation from looping
-var isVictory2 = false # A second one for partner
 var shoeTime = 0
 var ringDisTime = 0 # ring collecting disable timer
-var swapCooldown = 0 # Cooldown for character switching
-var reboundTimer = 0.15 # Rebound timer for detecting the swap/combo button bein pressed or held
+var swap_cooldown = 0 # Cooldown for character switching
+var rebound_timer = 0.15 # Rebound timer for detecting the swap/combo button bein pressed or held
 
 # water settings
 var water = false
@@ -136,7 +134,7 @@ var reflective = false # used for reflecting projectiles
 
 
 # Animation related
-@onready var animator = $Sonic/PlayerAnimation
+@onready var animator: AnimationPlayer = $Sonic/PlayerAnimation
 @onready var superAnimator = $Sonic/SuperPalette
 @onready var sprite = $Sonic/Sprite2D
 @onready var spriteController = $Sonic
@@ -152,7 +150,8 @@ var camLookOff = 0
 var camAdjust = Vector2.ZERO
 var cameraDragLerp = 0
 var camLockTime = 0
-var camShake = Vector2.ZERO
+var cam_shake_time: Vector2
+var cam_shake_strength: float = 1.0
 
 
 # boundries
@@ -185,7 +184,7 @@ var inputActions = INPUTACTIONS_P1
 # 0 = ai, 1 = player 1, 2 = player 2
 var playerControl = 1
 
-var partner = null
+var partner: PlayerChar = null
 var partnerPanic = 0
 
 const RESPAWN_DEFAULT_TIME = 5
@@ -348,20 +347,18 @@ func _ready():
 		if Global.currentCheckPoint == i.checkPointID:
 			global_position = i.global_position+Vector2(0,8)
 			camera.global_position = i.global_position+Vector2(0,8)
-		else:
-			Global.levelTime = 0
-			print("Reset time")
+			break
 	
 	if Global.bonus_stage_saved_position:
 		global_position = Global.bonus_stage_saved_position
 		camera.global_position = global_position
-		Global.bonus_stage_saved_position = Vector2.ZERO
 		rings = Global.bonus_stage_saved_rings
-		Global.bonus_stage_saved_rings = 0
-		Global.levelTime = Global.checkPointTime
+		Global.levelTime = Global.bonus_stage_saved_time
 
-		while ring1upCounter < rings:
-			ring1upCounter += 100
+		while ring_1up_counter < rings:
+			ring_1up_counter += 100
+			if partner != null:
+				partner.ring_1up_counter += 100
 		
 		Global.bonus_stage_saved_time = 0
 		Global.bonus_stage_saved_position = Vector2.ZERO
@@ -469,9 +466,16 @@ func _process(delta):
 						partner.inputs[INPUTS.ACTION] = 1
 					elif global_position.y < partner.global_position.y and ground and !partner.ground:
 						partner.inputs[INPUTS.ACTION] = 2
+				
+				if currentState == STATES.DEBUG:
+					partner.inputs = [0,0,0,0,0,0,0]
+			
+			
 			# panic
 			else:
-				if !partner.ground or partner.currentState == partner.STATES.ROLL:
+				if (partner.currentState == partner.STATES.SPINDASH and \
+				(global_position.distance_to(partner.global_position) <= 48 or partner.direction != sign(global_position.x - partner.global_position.x))) or \
+				(!partner.ground or partner.currentState == partner.STATES.ROLL):
 					partnerPanic = 0
 				partner.inputs[INPUTS.XINPUT] = 0
 				partner.inputs[INPUTS.YINPUT] = 0
@@ -489,20 +493,18 @@ func _process(delta):
 				partnerPanic = 128/60.0
 				
 
-			if currentState == STATES.DEBUG:
-				partner.inputs = [0,0,0,0,0,0,0]
-
 			# Some conditions for doing the character switching and combo moves..
-			if inputs[INPUTS.ACTION3] > 0 and currentState != STATES.DEBUG and currentState != STATES.DIE and partner.currentState != STATES.DIE and partner.currentState != STATES.RESPAWN and partner.get_node("ScreenCheck").is_on_screen() and Global.stageClearPhase < 2:
-				if reboundTimer > 0:
-					reboundTimer -= delta # Run the rebound timer to measure the time the ACTION3 button is held
+			if inputs[INPUTS.ACTION3] > 0 and currentState != STATES.DEBUG and currentState != STATES.DIE and partner.currentState != STATES.DIE and \
+			partner.currentState != STATES.RESPAWN and partner.get_node("ScreenCheck").is_on_screen() and Global.stageClearPhase < 2:
+				if rebound_timer > 0:
+					rebound_timer -= delta # Run the rebound timer to measure the time the ACTION3 button is held
 				# Only perform the combo move when button is confirmed to be held and current Player 1 is in normal state (more on that later..)
 				elif currentState == STATES.NORMAL: 
 					print("Bruh..") # Bruh..
 			else:
-				if reboundTimer > 0 and reboundTimer < 0.15: # Switch characters when timer is more than 0 and less than 0.15 seconds
+				if rebound_timer > 0 and rebound_timer < 0.15: # Switch characters when timer is more than 0 and less than 0.15 seconds
 					character_swap() # Normal character swap xd
-				reboundTimer = 0.15 # Reset the rebound timer
+				rebound_timer = 0.15 # Reset the rebound timer
 
 
 
@@ -513,26 +515,26 @@ func _process(delta):
 		else:
 			if respawnTime > 0:
 				respawnTime -= delta
-			else:
+			elif partner.currentState != STATES.DEBUG:
 				respawn()
 				
 			
 	
 	if Input.is_action_just_pressed("ui_debug_mode") and playerControl == 1:
-		set_state(STATES.DEBUG)
+		set_state(STATES.DEBUG) # Enter debug mode
 	
 	# Sprite2D rotation handling
 	if ground:
 		spriteRotation = rad_to_deg(angle)+rad_to_deg(gravityAngle)+90
 	else:
-		if (spriteRotation+90 >= 180):
+		if spriteRotation+90 >= 180:
 			spriteRotation = max(90,spriteRotation-(168.75*delta))
 		else:
 			spriteRotation = min(360,spriteRotation+(168.75*delta))
 	
 	# set the sprite to match the sprite rotation variable if it's in the rotatable Sprites list
-	if (rotatableSprites.has(animator.current_animation)):
-		if (Global.smooth_rotation):
+	if rotatableSprites.has(animator.current_animation):
+		if Global.smooth_rotation:
 			sprite.rotation = deg_to_rad(spriteRotation-90)-rotation-gravityAngle
 		else:
 			# check if the charcter's angle is too shallow to rotate and the player is grounded, otherwise, do.
@@ -559,20 +561,20 @@ func _process(delta):
 		else:
 			$InvincibilityBarrier.visible = false
 			# Animate Palette
-			if is_instance_valid(superAnimator):
-				if !superAnimator.is_playing():
-					superAnimator.play("Flash")
+			if is_instance_valid(superAnimator) and !superAnimator.is_playing():
+				superAnimator.play("Flash")
 			# check if ring count is greater then 0
 			# deactivate if stage cleared
-			if rings > 0 and Global.stageClearPhase == 0:
-				if playerControl == 1 or playerControl == -1:
-					rings -= delta
+			if rings > 0 and Global.stageClearPhase == 0 and (playerControl == 1 or playerControl == -1):
+				rings -= delta
 			else:
 				# Deactivate super
 				supTime = 0
 				rings = round(rings)
 				if character == Global.CHARACTERS.SONIC:
 					sprite.texture = normalSprite
+				if partner.character == Global.CHARACTERS.SONIC:
+					partner.sprite.texture = partner.normalSprite
 				
 		if supTime <= 0:
 			if shield != SHIELDS.NONE:
@@ -653,11 +655,10 @@ func _process(delta):
 		
 	
 	# Water timer
-	if water and shield != SHIELDS.BUBBLE:
+	if water and shield != SHIELDS.BUBBLE and currentState != STATES.RESPAWN:
 		if airTimer > 0:
-			if playerControl == 1 or playerControl == -1:
-				if snapped(airTimer,airWarning) != snapped(airTimer-delta,airWarning) and airTimer > panicTime:
-					sfx[24].play()
+			if (playerControl == 1 or playerControl == -1) and snapped(airTimer,airWarning) != snapped(airTimer-delta,airWarning) and airTimer > panicTime:
+				sfx[24].play()
 			# Count down timer
 			if airTimer <= panicTime and snapped(airTimer,1.8) != snapped(airTimer-delta,1.8):
 				if round(airTimer/1.8)-2 >= 0:
@@ -684,8 +685,8 @@ func _process(delta):
 		partnerControlTime -= delta
 	
 	# Swap cooldown timer
-	if swapCooldown > 0:
-		swapCooldown -= delta
+	if swap_cooldown > 0:
+		swap_cooldown -= delta
 	
 	
 	# Set player inputs
@@ -695,24 +696,12 @@ func _process(delta):
 		active_gimmick.player_process(self, delta)
 	
 	# Victory animation
-	if Global.stageClearPhase >= 2:
-		if ground and ((animator.has_animation("victoryLoop") and animator.current_animation != "victoryLoop") \
-			or (lastActiveAnimation != "victory" or (animator.current_animation == "victory" and lastActiveAnimation == "victory"))): # Check if ground and victory animation ain't playing yet
-			#isVictory = true # This prevents animation from looping
+	# Check if the stage is finished, grounded (lol) and looped victory animation ain't playing yet
+	if Global.stageClearPhase >= 2 and ground and animator.current_animation != "victoryLoop":
 			movement = Vector2.ZERO # Stop movement ENTIRELY
-			set_state(STATES.ANIMATION) # Set state to animation state
+			set_state(STATES.ANIMATION) # Set state to animation state, for no reason
 			animator.play("victory") # Play initial victory animation
-			if animator.has_animation("victoryLoop"):
-				animator.queue("victoryLoop") # Queue the looped victory animation if it exists
-		# Same stuff for the partner
-		if partner != null and partner.ground and ((partner.animator.has_animation("victoryLoop") and partner.animator.current_animation != "victoryLoop") \
-			or (partner.lastActiveAnimation != "victory" or (partner.animator.current_animation == "victory" and partner.lastActiveAnimation == "victory"))):
-			#isVictory2 = true
-			partner.movement = Vector2.ZERO
-			partner.set_state(partner.STATES.ANIMATION)
-			partner.animator.play("victory")
-			if partner.animator.has_animation("victoryLoop"):
-				partner.animator.queue("victoryLoop")
+			animator.queue("victoryLoop") # Queue the looped victory animation
 	
 	
 func _physics_process(delta):
@@ -1257,7 +1246,7 @@ func respawn():
 
 # Code for character switching is here
 func character_swap() -> void:
-	if swapCooldown <= 0:
+	if swap_cooldown <= 0:
 		var saved_values: Array = [playerControl, camera, defaultZIndex, shield, stateList[STATES.DEBUG].object_cursor] # Save some values in an array instead of having a variable for each
 		# The playerControl is probably the most important variable to switch
 		playerControl = partner.playerControl
@@ -1287,6 +1276,7 @@ func character_swap() -> void:
 		# Give rings to the partner so that both players have an equal share of rings
 		# Btw, the rings value is rounded in case both players are super and the value of their rings is decreasing
 		partner.rings = round(rings)
+		#partner.ring_1up_counter = ring_1up_counter
 		# This is probably the second most important things to swap here.
 		# If not swapped, Player 1 will need to navigate through with Player 2 controls and vice versa xd..
 		inputActions = INPUTACTIONS_P2
@@ -1296,8 +1286,8 @@ func character_swap() -> void:
 		Global.PlayerChar1 = partner.character
 		Global.PlayerChar2 = character
 		# Adjust cooldown so that nobody spams the swap lol
-		swapCooldown = 0.25
-		partner.swapCooldown = 0.25
+		swap_cooldown = 0.25
+		partner.swap_cooldown = 0.25
 		# Reset the partner panic so that the other player doesn't automatically spindash after switching lol (I guess?)
 		partnerPanic = 0
 		partner.partnerPanic = 0
@@ -1437,7 +1427,7 @@ func cam_update(forceMove = false):
 					camAdjust.y = 0
 
 	# Extended Camera (code by NeonSRB2)
-	if Global.extended_camera:
+	if Global.extended_camera and currentState != STATES.DEBUG:
 		if currentState == STATES.PEELOUT or abs(movement.x) >= 6*60:
 			camAdjust.x += direction*2
 		elif camAdjust.x != 0:
@@ -1448,13 +1438,19 @@ func cam_update(forceMove = false):
 	elif camera.drag_left_margin != camDist.x/viewSize.x:
 		camera.drag_left_margin = camDist.x/viewSize.x
 
-	if camShake:
-		camShake.x -= 1
-		camShake.y -= 1
-		if camShake <= Vector2.ZERO:
-			camShake = Vector2(-1-camShake.x,-1-camShake.y)
+	if cam_shake_time.x:
+		#cam_shake_time.x -= 1
+		if cam_shake_time.x <= 0:
+			cam_shake_time.x = -1-cam_shake_time.x
 		else:
-			camShake *= -1
+			cam_shake_time.x *= -1
+	if cam_shake_time.y:
+		#cam_shake_time.y -= 1
+		if cam_shake_time.y <= 0:
+			cam_shake_time.y = -1-cam_shake_time.y
+		else:
+			cam_shake_time.y *= -1
+	camera.offset = Vector2(sin(cam_shake_time.x),sin(cam_shake_time.y))*cam_shake_strength
 
 
 	# Camera lock
@@ -1485,6 +1481,13 @@ func cam_update(forceMove = false):
 func lock_camera(time = 1):
 	camLockTime = max(time,camLockTime)*int(!Global.extended_camera)
 	
+
+## A function that makes the camera shake (needs a better description imo..)
+func shake_camera(delta: float, shake_time: Vector2, shake_power: float = 1.0) -> void:
+	cam_shake_time = shake_time*120*delta
+	cam_shake_strength = shake_power
+	Global.emit_screen_shake()
+
 
 func snap_camera_to_limits():
 	camera.limit_left = max(limitLeft,Global.hardBorderLeft)

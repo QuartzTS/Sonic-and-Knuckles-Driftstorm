@@ -69,6 +69,7 @@ func _process(_delta: float) -> void:
 			#object_preview.debug_change_property()
 			#print(object_cursor)
 			#await Global.cycle_object
+		await get_tree().process_frame
 		object_cursor = wrapi(object_cursor+parent.inputs[parent.INPUTS.ACTION2]-parent.inputs[parent.INPUTS.ACTION3],0,objects.size())
 		var new_object_preview: Node = objects[object_cursor].instantiate()
 		object_preview.queue_free()
@@ -82,19 +83,14 @@ func _process(_delta: float) -> void:
 		object_spawn.process_mode = Node.PROCESS_MODE_INHERIT
 
 func _physics_process(delta: float) -> void:
-	#moved = parent.inputs[parent.INPUTS.XINPUT] or parent.inputs[parent.INPUTS.YINPUT]
-	#move_speed = move_speed + Vector2(parent.inputs[parent.INPUTS.XINPUT],parent.inputs[parent.INPUTS.YINPUT]) if moved else Vector2.ZERO
-	#move_speed = min(move_speed+parent.acc/GlobalFunctions.div_by_delta(delta),16*60) if moved else 0
-	#parent.movement = parent.movement + Vector2(move_speed*Vector2(parent.inputs[parent.INPUTS.XINPUT],parent.inputs[parent.INPUTS.YINPUT]).sign())*delta if moved else Vector2.ZERO
-	#print(move_speed)
-	#parent.movement.x = min(parent.movement.x+parent.inputs[parent.INPUTS.XINPUT]*parent.acc/GlobalFunctions.div_by_delta(delta),16*60) if  else 0
-	#parent.movement.y = min(parent.movement.y+parent.inputs[parent.INPUTS.YINPUT]*parent.acc/GlobalFunctions.div_by_delta(delta),16*60) if parent.inputs[parent.INPUTS.YINPUT] != 0 else 0
-	#if moved:
-	#parent.movement = parent.movement + move_speed.normalized()*parent.acc/GlobalFunctions.div_by_delta(delta) if moved else Vector2.ZERO
-	parent.movement = Vector2(
-		min(parent.movement.x+parent.inputs[parent.INPUTS.XINPUT]*parent.acc/GlobalFunctions.div_by_delta(delta),16*60) if parent.inputs[parent.INPUTS.XINPUT] != 0 else 0,
-		min(parent.movement.y+parent.inputs[parent.INPUTS.YINPUT]*parent.acc/GlobalFunctions.div_by_delta(delta),16*60) if parent.inputs[parent.INPUTS.YINPUT] != 0 else 0
-	)
+	moved = parent.inputs[parent.INPUTS.XINPUT] or parent.inputs[parent.INPUTS.YINPUT]
+	move_speed = (move_speed + 1)*int(moved)
+	parent.movement = (move_speed*parent.acc/GlobalFunctions.div_by_delta(delta)*Vector2(
+		parent.inputs[parent.INPUTS.XINPUT],
+		parent.inputs[parent.INPUTS.YINPUT]
+	)).clamp(Vector2(-16*60,-16*60),Vector2(16*60,16*60))
+	#movement.x = move_toward(movement.x,top*inputs[INPUTS.XINPUT],acc/GlobalFunctions.div_by_delta(delta))
+	#parent.movement = move_toward(1,2,4)
 
 func state_activated() -> void:
 	parent.allowTranslate = true
@@ -103,8 +99,9 @@ func state_activated() -> void:
 	parent.animator.process_mode = PROCESS_MODE_DISABLED
 	parent.movement = Vector2.ZERO
 	parent.z_index = 100
-	#parent.collision_layer = 0
-	#parent.collision_mask = 0
+	parent.water = false
+	parent.switch_physics()
+	await get_tree().process_frame
 	object_preview = objects[object_cursor].instantiate()
 	parent.add_child(object_preview)
 
@@ -114,7 +111,6 @@ func state_exit() -> void:
 	parent.spriteController.visible = true
 	parent.animator.process_mode = PROCESS_MODE_INHERIT
 	parent.movement = Vector2.ZERO
+	move_speed = 0.0
 	parent.z_index = parent.defaultZIndex
-	#parent.collision_layer = parent.defaultLayer
-	#parent.collision_mask = parent.defaultMask
 	object_preview.queue_free()
