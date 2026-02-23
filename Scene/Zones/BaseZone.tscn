@@ -85,6 +85,7 @@
 [ext_resource type="PackedScene" uid="uid://btna3kqcoupda" path="res://Entities/Gimmicks/MonkeyBar/MonkeyBar.tscn" id="83_yispl"]
 [ext_resource type="Texture2D" uid="uid://d3bnbfh56x3kc" path="res://icon.png" id="84_0dha4"]
 
+
 [sub_resource type="Animation" id="1"]
 resource_name = "Glow"
 length = 5.0

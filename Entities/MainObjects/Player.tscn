@@ -1,4 +1,4 @@
-[gd_scene load_steps=203 format=3 uid="uid://cioq5saowvqxj"]
+[gd_scene format=3 uid="uid://cioq5saowvqxj"]
 
 [ext_resource type="Script" uid="uid://bbspyeoggyqpi" path="res://Scripts/Player/Player.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://d1e4muavtnun6" path="res://Graphics/Players/PlayerAnimations/Sonic.tscn" id="2"]
