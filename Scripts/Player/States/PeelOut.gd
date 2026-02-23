@@ -22,7 +22,7 @@ func _process(delta):
 	# animation based on speed
 	if speedCalc < 6*60:
 		parent.animator.play("walk")
-	elif parent.peelOutCharge < dashPower or (parent.water and parent.peelOutCharge <= dashPower):
+	elif parent.peelOutCharge < dashPower*60 or (parent.water and parent.peelOutCharge <= dashPower*60):
 		parent.animator.play("run")
 	elif !parent.water:
 		parent.animator.play("peelOut")

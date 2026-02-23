@@ -1,4 +1,4 @@
-[gd_scene load_steps=85 format=3 uid="uid://bwpp6nh1dw231"]
+[gd_scene format=3 uid="uid://bwpp6nh1dw231"]
 
 [ext_resource type="Texture2D" uid="uid://dj10j0ouh5v12" path="res://Graphics/Misc/DustCloudDrillDive.png" id="1_isb56"]
 [ext_resource type="Texture2D" uid="uid://bcighbbtky5cp" path="res://Graphics/Misc/DropDashDust.png" id="1_ynrrm"]
@@ -588,26 +588,22 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_isb56"]
 size = Vector2(10, 80)
 
-[node name="MovingParticle" type="CharacterBody2D"]
+[node name="MovingParticle" type="CharacterBody2D" unique_id=352537731]
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("7_bw3py")
 
-[node name="GenericParticle" type="AnimatedSprite2D" parent="."]
+[node name="GenericParticle" type="AnimatedSprite2D" parent="." unique_id=222760593]
 sprite_frames = SubResource("157")
 animation = &"DrillDiveDust"
-frame = 9
-frame_progress = 1.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=495280119]
 shape = SubResource("RectangleShape2D_2pqym")
-disabled = true
 
-[node name="DamageArea" type="Area2D" parent="."]
-collision_layer = 8912896
+[node name="DamageArea" type="Area2D" parent="." unique_id=132729233]
+collision_layer = 8388608
 collision_mask = 0
 
-[node name="HitBox" type="CollisionShape2D" parent="DamageArea"]
+[node name="HitBox" type="CollisionShape2D" parent="DamageArea" unique_id=1469502582]
 modulate = Color(1, 0, 0, 1)
 shape = SubResource("RectangleShape2D_isb56")
-disabled = true

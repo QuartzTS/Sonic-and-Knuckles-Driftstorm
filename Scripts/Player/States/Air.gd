@@ -143,7 +143,8 @@ func _physics_process(delta):
 	
 	# Run the freefall animation (or queue if the spring animation is playing)
 	if parent.animator.has_animation("freefall"):
-		if parent.movement.y >= 2*60 and parent.animator.current_animation != "roll" and (parent.lastActiveAnimation != "freefall" or (parent.animator.current_animation == "freefall" and parent.lastActiveAnimation == "freefall")) and !isJump:
+		if parent.movement.y >= 2*60 and parent.animator.current_animation != "roll" and (parent.lastActiveAnimation != "freefall" or \
+		(parent.animator.current_animation == "freefall" and parent.lastActiveAnimation == "freefall")) and !isJump:
 			parent.animator.play("freefall")
 		if parent.animator.current_animation == "spring" or parent.animator.current_animation == "springScrew":
 			parent.animator.queue("freefall")
@@ -222,11 +223,12 @@ func _physics_process(delta):
 					@warning_ignore("narrowing_conversion")
 					parent.lock_camera(16.0/60.0)
 					if parent.isSuper:
-						parent.shake_camera(delta, Vector2(6,6))
+						parent.shake_camera(delta, Vector2.ONE, 6)
 					# drop dash dust
 					var dust = parent.Particle.instantiate()
 					dust.play("DropDash")
 					dust.global_position = parent.global_position+Vector2(0,2).rotated(parent.rotation)
+					dust.rotation = parent.angle
 					dust.scale.x = parent.direction
 					parent.get_parent().add_child(dust)
 				# Amys drop dash handle

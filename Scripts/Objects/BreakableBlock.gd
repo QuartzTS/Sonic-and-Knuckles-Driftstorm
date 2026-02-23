@@ -2,11 +2,10 @@ extends StaticBody2D
 @export var pieces = Vector2(2,2)
 var Piece = preload("res://Entities/Misc/BlockPiece.tscn")
 @export var sound = preload("res://Audio/SFX/Gimmicks/Collapse.wav")
-enum BREAK_STATE {UNBREAKABLE, DRILLDIVE_ONLY, BREAKABLE}
+enum BREAK_STATE {BREAKABLE, DRILLDIVE_ONLY, UNBREAKABLE}
 @export var break_state: BREAK_STATE = BREAK_STATE.BREAKABLE
 @export var score = true
-#@export var breakable = true
-#@export var drillDive_only = true
+#@export var pushable = true
 
 func physics_collision(body, hitVector):
 	if hitVector == Vector2.DOWN and body.get_collision_layer_value(20):
@@ -55,3 +54,9 @@ func physics_collision(body, hitVector):
 		else:
 			body.ground = true
 			body.movement.y = 0
+
+	# Just an experiment for a pushable block
+	#if pushable and body.ground and hitVector.x != 0 and (sign(body.pushingWall) == sign(hitVector.x) or (\
+	#body.currentState == PlayerChar.STATES.SPINDASH and body.direction == hitVector.x)):
+		#global_position.x += 0.25*60*get_physics_process_delta_time()*hitVector.x
+		#body.movement.x += 0.5*60*hitVector.x

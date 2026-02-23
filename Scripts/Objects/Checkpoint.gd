@@ -18,10 +18,11 @@ func activate():
 	$Spinner.queue("flash")
 	active = true
 	Global.currentCheckPoint = checkPointID
+	Global.checkPointTime = Global.levelTime
 	
 	# set checkpoint to self (and set any checkpoitns with a lower ID to active)
 	for i in Global.checkPoints:
-		if i.get("checkPointID") != null and i.checkPointID < checkPointID and Global.players[0].currentState != PlayerChar.STATES.DEBUG:
+		if i != null and i.get("checkPointID") != null and i.checkPointID < checkPointID and Global.players[0].currentState != PlayerChar.STATES.DEBUG:
 			i.active = true
 			i.get_node("Spinner").play("flash")
 

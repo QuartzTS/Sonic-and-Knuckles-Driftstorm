@@ -21,7 +21,7 @@ func _ready():
 func _process(delta):
 	# set position of the water overlay based on the camera position and size
 	var cam = GlobalFunctions.getCurrentCamera2D()
-	if cam != null:
+	if cam != null and Global.waterLevel != null:
 		$Water.global_position = Vector2(cam.get_screen_center_position().x,Global.waterLevel)
 	$Water.region_rect.position.x = $Water.global_position.x
 	

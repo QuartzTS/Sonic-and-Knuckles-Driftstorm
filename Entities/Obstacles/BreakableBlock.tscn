@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://bfjam0ov4pku5"]
+[gd_scene format=3 uid="uid://bfjam0ov4pku5"]
 
 [ext_resource type="Script" uid="uid://cegilpdyplyro" path="res://Scripts/Objects/BreakableBlock.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://dnmy18lc2iyh6" path="res://Graphics/Obstacles/Blocks/breakable_block.png" id="2"]
@@ -6,13 +6,13 @@
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(31, 31)
 
-[node name="Breakable" type="StaticBody2D"]
+[node name="Breakable" type="StaticBody2D" unique_id=1508503609]
 collision_layer = 8192
 collision_mask = 0
 script = ExtResource("1")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1011235339]
 shape = SubResource("1")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=922388142]
 texture = ExtResource("2")

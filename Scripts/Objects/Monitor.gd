@@ -87,7 +87,6 @@ func destroy():
 	Global.nodeMemory.append(get_path()) # Save the monitor destruction state to the node memory, so that it self-destructs when the player respawns
 	# Set swap cooldown to the length of monitor destruction animation so that no character switching occurs before playerTouch obtains the item
 	playerTouch.swap_cooldown = $Animator.current_animation_length
-	#print(playerTouch.STATES.find_key(playerTouch.currentState))
 	# Now make a tween so that we can change the global position of the icon outside of the influence of the monitor body, and without using an animation player.
 	# But was that even needed anyway? I don't know..
 	await create_tween().tween_property(item_icon,"global_position",item_icon.global_position-Vector2(0,32),$Animator.current_animation_length).set_ease(Tween.EASE_OUT).finished
@@ -216,4 +215,3 @@ func _on_DamageArea_area_entered(area):
 		elif area.get_collision_layer_value(24):
 			playerTouch = Global.players[0]
 		destroy()
-	print("Destroyed")

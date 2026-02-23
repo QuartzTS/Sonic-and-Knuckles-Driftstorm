@@ -8,6 +8,7 @@ var magnet = null
 var magnetShape = null
 var ringacceleration = [0.75,0.1875]
 var Particle = preload("res://Entities/Misc/GenericParticle.tscn")
+var big = false
 
 func _ready():
 	if Global.nodeMemory.has(get_path()) and Global.players[0].currentState != PlayerChar.STATES.DEBUG:
@@ -15,12 +16,13 @@ func _ready():
 
 func _process(delta):
 	# scattered logic
-	if scattered:
-		z_index = 7
+	if scattered or big:
+		if big:
+			z_index = 100
 		$RingSprite.speed_scale = lifetime / MAX_LIFETIME + 1
 		if lifetime > 0:
 			lifetime -= delta
-		else:
+		elif lifetime <= 0 or (lifetime <= 192.0/60.0 and big):
 			queue_free()
 	if player:
 		# collect ring
@@ -34,6 +36,7 @@ func _process(delta):
 			get_parent().add_child(part)
 			part.global_position = global_position
 			part.play("RingSparkle")
+			part.z_index = 7
 			queue_free()
 
 func _physics_process(delta):
@@ -43,6 +46,13 @@ func _physics_process(delta):
 		translate(velocity*delta)
 		if ($FloorCheck.is_colliding() and velocity.y > 0):
 			velocity.y *= -0.75
+	elif big:
+		$FloorCheck.enabled = false
+		$Hitbox/CollisionShape2D.disabled = true
+		translate(velocity*delta)
+		scale.x += 16.0/60.0
+		scale.y += 16.0/60.0
+		
 	elif magnet:
 		#relative positions
 		var sx = sign(magnet.global_position.x - global_position.x)

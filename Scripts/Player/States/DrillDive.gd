@@ -4,7 +4,7 @@ var flat_ground: bool = false ## This is set to true when flat ground is detecte
 var dust_velocity: float = 1.0 ## Velocity of dust clouds
 const DUST_PARTICLES_NUM: int = 6 ## Maximum number of dust particles to spawn
 
-# This code here allows gliding while drilldiving, and jumping/spindashing when landing
+# This code here allows gliding while drilldiving, and jumping/spindashing directly after landing
 # Also sorry, most of the code in this entire script is copied from Air.gd, lol.
 func _process(delta: float) -> void:
 	if parent.inputs[parent.INPUTS.ACTION] == 1 and !flat_ground:
@@ -12,7 +12,7 @@ func _process(delta: float) -> void:
 		parent.movement = Vector2(parent.direction*4*60,max(parent.movement.y,0))
 		parent.set_state(parent.STATES.GLIDE,parent.currentHitbox.GLIDE)
 	# Jump and Spindash cancel
-	if (parent.inputs[parent.INPUTS.ACTION] == 1 or parent.inputs[parent.INPUTS.ACTION2] == 1) and parent.ground and flat_ground:
+	if parent.any_action_pressed() and parent.ground and flat_ground:
 		parent.movement.x = 0
 		if parent.inputs[parent.INPUTS.YINPUT] > 0:
 			parent.animator.play("spinDash")
@@ -29,17 +29,17 @@ func _process(delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	# air movement
-	if parent.inputs[parent.INPUTS.XINPUT] != 0 and parent.airControl and !parent.ground and \
-	parent.movement.x*parent.inputs[parent.INPUTS.XINPUT] < parent.top and abs(parent.movement.x) < parent.top:
-		parent.movement.x = clamp(parent.movement.x+parent.air/GlobalFunctions.div_by_delta(delta)*parent.inputs[parent.INPUTS.XINPUT],-parent.top,parent.top)
+	if parent.get_x_input() != 0 and parent.airControl and !parent.ground and \
+	parent.movement.x*parent.get_x_input() < parent.top and abs(parent.movement.x) < parent.top:
+		parent.movement.x = clamp(parent.movement.x+parent.air/GlobalFunctions.div_by_delta(delta)*parent.get_x_input(),-parent.top,parent.top)
 		
 	# Air drag
 	if parent.movement.y < 0 and parent.movement.y > -parent.releaseJmp*60:
 		parent.movement.x -= ((parent.movement.x / 0.125) / 256)*60*delta
 	
 	
-	if parent.inputs[parent.INPUTS.XINPUT] != 0:
-		parent.direction = parent.inputs[parent.INPUTS.XINPUT]
+	if parent.get_x_input() != 0:
+		parent.direction = parent.get_x_input()
 	
 	
 	# Gravity
@@ -56,7 +56,7 @@ func _physics_process(delta: float) -> void:
 			if parent.movement.y >= 12*60: # Only make the dramatic effects if the Y speed didn't decrease
 				parent.sfx[34].play()
 				parent.sfx[33].stop()
-				parent.shake_camera(delta, Vector2(0,4), 2)
+				parent.shake_camera(delta, Vector2.DOWN, 4)
 				# Spawn a dust cloud, and then do some calculations on dust_velocity for the next iteration.
 				# Funnily enough, this takes 6 lines without the for loop.. meanwhile here, it took 5.. 
 				# Idk if there's a better way, tho..
@@ -97,6 +97,6 @@ func spawn_drill_dive_dust(initial_velocity: float) -> void:
 	dust.z_index = 6
 	dust.global_position = parent.global_position+(Vector2.DOWN*10)
 	dust.collide = true # Set collide to true so that the clouds destroy enemies and monitors
-	dust.velocity.x = initial_velocity*60 # Set the velocity to the initial velocity
+	dust.velocity.x = initial_velocity*60 # Set the x velocity to the initial velocity
 	#dust.velo = Vector2(initial_velocity,0)
 	parent.get_parent().add_child(dust)

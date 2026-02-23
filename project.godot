@@ -45,6 +45,11 @@ window/stretch/mode="viewport"
 
 project/assembly_name="Sonic Worlds Next"
 
+[editor]
+
+naming/scene_name_casing=1
+naming/script_name_casing=1
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/GDQuest_GDScript_formatter/plugin.cfg", "res://addons/discord-rpc-gd/plugin.cfg")

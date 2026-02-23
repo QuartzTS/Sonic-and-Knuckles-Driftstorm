@@ -35,10 +35,9 @@ var objects: Array[PackedScene] = [
 	preload("res://Entities/Obstacles/Platform.tscn"),
 	preload("res://Entities/Obstacles/SwingingPlatform.tscn")
 ]
-var object_cursor: int = 0
 var object_preview: Node = null
 var moved: bool = false
-var move_speed: float
+var move_speed: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -49,12 +48,12 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("ui_debug_mode"):
 		parent.set_state(parent.STATES.NORMAL)
-	if object_preview != null:
+	if object_preview:
 		object_preview.process_mode = Node.PROCESS_MODE_DISABLED
 		object_preview.global_position = parent.global_position
 	if parent.inputs[parent.INPUTS.ACTION2] == 1 or parent.inputs[parent.INPUTS.ACTION3] == 1:
 		#if parent.inputs[parent.INPUTS.ACTION2] == 1:
-			#object_cursor = wrapi(object_cursor+1,0,objects.size())
+			#Global.debug_object_cursor = wrapi(Global.debug_object_cursor+1,0,objects.size())
 		#elif parent.inputs[parent.INPUTS.ACTION3] == 1:
 		#var assign_property = ""
 		#var dict = ["item", "type", "boostDirection", "springDirection"]
@@ -67,42 +66,42 @@ func _process(_delta: float) -> void:
 		# or (object_preview.has_method("debug_change_property") and !object_preview.debug_change_property()):
 		#if object_preview.has_method("debug_change_property"):
 			#object_preview.debug_change_property()
-			#print(object_cursor)
+			#print(Global.debug_object_cursor)
 			#await Global.cycle_object
 		await get_tree().process_frame
-		object_cursor = wrapi(object_cursor+parent.inputs[parent.INPUTS.ACTION2]-parent.inputs[parent.INPUTS.ACTION3],0,objects.size())
-		var new_object_preview: Node = objects[object_cursor].instantiate()
+		Global.debug_object_cursor = wrapi(Global.debug_object_cursor+parent.inputs[parent.INPUTS.ACTION2]-parent.inputs[parent.INPUTS.ACTION3],0,objects.size())
+		var new_object_preview: Node = objects[Global.debug_object_cursor].instantiate()
 		object_preview.queue_free()
 		object_preview = new_object_preview
 		parent.add_child(object_preview)
-		print(object_cursor)
-	if parent.inputs[parent.INPUTS.ACTION] == 1 and object_preview != null:
+		#print(Global.debug_object_cursor)
+	if parent.inputs[parent.INPUTS.ACTION] == 1 and object_preview:
 		var object_spawn: Node = object_preview.duplicate()
 		parent.get_parent().add_child(object_spawn)
 		object_spawn.global_position = parent.global_position
 		object_spawn.process_mode = Node.PROCESS_MODE_INHERIT
 
-func _physics_process(delta: float) -> void:
-	moved = parent.inputs[parent.INPUTS.XINPUT] or parent.inputs[parent.INPUTS.YINPUT]
-	move_speed = (move_speed + 1)*int(moved)
-	parent.movement = (move_speed*parent.acc/GlobalFunctions.div_by_delta(delta)*Vector2(
-		parent.inputs[parent.INPUTS.XINPUT],
-		parent.inputs[parent.INPUTS.YINPUT]
+func _physics_process(_delta: float) -> void:
+	moved = parent.get_x_input() or parent.get_y_input()
+	move_speed = (move_speed + 2)*int(moved)
+	parent.movement = (move_speed*parent.acc*60*Vector2(
+		parent.get_x_input(),
+		parent.get_y_input()
 	)).clamp(Vector2(-16*60,-16*60),Vector2(16*60,16*60))
-	#movement.x = move_toward(movement.x,top*inputs[INPUTS.XINPUT],acc/GlobalFunctions.div_by_delta(delta))
-	#parent.movement = move_toward(1,2,4)
 
 func state_activated() -> void:
+	parent.unset_active_gimmick()
 	parent.allowTranslate = true
 	parent.get_node("HitBox").disabled = true
 	parent.spriteController.visible = false
 	parent.animator.process_mode = PROCESS_MODE_DISABLED
 	parent.movement = Vector2.ZERO
 	parent.z_index = 100
+	parent.rotation = 0
 	parent.water = false
 	parent.switch_physics()
 	await get_tree().process_frame
-	object_preview = objects[object_cursor].instantiate()
+	object_preview = objects[Global.debug_object_cursor].instantiate()
 	parent.add_child(object_preview)
 
 func state_exit() -> void:
@@ -111,6 +110,6 @@ func state_exit() -> void:
 	parent.spriteController.visible = true
 	parent.animator.process_mode = PROCESS_MODE_INHERIT
 	parent.movement = Vector2.ZERO
-	move_speed = 0.0
 	parent.z_index = parent.defaultZIndex
-	object_preview.queue_free()
+	if object_preview:
+		object_preview.queue_free()

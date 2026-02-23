@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://c4e1wv2sxs1gm"]
+[gd_scene format=3 uid="uid://c4e1wv2sxs1gm"]
 
 [ext_resource type="Texture2D" uid="uid://4lhg0ovh1pe8" path="res://Graphics/Players/Sonic.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://bemwlrblbgn23" path="res://Graphics/Backgrounds/WorldsBackground.png" id="2"]
@@ -312,19 +312,19 @@ _data = {
 &"RESET": SubResource("2")
 }
 
-[node name="CharacterSelect" type="Node2D"]
+[node name="CharacterSelect" type="Node2D" unique_id=1987755065]
 script = ExtResource("5")
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=1800167696]
 layer = -1
 
-[node name="Back" type="ColorRect" parent="UI"]
+[node name="Back" type="ColorRect" parent="UI" unique_id=1656589735]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.176471, 0, 0.145098, 1)
 
-[node name="TextureRect" type="TextureRect" parent="UI"]
+[node name="TextureRect" type="TextureRect" parent="UI" unique_id=1025754691]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -332,7 +332,7 @@ texture = ExtResource("2")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="Labels" type="Control" parent="UI"]
+[node name="Labels" type="Control" parent="UI" unique_id=1759828683]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -340,7 +340,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CharacterOrigin" type="Control" parent="UI/Labels"]
+[node name="CharacterOrigin" type="Control" parent="UI/Labels" unique_id=2136650159]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -352,47 +352,47 @@ offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SonicAndKnuckles" type="Node2D" parent="UI/Labels/CharacterOrigin"]
+[node name="SonicAndKnuckles" type="Node2D" parent="UI/Labels/CharacterOrigin" unique_id=1617202283]
 
-[node name="Sonic" type="Sprite2D" parent="UI/Labels/CharacterOrigin/SonicAndKnuckles"]
+[node name="Sonic" type="Sprite2D" parent="UI/Labels/CharacterOrigin/SonicAndKnuckles" unique_id=775963196]
 z_index = 3
 position = Vector2(10, -6)
 texture = ExtResource("1")
 region_enabled = true
 region_rect = Rect2(728, 48, 32, 48)
 
-[node name="Knuckles" type="Sprite2D" parent="UI/Labels/CharacterOrigin/SonicAndKnuckles"]
+[node name="Knuckles" type="Sprite2D" parent="UI/Labels/CharacterOrigin/SonicAndKnuckles" unique_id=1768601696]
 z_index = 2
 position = Vector2(-10, 0)
 texture = ExtResource("7")
 region_enabled = true
 region_rect = Rect2(402, 468, 38, 36)
 
-[node name="SonicAndTails" type="Node2D" parent="UI/Labels/CharacterOrigin"]
+[node name="SonicAndTails" type="Node2D" parent="UI/Labels/CharacterOrigin" unique_id=2041053286]
 visible = false
 
-[node name="Sonic" type="Sprite2D" parent="UI/Labels/CharacterOrigin/SonicAndTails"]
+[node name="Sonic" type="Sprite2D" parent="UI/Labels/CharacterOrigin/SonicAndTails" unique_id=799324124]
 z_index = 3
 position = Vector2(10, -6)
 texture = ExtResource("1")
 region_enabled = true
 region_rect = Rect2(728, 48, 32, 48)
 
-[node name="Tails" type="Sprite2D" parent="UI/Labels/CharacterOrigin/SonicAndTails"]
+[node name="Tails" type="Sprite2D" parent="UI/Labels/CharacterOrigin/SonicAndTails" unique_id=331335040]
 z_index = 2
 position = Vector2(-10, -2)
 texture = ExtResource("4")
 region_enabled = true
 region_rect = Rect2(676, 205, 33, 35)
 
-[node name="TailsTails" type="Sprite2D" parent="UI/Labels/CharacterOrigin/SonicAndTails/Tails"]
+[node name="TailsTails" type="Sprite2D" parent="UI/Labels/CharacterOrigin/SonicAndTails/Tails" unique_id=1018945139]
 z_index = -1
 position = Vector2(-9, 7)
 texture = ExtResource("4")
 region_enabled = true
 region_rect = Rect2(488, 25, 16, 22)
 
-[node name="Sonic" type="Sprite2D" parent="UI/Labels/CharacterOrigin"]
+[node name="Sonic" type="Sprite2D" parent="UI/Labels/CharacterOrigin" unique_id=1638974980]
 visible = false
 z_index = 3
 position = Vector2(-3, -6)
@@ -400,39 +400,39 @@ texture = ExtResource("1")
 region_enabled = true
 region_rect = Rect2(728, 48, 32, 48)
 
-[node name="Knuckles" type="Sprite2D" parent="UI/Labels/CharacterOrigin"]
+[node name="Knuckles" type="Sprite2D" parent="UI/Labels/CharacterOrigin" unique_id=430283639]
 visible = false
 z_index = 3
 texture = ExtResource("7")
 region_enabled = true
 region_rect = Rect2(402, 468, 38, 36)
 
-[node name="TailsAndAmy" type="Node2D" parent="UI/Labels/CharacterOrigin"]
+[node name="TailsAndAmy" type="Node2D" parent="UI/Labels/CharacterOrigin" unique_id=1187028624]
 visible = false
 position = Vector2(0, -2.5)
 
-[node name="Tails" type="Sprite2D" parent="UI/Labels/CharacterOrigin/TailsAndAmy"]
+[node name="Tails" type="Sprite2D" parent="UI/Labels/CharacterOrigin/TailsAndAmy" unique_id=1085344315]
 z_index = 3
 position = Vector2(10, 0.6)
 texture = ExtResource("4")
 region_enabled = true
 region_rect = Rect2(672, 200, 40, 40)
 
-[node name="TailsTails" type="Sprite2D" parent="UI/Labels/CharacterOrigin/TailsAndAmy/Tails"]
+[node name="TailsTails" type="Sprite2D" parent="UI/Labels/CharacterOrigin/TailsAndAmy/Tails" unique_id=395779063]
 z_index = -1
 position = Vector2(-9, 7)
 texture = ExtResource("4")
 region_enabled = true
 region_rect = Rect2(677, 28, 19, 20)
 
-[node name="Amy" type="Sprite2D" parent="UI/Labels/CharacterOrigin/TailsAndAmy"]
+[node name="Amy" type="Sprite2D" parent="UI/Labels/CharacterOrigin/TailsAndAmy" unique_id=71410973]
 z_index = 2
 position = Vector2(-10, 3.5)
 texture = ExtResource("6_nah0p")
 region_enabled = true
 region_rect = Rect2(536, 8, 32, 40)
 
-[node name="Tails" type="Sprite2D" parent="UI/Labels/CharacterOrigin"]
+[node name="Tails" type="Sprite2D" parent="UI/Labels/CharacterOrigin" unique_id=2019105293]
 visible = false
 z_index = 2
 position = Vector2(0, -2)
@@ -440,14 +440,14 @@ texture = ExtResource("4")
 region_enabled = true
 region_rect = Rect2(676, 205, 33, 35)
 
-[node name="TailsTails" type="Sprite2D" parent="UI/Labels/CharacterOrigin/Tails"]
+[node name="TailsTails" type="Sprite2D" parent="UI/Labels/CharacterOrigin/Tails" unique_id=1996115121]
 z_index = -1
 position = Vector2(-9, 7)
 texture = ExtResource("4")
 region_enabled = true
 region_rect = Rect2(488, 25, 16, 22)
 
-[node name="Amy" type="Sprite2D" parent="UI/Labels/CharacterOrigin"]
+[node name="Amy" type="Sprite2D" parent="UI/Labels/CharacterOrigin" unique_id=1715688848]
 visible = false
 z_index = 3
 position = Vector2(1, 1)
@@ -455,13 +455,11 @@ texture = ExtResource("6_nah0p")
 region_enabled = true
 region_rect = Rect2(488, 8, 32, 40)
 
-[node name="CharacterAnimations" type="AnimationPlayer" parent="UI/Labels/CharacterOrigin"]
-libraries = {
-&"": SubResource("AnimationLibrary_wio08")
-}
-autoplay = "Animate"
+[node name="CharacterAnimations" type="AnimationPlayer" parent="UI/Labels/CharacterOrigin" unique_id=1084515468]
+libraries/ = SubResource("AnimationLibrary_wio08")
+autoplay = &"Animate"
 
-[node name="Control" type="Control" parent="UI/Labels"]
+[node name="Control" type="Control" parent="UI/Labels" unique_id=601439596]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -469,7 +467,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Character" type="Label" parent="UI/Labels/Control"]
+[node name="Character" type="Label" parent="UI/Labels/Control" unique_id=957381959]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -488,7 +486,7 @@ horizontal_alignment = 1
 vertical_alignment = 2
 uppercase = true
 
-[node name="Level" type="Label" parent="UI/Labels/Control"]
+[node name="Level" type="Label" parent="UI/Labels/Control" unique_id=520983609]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -502,28 +500,28 @@ text = "Base zone act 1"
 vertical_alignment = 1
 uppercase = true
 
-[node name="DownArrow" type="Sprite2D" parent="UI/Labels/Control/Level"]
+[node name="DownArrow" type="Sprite2D" parent="UI/Labels/Control/Level" unique_id=1685755192]
 position = Vector2(60, 20.5)
 texture = ExtResource("9")
 hframes = 2
 
-[node name="UpArrow" type="Sprite2D" parent="UI/Labels/Control/Level"]
+[node name="UpArrow" type="Sprite2D" parent="UI/Labels/Control/Level" unique_id=523806702]
 position = Vector2(60, 4.5)
 texture = ExtResource("9")
 hframes = 2
 frame = 1
 
-[node name="Cover" type="CanvasLayer" parent="."]
+[node name="Cover" type="CanvasLayer" parent="." unique_id=94373852]
 layer = 0
 visible = false
 
-[node name="Back" type="ColorRect" parent="Cover"]
+[node name="Back" type="ColorRect" parent="Cover" unique_id=716594230]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(1, 1, 1, 0)
 
-[node name="Switch" type="AudioStreamPlayer" parent="."]
+[node name="Switch" type="AudioStreamPlayer" parent="." unique_id=170137393]
 stream = ExtResource("9_5f42f")
 bus = &"SFX"

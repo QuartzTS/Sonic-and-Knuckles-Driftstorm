@@ -10,3 +10,5 @@ func _physics_process(delta):
 	if parent.ground and parent.movement.y >= 0:
 		parent.movement.x = 0
 		parent.set_state(parent.STATES.NORMAL)
+	elif parent.movement.y >= 6*60:
+		parent.set_state(parent.STATES.AIR)

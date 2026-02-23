@@ -23,7 +23,7 @@ func _physics_process(delta):
 					Global.checkPointTime = 0
 				# Immediately return to the starting scene when somehow dying in attract reel mode
 				elif parent.playerControl == -1 and Global.attract_reel:
-					Global.attract_reelID = (Global.attract_reelID + 1) % Global.level_paths.size() as Global.LEVELS
+					Global.attract_reel_id = (Global.attract_reel_id + 1) % Global.LEVELS.size() as Global.LEVELS
 					Global.attract_reel = false
 					Global.music.stop()
 					Global.effectTheme.stop()
@@ -34,7 +34,7 @@ func _physics_process(delta):
 					await Main.scene_faded
 					Main.reset_game_values()
 				else:
-					Main.change_scene(Global.currentZone)
+					Main.change_scene_by_level_id(Global.level_id)
 					parent.process_mode = PROCESS_MODE_PAUSABLE
 			else:
 				Global.gameOver = true

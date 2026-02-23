@@ -160,7 +160,7 @@ func remove_player(player):
 		# Don't allow removal of someone who is still on the vertical bar. This can occur with
 		# high speeds. Preventing this should be fine since the player will be brought back into
 		# collision overlap range by virtue of being on the bar.
-		if (player.currentState == player.STATES.ANIMATION):
+		if (player.currentState == player.STATES.ANIMATION or player.currentState == player.STATES.DEBUG):
 			return
 		player.animator.play("roll")
 		player.set_state(player.STATES.AIR)

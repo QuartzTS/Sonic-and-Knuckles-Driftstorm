@@ -33,7 +33,7 @@ func _process(delta):
 			Global.bonus_stage_saved_time = Global.levelTime
 			
 			# fade to new scene
-			Main.change_scene("res://Scene/SpecialStage/SpecialStageResult.tscn","WhiteOut",1,false)
+			Main.change_scene("res://Scene/SpecialStage/SpecialStageResult.tscn","WhiteOut",true,1,false)
 			# wait for scene to fade
 			await Main.scene_faded
 	# Spinning ring logic

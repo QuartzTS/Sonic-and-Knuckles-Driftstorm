@@ -5,7 +5,7 @@ var targetPoint = Vector2.ZERO
 
 var spawnTicker = (1.0/64.0)*60.0
 
-var knuxTurnTimer = 0
+var knux_turn_timer = 0
 
 
 func _ready():
@@ -14,34 +14,28 @@ func _ready():
 func state_activated():
 	targetPoint = parent.partner.global_position
 	if parent.character == Global.CHARACTERS.KNUCKLES:
-		if parent.movement.x > 0:
-			knuxTurnTimer = 0
-		else:
-			knuxTurnTimer = 180
+		knux_turn_timer = 0 if parent.movement.x > 0 else 180
 
 func _process(delta):
 	# Animation
 	match(parent.character):
 		Global.CHARACTERS.TAILS:
-			if parent.water:
-				parent.animator.play("swim")
-			else:
-				parent.animator.play("fly")
+			parent.animator.play("swim" if parent.water else "fly")
 		Global.CHARACTERS.KNUCKLES:
 			parent.animator.play("glide")
 			# Turning, copied from Glide.gd
 			# left
-			if (parent.partner.movement.x > 0 or (parent.partner.movement.x == 0 and parent.partner.direction > 0 and abs(parent.global_position.x-parent.partner.global_position.x) >= 0)) and knuxTurnTimer > 0:
-				knuxTurnTimer -= 2.8125*delta*60
+			if (parent.partner.movement.x > 0 or (parent.partner.movement.x == 0 and parent.partner.direction > 0 and abs(parent.global_position.x-parent.partner.global_position.x) >= 0)) and knux_turn_timer > 0:
+				knux_turn_timer -= 2.8125*delta*60
 			# right
-			elif (parent.partner.movement.x < 0 or (parent.partner.movement.x == 0 and parent.partner.direction < 0 and abs(parent.global_position.x-parent.partner.global_position.x) <= 0)) and knuxTurnTimer < 180:
-				knuxTurnTimer += 2.8125*delta*60
+			elif (parent.partner.movement.x < 0 or (parent.partner.movement.x == 0 and parent.partner.direction < 0 and abs(parent.global_position.x-parent.partner.global_position.x) <= 0)) and knux_turn_timer < 180:
+				knux_turn_timer += 2.8125*delta*60
 			
-			knuxTurnTimer = clamp(knuxTurnTimer,0,180)
+			knux_turn_timer = clamp(knux_turn_timer,0,180)
 			
 			# Animation
 			var animSize = parent.animator.current_animation_length
-			var offset = knuxTurnTimer/180
+			var offset = knux_turn_timer/180
 			
 			parent.animator.advance(-parent.animator.current_animation_position+(animSize*offset))
 		Global.CHARACTERS.AMY:
@@ -101,17 +95,19 @@ func _physics_process(delta):
 	else: # Go back to normal
 		# restore layer
 		parent.collision_layer = layerMemory
-		parent.groundSpeed = 0
-		parent.animator.play("walk")
-		parent.allowTranslate = false
-		parent.partnerPanic = 0
-		parent.collision_layer = parent.defaultLayer
-		parent.collision_mask = parent.defaultMask
 		parent.set_state(parent.STATES.AIR)
-		parent.movement = Vector2.ZERO
-		parent.collissionLayer = parent.partner.collissionLayer
-		# copy limits to avoid out of bounds errors
-		parent.limitLeft = parent.partner.limitLeft
-		parent.limitRight = parent.partner.limitRight
-		parent.limitTop = parent.partner.limitTop
-		parent.limitBottom = parent.partner.limitBottom
+
+func state_exit() -> void:
+	parent.groundSpeed = 0
+	parent.animator.play("freefall")
+	parent.allowTranslate = false
+	parent.partnerPanic = 0
+	parent.collision_layer = parent.defaultLayer
+	parent.collision_mask = parent.defaultMask
+	parent.movement = Vector2.ZERO
+	parent.collissionLayer = parent.partner.collissionLayer
+	# copy limits to avoid out of bounds errors
+	parent.limitLeft = parent.partner.limitLeft
+	parent.limitRight = parent.partner.limitRight
+	parent.limitTop = parent.partner.limitTop
+	parent.limitBottom = parent.partner.limitBottom

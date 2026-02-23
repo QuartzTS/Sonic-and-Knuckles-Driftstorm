@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://d4chq0jb35u6n"]
+[gd_scene format=3 uid="uid://d4chq0jb35u6n"]
 
 [ext_resource type="Texture2D" uid="uid://c6ryasbv2ai4j" path="res://Graphics/Backgrounds/EHZ_Parallax/EHZ_BG_A.png" id="1_npaq8"]
 [ext_resource type="Texture2D" uid="uid://bmwj34rjk7fax" path="res://Graphics/Backgrounds/EHZ_Parallax/EHZ_BG_B.png" id="2_xgb6m"]
@@ -47,42 +47,42 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="EHZ_Parallax" type="ParallaxBackground"]
+[node name="EHZ_Parallax" type="ParallaxBackground" unique_id=416259771]
 scroll_base_scale = Vector2(1, 0.05)
 scroll_limit_end = Vector2(0, 256)
 
-[node name="ParallaxLayerAB" type="ParallaxLayer" parent="."]
+[node name="ParallaxLayerAB" type="ParallaxLayer" parent="." unique_id=989156879]
 motion_scale = Vector2(0.01, 1)
 motion_mirroring = Vector2(512, 0)
 
-[node name="SkyBox" type="TextureRect" parent="ParallaxLayerAB"]
+[node name="SkyBox" type="TextureRect" parent="ParallaxLayerAB" unique_id=699389577]
 offset_right = 40.0
 offset_bottom = 40.0
 texture = ExtResource("1_npaq8")
 stretch_mode = 1
 
-[node name="AnimatedLake" type="AnimatedSprite2D" parent="ParallaxLayerAB"]
+[node name="AnimatedLake" type="AnimatedSprite2D" parent="ParallaxLayerAB" unique_id=1219915140]
 position = Vector2(256, 104)
 sprite_frames = SubResource("SpriteFrames_yj1oj")
 autoplay = "default"
-frame_progress = 0.405603
+frame_progress = 0.8386972
 
-[node name="ParallaxLayerC" type="ParallaxLayer" parent="."]
+[node name="ParallaxLayerC" type="ParallaxLayer" parent="." unique_id=1019668696]
 motion_scale = Vector2(0.25, 1)
 motion_mirroring = Vector2(512, 0)
 
-[node name="RollingHills" type="TextureRect" parent="ParallaxLayerC"]
+[node name="RollingHills" type="TextureRect" parent="ParallaxLayerC" unique_id=1717609591]
 offset_top = 120.0
 offset_right = 512.0
 offset_bottom = 152.0
 texture = ExtResource("3_5g6t2")
 stretch_mode = 1
 
-[node name="ParallaxLayerD" type="ParallaxLayer" parent="."]
+[node name="ParallaxLayerD" type="ParallaxLayer" parent="." unique_id=1900666843]
 motion_scale = Vector2(0.3, 1)
 motion_mirroring = Vector2(512, 0)
 
-[node name="TextureRect" type="TextureRect" parent="ParallaxLayerD"]
+[node name="TextureRect" type="TextureRect" parent="ParallaxLayerD" unique_id=1773949441]
 offset_top = 152.0
 offset_right = 512.0
 offset_bottom = 160.0
@@ -90,11 +90,11 @@ texture = ExtResource("4_o14y8")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="ParallaxLayerE" type="ParallaxLayer" parent="."]
+[node name="ParallaxLayerE" type="ParallaxLayer" parent="." unique_id=1898988541]
 motion_scale = Vector2(0.325, 1)
 motion_mirroring = Vector2(512, 0)
 
-[node name="TextureRect" type="TextureRect" parent="ParallaxLayerE"]
+[node name="TextureRect" type="TextureRect" parent="ParallaxLayerE" unique_id=66069269]
 offset_top = 160.0
 offset_right = 512.0
 offset_bottom = 168.0
@@ -102,11 +102,11 @@ texture = ExtResource("5_0geg8")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="ParallaxLayerF" type="ParallaxLayer" parent="."]
+[node name="ParallaxLayerF" type="ParallaxLayer" parent="." unique_id=1880613121]
 motion_scale = Vector2(0.35, 1)
 motion_mirroring = Vector2(512, 0)
 
-[node name="TextureRect" type="TextureRect" parent="ParallaxLayerF"]
+[node name="TextureRect" type="TextureRect" parent="ParallaxLayerF" unique_id=668659325]
 offset_top = 168.0
 offset_right = 512.0
 offset_bottom = 176.0
@@ -114,11 +114,11 @@ texture = ExtResource("6_11mpl")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="ParallaxLayerG" type="ParallaxLayer" parent="."]
+[node name="ParallaxLayerG" type="ParallaxLayer" parent="." unique_id=1233323587]
 motion_scale = Vector2(0.4, 1)
 motion_mirroring = Vector2(512, 0)
 
-[node name="TextureRect" type="TextureRect" parent="ParallaxLayerG"]
+[node name="TextureRect" type="TextureRect" parent="ParallaxLayerG" unique_id=756873265]
 offset_top = 176.0
 offset_right = 512.0
 offset_bottom = 184.0
@@ -126,11 +126,11 @@ texture = ExtResource("7_7s307")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="ParallaxLayerH" type="ParallaxLayer" parent="."]
+[node name="ParallaxLayerH" type="ParallaxLayer" parent="." unique_id=1200676079]
 motion_scale = Vector2(0.45, 1)
 motion_mirroring = Vector2(512, 0)
 
-[node name="TextureRect" type="TextureRect" parent="ParallaxLayerH"]
+[node name="TextureRect" type="TextureRect" parent="ParallaxLayerH" unique_id=717168198]
 offset_top = 184.0
 offset_right = 512.0
 offset_bottom = 192.0
@@ -138,11 +138,11 @@ texture = ExtResource("8_hvu78")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="ParallaxLayerI" type="ParallaxLayer" parent="."]
+[node name="ParallaxLayerI" type="ParallaxLayer" parent="." unique_id=1078079442]
 motion_scale = Vector2(0.5, 1)
 motion_mirroring = Vector2(512, 0)
 
-[node name="TextureRect" type="TextureRect" parent="ParallaxLayerI"]
+[node name="TextureRect" type="TextureRect" parent="ParallaxLayerI" unique_id=155748214]
 offset_top = 192.0
 offset_right = 512.0
 offset_bottom = 200.0
@@ -150,11 +150,11 @@ texture = ExtResource("9_je0l6")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="ParallaxLayerJ" type="ParallaxLayer" parent="."]
+[node name="ParallaxLayerJ" type="ParallaxLayer" parent="." unique_id=1852183587]
 motion_scale = Vector2(0.55, 1)
 motion_mirroring = Vector2(512, 0)
 
-[node name="TextureRect" type="TextureRect" parent="ParallaxLayerJ"]
+[node name="TextureRect" type="TextureRect" parent="ParallaxLayerJ" unique_id=1437674603]
 offset_top = 200.0
 offset_right = 512.0
 offset_bottom = 216.0
@@ -162,11 +162,11 @@ texture = ExtResource("10_mse8f")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="ParallaxLayerJ2" type="ParallaxLayer" parent="."]
+[node name="ParallaxLayerJ2" type="ParallaxLayer" parent="." unique_id=1477425130]
 motion_scale = Vector2(0.6, 1)
 motion_mirroring = Vector2(512, 0)
 
-[node name="TextureRect" type="TextureRect" parent="ParallaxLayerJ2"]
+[node name="TextureRect" type="TextureRect" parent="ParallaxLayerJ2" unique_id=511029849]
 offset_top = 216.0
 offset_right = 512.0
 offset_bottom = 232.0
@@ -174,11 +174,11 @@ texture = ExtResource("10_mse8f")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="ParallaxLayerJ3" type="ParallaxLayer" parent="."]
+[node name="ParallaxLayerJ3" type="ParallaxLayer" parent="." unique_id=1542322607]
 motion_scale = Vector2(0.7, 1)
 motion_mirroring = Vector2(512, 0)
 
-[node name="TextureRect" type="TextureRect" parent="ParallaxLayerJ3"]
+[node name="TextureRect" type="TextureRect" parent="ParallaxLayerJ3" unique_id=1540294461]
 offset_top = 232.0
 offset_right = 512.0
 offset_bottom = 248.0
@@ -186,11 +186,11 @@ texture = ExtResource("10_mse8f")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="ParallaxLayerJ4" type="ParallaxLayer" parent="."]
+[node name="ParallaxLayerJ4" type="ParallaxLayer" parent="." unique_id=1572570653]
 motion_scale = Vector2(0.8, 1)
 motion_mirroring = Vector2(512, 0)
 
-[node name="TextureRect" type="TextureRect" parent="ParallaxLayerJ4"]
+[node name="TextureRect" type="TextureRect" parent="ParallaxLayerJ4" unique_id=1484127013]
 offset_top = 248.0
 offset_right = 512.0
 offset_bottom = 264.0

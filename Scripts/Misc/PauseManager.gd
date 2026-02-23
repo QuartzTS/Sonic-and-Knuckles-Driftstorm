@@ -126,10 +126,11 @@ func _input(event):
 						set_menu(0)
 						Main.wasPaused = false
 						visible = false
+						Main.change_scene_by_level_id(Global.level_id)
+						await Main.scene_faded
+						Global.levelTime = 0
 						Global.checkPointTime = 0
 						Global.currentCheckPoint = -1
-						Main.change_scene(Global.currentZone,"FadeOut",1,true)
-						await Main.scene_faded
 						Global.effectTheme.stop()
 						Global.bossMusic.stop()
 						Global.music.stop()

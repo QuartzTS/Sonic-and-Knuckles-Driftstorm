@@ -83,6 +83,8 @@ func check_grab(player: PlayerChar) -> bool:
 	# We don't grab if the player isn't low enough to grab
 	if player.global_position.y < $MonkeyBarHanger.global_position.y + 7:
 		return false
+	if player.currentState == PlayerChar.STATES.DEBUG:
+		return false
 
 	# If we didn't hit any of the ejection conditions then we are good to grab
 	return true

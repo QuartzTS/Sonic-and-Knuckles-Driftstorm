@@ -96,6 +96,7 @@ size = Vector2(128, 24)
 
 [node name="BaseZoneAct2" type="Node2D" unique_id=452931638]
 script = ExtResource("2")
+level_id = 1
 music = ExtResource("2_uemc5")
 nextZone = "res://Scene/Zones/emerald_hill_zone.tscn"
 animal1 = 2
@@ -119,11 +120,12 @@ offset_right = 2172.0
 offset_bottom = 398.0
 theme_override_fonts/normal_font = ExtResource("6_owcub")
 text = "CHAIN TARGET_REACHED SIGNAL USED HERE WILL CALL THE HOOK ON THE RIGHT"
+metadata/_edit_use_anchors_ = true
 
 [node name="HUD" parent="." unique_id=675817007 instance=ExtResource("4")]
-act = 2
 
 [node name="ParallaxContainer" type="CanvasLayer" parent="." unique_id=27092921]
+layer = -100
 
 [node name="Animate" type="AnimationPlayer" parent="ParallaxContainer" unique_id=995560974]
 libraries/ = SubResource("AnimationLibrary_48kib")
@@ -134,6 +136,7 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.364706, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
 
 [node name="Parallax2D" type="Parallax2D" parent="ParallaxContainer" unique_id=240569092]
 
@@ -144,7 +147,7 @@ region_enabled = true
 region_rect = Rect2(0, 0, 512, 512)
 
 [node name="Player" parent="." unique_id=424257675 instance=ExtResource("18")]
-position = Vector2(49, 747)
+position = Vector2(49, 749)
 
 [node name="Default" type="TileMapLayer" parent="." unique_id=1722441916]
 use_parent_material = true
@@ -1088,11 +1091,11 @@ travelDistance = 252
 [connection signal="pressed" from="HookSliderAssembly/MiddleSwitch" to="HookSliderAssembly/HookSlider" method="send_to_target" binds= [0]]
 [connection signal="pressed" from="HookSliderAssembly/MiddleSwitch" to="HookSliderAssembly/HookSlider/MobileHook/RetractibleChain" method="send_to_height" binds= [120]]
 [connection signal="target_reached" from="HookSliderAssembly/HookSlider/MobileHook/RetractibleChain" to="HookSliderAssembly/HookSlider" method="send_to_target" binds= [615]]
-[connection signal="pressed" from="Switch" to="ChainedMonkeyBar/RetractibleChain" method="send_to_height" binds= [609]]
 [connection signal="pressed" from="Switch" to="ChainedMonkeyBar/RetractibleChain" method="set_default_target" binds= [170]]
-[connection signal="pressed" from="Switch2" to="ChainedMonkeyBar/RetractibleChain" method="set_home_height" binds= [170]]
-[connection signal="pressed" from="Switch2" to="ChainedMonkeyBar/RetractibleChain" method="send_to_height" binds= [170]]
+[connection signal="pressed" from="Switch" to="ChainedMonkeyBar/RetractibleChain" method="send_to_height" binds= [609]]
 [connection signal="pressed" from="Switch2" to="ChainedMonkeyBar/RetractibleChain" method="set_default_target" binds= [0]]
+[connection signal="pressed" from="Switch2" to="ChainedMonkeyBar/RetractibleChain" method="send_to_height" binds= [170]]
+[connection signal="pressed" from="Switch2" to="ChainedMonkeyBar/RetractibleChain" method="set_home_height" binds= [170]]
 
 [editable path="ChainedMonkeyBar2"]
 [editable path="ChainedMonkeyBar3"]

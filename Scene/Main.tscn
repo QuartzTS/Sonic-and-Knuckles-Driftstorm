@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://byje3iiukvt4p"]
+[gd_scene format=3 uid="uid://byje3iiukvt4p"]
 
 [ext_resource type="AudioStream" uid="uid://dec4ik84l88go" path="res://Audio/Soundtrack/2. SWD_SpeedUp.ogg" id="1"]
 [ext_resource type="Script" uid="uid://csh72sexg3lmq" path="res://Scripts/Global/Main.gd" id="2"]
@@ -132,37 +132,42 @@ _data = {
 &"WhiteOut": SubResource("Animation_rqlip")
 }
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" unique_id=1161493502]
 script = ExtResource("2")
 
-[node name="Music" type="Node" parent="."]
+[node name="Music" type="Node" parent="." unique_id=206046199]
 process_mode = 1
 
-[node name="Music" type="AudioStreamPlayer" parent="Music"]
+[node name="Music" type="AudioStreamPlayer" parent="Music" unique_id=1370727252]
 autoplay = true
 bus = &"Music"
 
-[node name="BossTheme" type="AudioStreamPlayer" parent="Music"]
+[node name="BossTheme" type="AudioStreamPlayer" parent="Music" unique_id=111984888]
 stream = ExtResource("8")
 bus = &"Music"
 
-[node name="EffectTheme" type="AudioStreamPlayer" parent="Music"]
+[node name="EffectTheme" type="AudioStreamPlayer" parent="Music" unique_id=638378839]
 stream = ExtResource("1")
 bus = &"Music"
 
-[node name="Drowning" type="AudioStreamPlayer" parent="Music"]
+[node name="Drowning" type="AudioStreamPlayer" parent="Music" unique_id=1966298868]
 stream = ExtResource("5")
 bus = &"Music"
 
-[node name="Life" type="AudioStreamPlayer" parent="Music"]
+[node name="Life" type="AudioStreamPlayer" parent="Music" unique_id=1799636746]
 stream = ExtResource("3")
 bus = &"Music"
 
-[node name="GUI" type="CanvasLayer" parent="."]
+[node name="GUI" type="CanvasLayer" parent="." unique_id=1408413394]
 process_mode = 3
 layer = 128
 
-[node name="ScreenFader" type="ColorRect" parent="GUI"]
+[node name="VideoPlayer" type="VideoStreamPlayer" parent="GUI" unique_id=1700300624]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ScreenFader" type="ColorRect" parent="GUI" unique_id=1987442838]
 material = SubResource("1")
 anchors_preset = 15
 anchor_right = 1.0
@@ -171,14 +176,12 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 0, 0)
 
-[node name="Fader" type="AnimationPlayer" parent="GUI"]
-libraries = {
-&"": SubResource("AnimationLibrary_iltn5")
-}
-autoplay = "RESET"
+[node name="Fader" type="AnimationPlayer" parent="GUI" unique_id=1288553136]
+libraries/ = SubResource("AnimationLibrary_iltn5")
+autoplay = &"RESET"
 
-[node name="ControllerMenu" parent="GUI" instance=ExtResource("6")]
+[node name="ControllerMenu" parent="GUI" unique_id=1524359412 instance=ExtResource("6")]
 
-[node name="Pause" parent="GUI" instance=ExtResource("7")]
+[node name="Pause" parent="GUI" unique_id=378389682 instance=ExtResource("7")]
 
 [connection signal="finished" from="Music/Life" to="." method="_on_Life_finished"]

@@ -3,17 +3,17 @@ extends Node2D
 
 @export var music = preload("res://Audio/Soundtrack/10. SWD_CharacterSelect.ogg")
 ## level labels, the amount of labels here determines the total amount of options
-@export var levelLabels: Array[String] = [
-	"Base Zone Act 1",
-	"Base Zone Act 2",
-	"Emerald Hill Zone"
-]
-## The path to each zone in the Filesystem.
-@export var level_paths: Dictionary[Global.LEVELS, String] = {
-	Global.LEVELS.BZ1: "res://Scene/Zones/BaseZone.tscn",
-	Global.LEVELS.BZ2: "res://Scene/Zones/BaseZoneAct2.tscn",
-	Global.LEVELS.EHZ: "res://Scene/Zones/emerald_hill_zone.tscn"
-}
+#@export var levelLabels: Array[String] = [
+	#"Base Zone Act 1",
+	#"Base Zone Act 2",
+	#"Emerald Hill Zone"
+#]
+### The path to each zone in the Filesystem.
+#@export var level_paths: Dictionary[Global.LEVELS, String] = {
+	#Global.LEVELS.BZ1: "res://Scene/Zones/BaseZone.tscn",
+	#Global.LEVELS.BZ2: "res://Scene/Zones/BaseZoneAct2.tscn",
+	#Global.LEVELS.EHZ: "res://Scene/Zones/emerald_hill_zone.tscn"
+#}
 var selected = false
 
 # character labels, the amount of labels in here determines the total amount of options, see the set character option at the end for settings
@@ -62,15 +62,15 @@ func _input(event):
 			$Switch.play()
 		if inputCue.y != lastInput.y and inputCue.y != 0:
 			if inputCue.y > 0:
-				levelID = wrapi(levelID+1,0,levelLabels.size())
+				levelID = wrapi(levelID+1,0,Global.LEVELS.size()) as Global.LEVELS
 			else: # inputCue.y < 0
-				levelID = wrapi(levelID-1,0,levelLabels.size())
+				levelID = wrapi(levelID-1,0,Global.LEVELS.size()) as Global.LEVELS
 			$Switch.play()
 		#Save previous input for next read
 		lastInput = inputCue
 		
 		$UI/Labels/Control/Character.text = characterLabels[characterID]
-		$UI/Labels/Control/Level.text = levelLabels[levelID]
+		$UI/Labels/Control/Level.text = Global.get_level_label(levelID)
 		
 		# turn on and off visibility of the characters based on the current selection
 		for i in characterSprites.size():
@@ -104,7 +104,5 @@ func _input(event):
 				CHARACTER_ID.AMY:
 					Global.PlayerChar1 = Global.CHARACTERS.AMY
 			
-			## Save the upcoming level reference for later use
-			Global.nextZone = level_paths[levelID]
-			Global.currentZone = Global.nextZone
-			Main.change_scene(Global.currentZone,"FadeOut",1.0,true)
+			
+			Main.change_scene_by_level_id(levelID)

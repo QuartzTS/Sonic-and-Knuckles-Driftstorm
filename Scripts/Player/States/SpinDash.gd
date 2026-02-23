@@ -39,11 +39,19 @@ func _process(delta):
 		parent.lock_camera((parent.spindashPower+8)/60.0)
 		
 		parent.animator.play("roll")
+		
+		var dust = parent.Particle.instantiate()
+		dust.play("DropDash")
+		dust.global_position = parent.global_position+Vector2(-9*parent.direction,2).rotated(parent.rotation)
+		dust.z_index = dash.z_index
+		dust.scale.x = parent.direction
+		parent.get_parent().add_child(dust)
 	
 	# decrease the dash power for next frame
 	parent.spindashPower -= ((parent.spindashPower / 0.125) / (256))*60*delta
 
-func _physics_process(_delta):
+func _physics_process(delta):
 	# Gravity
 	if !parent.ground:
-		parent.set_state(parent.STATES.AIR)
+		#parent.set_state(parent.STATES.AIR)
+		parent.movement.y += parent.grv/GlobalFunctions.div_by_delta(delta)

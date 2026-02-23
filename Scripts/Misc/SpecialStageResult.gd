@@ -24,13 +24,13 @@ func _input(event):
 			$HUD/ColorRect/HBoxContainer.get_child(Global.specialStageID).get_child(0).visible = true
 			await $Emerald.finished
 			next_stage()
-			Main.change_scene(Global.currentZone,"WhiteOut",1,false)
+			Main.change_scene_by_level_id(Global.level_id,"WhiteOut",false,1,false)
 			
 			
 		if event.is_action_pressed("gm_action2"):
 			activated = true
 			next_stage()
-			Main.change_scene(Global.currentZone,"WhiteOut",1,false)
+			Main.change_scene_by_level_id(Global.level_id,"WhiteOut",false,1,false)
 
 
 func next_stage():

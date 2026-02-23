@@ -34,7 +34,6 @@ var defaultBounceReaction = 7.5 # Default bounce reaction for easy bounceReactio
 var invTime = 0
 var supTime = 0
 var isSuper = false
-var isDebug = false
 var shoeTime = 0
 var ringDisTime = 0 # ring collecting disable timer
 var swap_cooldown = 0 # Cooldown for character switching
@@ -347,6 +346,7 @@ func _ready():
 		if Global.currentCheckPoint == i.checkPointID:
 			global_position = i.global_position+Vector2(0,8)
 			camera.global_position = i.global_position+Vector2(0,8)
+			Global.levelTime = Global.checkPointTime
 			break
 	
 	if Global.bonus_stage_saved_position:
@@ -410,6 +410,9 @@ func _ready():
 	limitTop = Global.hardBorderTop
 	limitBottom = Global.hardBorderBottom
 	snap_camera_to_limits()
+	
+	Global.stage_ended.connect(Callable(self,"reset_on_act_transition"))
+	
 	
 	# set partner sounds to share players (prevents sound overlap)
 	if playerControl == 0:
@@ -536,6 +539,10 @@ func _process(delta):
 	if rotatableSprites.has(animator.current_animation):
 		if Global.smooth_rotation:
 			sprite.rotation = deg_to_rad(spriteRotation-90)-rotation-gravityAngle
+			#if abs(spriteRotation-90) > 35 or rotation != gravityAngle or !ground:
+				#sprite.rotation = move_toward(sprite.rotation,deg_to_rad(snapped(spriteRotation,45)-90)-rotation-gravityAngle,spriteRotation-(168.75*delta))
+			#else:
+				#sprite.rotation = move_toward(sprite.rotation,-rotation-gravityAngle,spriteRotation-(168.75*delta))
 		else:
 			# check if the charcter's angle is too shallow to rotate and the player is grounded, otherwise, do.
 			if abs(spriteRotation-90) > 35 or rotation != gravityAngle or !ground:
@@ -565,16 +572,11 @@ func _process(delta):
 				superAnimator.play("Flash")
 			# check if ring count is greater then 0
 			# deactivate if stage cleared
-			if rings > 0 and Global.stageClearPhase == 0 and (playerControl == 1 or playerControl == -1):
-				rings -= delta
+			if rings > 0:
+				if Global.stageClearPhase == 0 and (playerControl == 1 or playerControl == -1):
+					rings -= delta
 			else:
-				# Deactivate super
-				supTime = 0
-				rings = round(rings)
-				if character == Global.CHARACTERS.SONIC:
-					sprite.texture = normalSprite
-				if partner.character == Global.CHARACTERS.SONIC:
-					partner.sprite.texture = partner.normalSprite
+				cancel_super()
 				
 		if supTime <= 0:
 			if shield != SHIELDS.NONE:
@@ -585,7 +587,9 @@ func _process(delta):
 				isSuper = false
 				superAnimator.play("PowerDown")
 				switch_physics()
-			if Global.currentTheme == 0 and Global.effectTheme.is_playing():
+				if partner != null and partner.isSuper:
+					partner.cancel_super()
+			if Global.currentTheme == 0 and Global.effectTheme.is_playing() and (playerControl == 1 or playerControl == -1):
 				Global.music.play()
 				Global.effectTheme.stop()
 	
@@ -593,7 +597,7 @@ func _process(delta):
 		shoeTime -= delta
 		if shoeTime <= 0:
 			switch_physics()
-			if Global.currentTheme == 1:
+			if Global.currentTheme == 1 and (playerControl == 1 or playerControl == -1):
 				Global.music.play()
 				Global.effectTheme.stop()
 	
@@ -698,10 +702,10 @@ func _process(delta):
 	# Victory animation
 	# Check if the stage is finished, grounded (lol) and looped victory animation ain't playing yet
 	if Global.stageClearPhase >= 2 and ground and animator.current_animation != "victoryLoop":
-			movement = Vector2.ZERO # Stop movement ENTIRELY
-			set_state(STATES.ANIMATION) # Set state to animation state, for no reason
-			animator.play("victory") # Play initial victory animation
-			animator.queue("victoryLoop") # Queue the looped victory animation
+		movement = Vector2.ZERO # Stop movement ENTIRELY
+		set_state(STATES.ANIMATION) # Set state to animation state, for no reason
+		animator.play("victory") # Play initial victory animation
+		animator.queue("victoryLoop") # Queue the looped victory animation
 	
 	
 func _physics_process(delta):
@@ -785,7 +789,6 @@ func _physics_process(delta):
 		camLookAmount = clamp(camLookAmount,-1,1)
 		camLookOff = lerp(0,camLookDist[0],min(0,-camLookAmount))+lerp(0,camLookDist[1],min(0,camLookAmount))
 		
-		
 		if camLookAmount != 0:
 			var tmpScrollSpeed = sign(camLookAmount)*delta*2
 			if sign(camLookAmount - tmpScrollSpeed) == sign(camLookAmount):
@@ -865,10 +868,9 @@ func _physics_process(delta):
 	
 	
 	# center offsets (only moves hitbox if the centers moved)
-	if centerReference != null:
-		if centerReference.position != Vector2.ZERO:
-			# change to center offset if the center position is different
-			$HitBox.position = centerReference.position
+	if centerReference != null and centerReference.position != Vector2.ZERO:
+		# change to center offset if the center position is different
+		$HitBox.position = centerReference.position
 	
 	# Water
 	if Global.waterLevel != null and currentState != STATES.DIE and currentState != STATES.DEBUG:
@@ -1114,7 +1116,7 @@ func hit_player(damagePoint = global_position, damageType = 0, soundID = 6):
 	if currentState != STATES.HIT and invTime <= 0 and supTime <= 0 and (shieldSprite.get_node("InstaShieldHitbox/HitBox").disabled or character != Global.CHARACTERS.SONIC):
 		movement.x = sign(global_position.x-damagePoint.x)*2*60
 		movement.y = -4*60
-		if (movement.x == 0):
+		if movement.x == 0:
 			movement.x = 2*60
 		# check for water
 		if water:
@@ -1133,29 +1135,36 @@ func hit_player(damagePoint = global_position, damageType = 0, soundID = 6):
 			var ringAngle = 101.25
 			var ringAlt = false
 			var ringSpeed = 4
-			while (ringCount < min(rings,32)):
+			while (ringCount < min(rings,48)):
 				# Create ring
 				var ring = Ring.instantiate()
 				ring.global_position = global_position
-				ring.scattered = true
+				ring.scattered = ringCount < 32
+				ring.big = ringCount >= 32
 				ring.velocity.y = -sin(deg_to_rad(ringAngle))*ringSpeed*60
 				ring.velocity.x = cos(deg_to_rad(ringAngle))*ringSpeed*60
+				ring.scale = Vector2(256.0/60.0,256.0/60.0) if ring.big else Vector2.ONE
 
-				if (ringAlt):
+				if ringAlt:
 					ring.velocity.x *= -1
 					ringAngle += 22.5
 				ringAlt = !ringAlt
 				ringCount += 1
 				# if we're on the second circle, decrease the speed
-				if (ringCount == 16):
+				if ringCount == 16:
 					ringSpeed = 2
 					ringAngle = 101.25 # Reset angle
+				if ringCount == 32:
+					ringSpeed = 16
+					ringAngle = 101.25
 				get_parent().add_child(ring)
 			rings = 0
 		elif shield == SHIELDS.NONE and (playerControl == 1 or playerControl == -1):
 			kill(soundID)
 		else:
 			sfx[soundID].play()
+		# Disable Shield
+		
 		if playerControl == 1 or playerControl == -1:
 			set_shield(SHIELDS.NONE)
 			Global.cool_value -= 1000
@@ -1247,7 +1256,7 @@ func respawn():
 # Code for character switching is here
 func character_swap() -> void:
 	if swap_cooldown <= 0:
-		var saved_values: Array = [playerControl, camera, defaultZIndex, shield, stateList[STATES.DEBUG].object_cursor] # Save some values in an array instead of having a variable for each
+		var saved_values: Array = [playerControl, camera, defaultZIndex] # Save some values in an array instead of having a variable for each
 		# The playerControl is probably the most important variable to switch
 		playerControl = partner.playerControl
 		partner.playerControl = saved_values[0]
@@ -1260,33 +1269,30 @@ func character_swap() -> void:
 		partner.z_index = partner.defaultZIndex
 		z_index = defaultZIndex
 		# Give the shield to the partner (no sounds included lol)
-		partner.set_shield(saved_values[3], false)
+		partner.set_shield(shield, false)
 		set_shield(SHIELDS.NONE, false)
-		partner.stateList[STATES.DEBUG].object_cursor = saved_values[4]
 		# Invincibility handling
 		if supTime > 0 and !isSuper:
 			partner.supTime = supTime
 			supTime = 0
 			partner.shieldSprite.visible = false # Hide the shield for stars
 			partner.get_node("InvincibilityBarrier").visible = true
-			if supTime <= 0:
-				if shield != SHIELDS.NONE:
-					shieldSprite.visible = true
-				$InvincibilityBarrier.visible = false
+			if shield != SHIELDS.NONE:
+				shieldSprite.visible = true
+			$InvincibilityBarrier.visible = false
 		# Give rings to the partner so that both players have an equal share of rings
 		# Btw, the rings value is rounded in case both players are super and the value of their rings is decreasing
+		# Even tho rounding the ring value prevents the value from decreasing, which is kinda funny, but it doesn't matter lol..
 		partner.rings = round(rings)
-		#partner.ring_1up_counter = ring_1up_counter
 		# This is probably the second most important things to swap here.
 		# If not swapped, Player 1 will need to navigate through with Player 2 controls and vice versa xd..
 		inputActions = INPUTACTIONS_P2
 		partner.inputActions = INPUTACTIONS_P1
-		Global.players.reverse() # Reverse the order of the players array
+		Global.players.reverse() # Simply reverse the order of the players array
 		# Set player 1 to partner and vice versa, just for stuff like the life icon and 1up monitor icons
 		Global.PlayerChar1 = partner.character
 		Global.PlayerChar2 = character
 		# Adjust cooldown so that nobody spams the swap lol
-		swap_cooldown = 0.25
 		partner.swap_cooldown = 0.25
 		# Reset the partner panic so that the other player doesn't automatically spindash after switching lol (I guess?)
 		partnerPanic = 0
@@ -1295,6 +1301,43 @@ func character_swap() -> void:
 	elif !sfx[35].is_playing():
 		sfx[36].play() # Play swap fail sfx if the swap cooldown isn't off, yet.. also, check if the swap sfx ain't playing, for whatever reason..
 
+## Simple data reset when act transition happens.. (seriously, why does this exist?)
+func reset_on_act_transition() -> void:
+	Global.players.append(self)
+	set_state(STATES.NORMAL)
+	rings = 0
+	ring_1up_counter = 100
+	Global.cool_value = 10000
+	# reset camera limits (except the left one)
+	limitRight = Global.hardBorderRight
+	limitTop = Global.hardBorderTop
+	limitBottom = Global.hardBorderBottom
+	snap_camera_to_limits()
+	rachetScrollLeft = false
+	rachetScrollTop = false
+	rachetScrollRight = false
+	rachetScrollBottom = false
+
+## This one can be used to quickly transform the player into super form without having to go through the transformation animation
+## Idk where I can use it, tho..
+func transform_to_super() -> void:
+	if !isSuper:
+		# hide shield
+		shieldSprite.visible = false
+		# swap sprite if sonic
+		if character == Global.CHARACTERS.SONIC:
+			sprite.texture = superSprite
+		isSuper = true
+		switch_physics()
+		supTime = 1
+
+## This one cancels the super form
+func cancel_super() -> void:
+	# Deactivate super
+	supTime = 0
+	rings = round(rings)
+	if character == Global.CHARACTERS.SONIC:
+		sprite.texture = normalSprite
 
 func touch_ceiling():
 	if getVert != null:
@@ -1433,10 +1476,9 @@ func cam_update(forceMove = false):
 		elif camAdjust.x != 0:
 			camAdjust.x -= sign(camAdjust.x)*2
 		camAdjust.x = clamp(camAdjust.x, -64, 64)
-		if camera.drag_left_margin != 0:
-			camera.drag_left_margin = 0
-	elif camera.drag_left_margin != camDist.x/viewSize.x:
-		camera.drag_left_margin = camDist.x/viewSize.x
+		camera.drag_horizontal_enabled = false
+	else:
+		camera.drag_horizontal_enabled = true
 
 	if cam_shake_time.x:
 		#cam_shake_time.x -= 1
@@ -1483,8 +1525,8 @@ func lock_camera(time = 1):
 	
 
 ## A function that makes the camera shake (needs a better description imo..)
-func shake_camera(delta: float, shake_time: Vector2, shake_power: float = 1.0) -> void:
-	cam_shake_time = shake_time*120*delta
+func shake_camera(delta: float, shake_direction: Vector2, shake_power: float = 1.0) -> void:
+	cam_shake_time = shake_direction*480*delta
 	cam_shake_strength = shake_power
 	Global.emit_screen_shake()
 
@@ -1614,6 +1656,22 @@ func get_animator() -> AnimationPlayer:
 func play_animation(anim_name: StringName = "", custom_blend: float = -1, custom_speed: float = 1.0,
 					from_end: bool = false) -> void:
 	self.animator.play(anim_name, custom_blend, custom_speed, from_end)
+
+func play_sfx(index: int, pitch_scale: float = 1.0, from_position: float = 0.0) -> void:
+	sfx[index].play(from_position)
+	sfx[index].pitch_scale = pitch_scale
+
+func stop_sfx(index: int) -> void:
+	sfx[index].stop()
+
+func is_sfx_playing(index: int) -> bool:
+	return sfx[index].is_playing()
+
+func get_player_control() -> int:
+	return playerControl
+
+func set_player_control(control_state: int) -> void:
+	playerControl = control_state
 
 ## Available directions for the player to use when using set_direction
 enum DIRECTIONS {LEFT, RIGHT} # I'd wager there is already something more appropriate

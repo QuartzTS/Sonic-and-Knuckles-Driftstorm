@@ -25,8 +25,8 @@ var currentZone: String = ""
 ## Path to the first level in the game (set in "reset_game_values")
 var nextZone: String = "res://Scene/Zones/BaseZone.tscn"
 # use this to store the current state of the room, changing scene will clear everythin
-var stageInstanceMemory = null
-var stageLoadMemory = null
+#var stageInstanceMemory = null
+#var stageLoadMemory = null
 
 # score instace for add_score()
 var Score = preload("res://Entities/Misc/Score.tscn")
@@ -86,6 +86,8 @@ var globalTimer: float = 0
 const maxTime: int = 60*10
 ## Additional score that rewards players for not taking damage
 var cool_value: int = 10000
+## Object cursor for debug mode
+var debug_object_cursor: int = 0
 
 
 ## water level of the current level, setting this to null will disable the water
@@ -107,18 +109,26 @@ enum LEVELS {
 	BZ2, ## Base Zone Act 2
 	EHZ ## Emerald Hill Zone
 	}
-## A dictionary that references levels with their labels and paths
-var level_paths: Dictionary[LEVELS, Dictionary] = {
-	LEVELS.BZ1: {path = "res://Scene/Zones/BaseZone.tscn", label = "Base Zone Act 1"}, ## Base Zone Act 1
-	LEVELS.BZ2: {path = "res://Scene/Zones/BaseZoneAct2.tscn", label = "Base Zone Act 2"}, ## Base Zone Act 2
-	LEVELS.EHZ: {path = "res://Scene/Zones/emerald_hill_zone.tscn", label = "Emerald Hill Zone"} ## Emerald Hill Zone
+## A dictionary that references levels with their labels, paths and act number
+var level_info: Dictionary[LEVELS, Dictionary] = {
+	LEVELS.BZ1: {path = "res://Scene/Zones/BaseZone.tscn", label = "Base Zone Act 1", act = 1}, ## Base Zone Act 1
+	LEVELS.BZ2: {path = "res://Scene/Zones/BaseZone.tscn", label = "Base Zone Act 2", act = 2}, ## Base Zone Act 2
+	LEVELS.EHZ: {path = "res://Scene/Zones/emerald_hill_zone.tscn", label = "Emerald Hill Zone", act = 0} ## Emerald Hill Zone
 }
 ## ID of levels
 var level_id: LEVELS = LEVELS.BZ1
 ## Same as level_id, but for attract reel mode only
 var attract_reel_id: LEVELS = level_id
-## Variable for attract reel mode
+## Boolean variable for attract reel mode
 var attract_reel: bool = false
+## Plays an act 1 intro cutscene if true (Coming soon..)
+var play_intro: bool = false
+## Plays an act trantition if true
+var act_transition: bool = false
+## Skips act transition if act 1 is finished by a goalpost or a capsule spawned by debug mode (Also coming soon..)
+var force_act_2: bool = false
+## Emitted whenever a cutscene is finished (Also coming soon..)
+signal cutscene_finished
 
 ## Level settings
 var hardBorderLeft = -100000000
@@ -209,20 +219,36 @@ func stage_clear():
 		effectTheme.stop()
 		bossMusic.stop()
 
-func emit_stage_start():
+func emit_stage_start() -> void:
 	stage_started.emit()
 
-func emit_stage_end():
+func emit_stage_end() -> void:
 	stage_ended.emit()
 
-func emit_screen_shake():
+func emit_cutscene_finished() -> void:
+	cutscene_finished.emit()
+
+func emit_screen_shake() -> void:
 	screen_shake.emit()
 
-func emit_cycle_property():
+func emit_cycle_property() -> void:
 	cycle_property.emit()
 
-func emit_cycle_object():
+func emit_cycle_object() -> void:
 	cycle_object.emit()
+
+## Gets the level scene file path
+func get_level_path(id: LEVELS = level_id) -> String:
+	return level_info[id].path
+
+## Gets the level name
+func get_level_label(id: LEVELS = level_id) -> String:
+	return level_info[id].label
+
+## Gets the level act number
+func get_level_act_number(id: LEVELS = level_id) -> int:
+	return level_info[id].act
+
 
 # save data settings
 func save_settings():

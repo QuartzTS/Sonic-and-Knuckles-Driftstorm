@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://c30uceea18q1w"]
+[gd_scene format=3 uid="uid://c30uceea18q1w"]
 
 [ext_resource type="Texture2D" uid="uid://dloxtqer7p78l" path="res://Graphics/HUD/hud_lives.png" id="2_cfvjc"]
 [ext_resource type="Material" uid="uid://bveqi5m5ihsgj" path="res://Shaders/PlayerPalette.tres" id="2_xy7bp"]
@@ -18,6 +18,67 @@
 [ext_resource type="AudioStream" uid="uid://dh4rsaka62ph4" path="res://Audio/SFX/Gimmicks/Switch.wav" id="16"]
 [ext_resource type="AudioStream" uid="uid://dnyw7remih6op" path="res://Audio/Soundtrack/8. SWD_GameOver.ogg" id="16_vq3lx"]
 [ext_resource type="AudioStream" uid="uid://clgobastngtvy" path="res://Audio/SFX/Misc/Score.wav" id="17"]
+
+[sub_resource type="Animation" id="Animation_fiwnx"]
+resource_name = "HideHUD"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Counters:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.5),
+"transitions": PackedFloat32Array(0.5, 0.5, 1),
+"update": 0,
+"values": [Vector2(8, 8), Vector2(0, 8), Vector2(-80, 8)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.5),
+"transitions": PackedFloat32Array(0.5, 0.5, 1),
+"update": 0,
+"values": [Vector2(8, 216), Vector2(0, 216), Vector2(-80, 216)]
+}
+
+[sub_resource type="Animation" id="Animation_d6we3"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Counters:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(8, 8)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(8, 216)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0ei7l"]
+_data = {
+&"HideHUD": SubResource("Animation_fiwnx"),
+&"RESET": SubResource("Animation_d6we3")
+}
 
 [sub_resource type="Animation" id="5"]
 length = 0.001
@@ -617,20 +678,6 @@ tracks/3/keys = {
 "update": 0,
 "values": [Vector2(1, 1e-05), Vector2(1, 1)]
 }
-tracks/4/type = "method"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("..")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(11),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [&"gameOver_signal"],
-"method": &"emit_signal"
-}]
-}
 
 [sub_resource type="Animation" id="10"]
 length = 0.001
@@ -689,28 +736,28 @@ _data = {
 &"RESET": SubResource("10")
 }
 
-[node name="HUD" type="CanvasLayer"]
+[node name="HUD" type="CanvasLayer" unique_id=908615093]
 process_mode = 3
 script = ExtResource("6")
 
-[node name="LifeCounter" type="Control" parent="."]
+[node name="LifeCounter" type="Control" parent="." unique_id=699981693]
 layout_mode = 3
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 8.0
 offset_top = -24.0
-offset_right = 72.0
+offset_right = 71.99988
 offset_bottom = -8.0
 grow_vertical = 0
 
-[node name="Icon" type="Sprite2D" parent="LifeCounter"]
+[node name="Icon" type="Sprite2D" parent="LifeCounter" unique_id=1382488643]
 material = ExtResource("2_xy7bp")
 texture = ExtResource("2_cfvjc")
 centered = false
 vframes = 7
 
-[node name="LifeText" type="Label" parent="LifeCounter/Icon"]
+[node name="LifeText" type="Label" parent="LifeCounter/Icon" unique_id=1664565615]
 offset_left = 48.0
 offset_top = 2.0
 offset_right = 56.0
@@ -718,7 +765,7 @@ offset_bottom = 14.0
 theme_override_fonts/font = ExtResource("3_eauoj")
 text = "0"
 
-[node name="Counters" type="Control" parent="."]
+[node name="Counters" type="Control" parent="." unique_id=1188873150]
 layout_mode = 3
 anchors_preset = 0
 offset_left = 8.0
@@ -726,19 +773,19 @@ offset_top = 8.0
 offset_right = 48.0
 offset_bottom = 48.0
 
-[node name="Text" type="Sprite2D" parent="Counters"]
+[node name="Text" type="Sprite2D" parent="Counters" unique_id=1260704066]
 texture = ExtResource("5_kre34")
 centered = false
 region_enabled = true
 region_rect = Rect2(0, 0, 40, 48)
 
-[node name="ScoreNumber" type="Label" parent="Counters/Text"]
+[node name="ScoreNumber" type="Label" parent="Counters/Text" unique_id=853922399]
 offset_left = 48.0
 offset_right = 48.0
 theme_override_fonts/font = ExtResource("6_synv7")
 text = "0"
 
-[node name="TimeNumbers" type="Label" parent="Counters/Text"]
+[node name="TimeNumbers" type="Label" parent="Counters/Text" unique_id=1854177932]
 offset_left = 32.0
 offset_top = 16.0
 offset_right = 40.0
@@ -746,7 +793,7 @@ offset_bottom = 35.0
 theme_override_fonts/font = ExtResource("6_synv7")
 text = "00:00"
 
-[node name="RingCount" type="Label" parent="Counters/Text"]
+[node name="RingCount" type="Label" parent="Counters/Text" unique_id=1710028998]
 offset_left = 48.0
 offset_top = 32.0
 offset_right = 56.0
@@ -754,7 +801,7 @@ offset_bottom = 51.0
 theme_override_fonts/font = ExtResource("6_synv7")
 text = "0"
 
-[node name="Time" type="Sprite2D" parent="Counters/Text"]
+[node name="Time" type="Sprite2D" parent="Counters/Text" unique_id=1564865548]
 visible = false
 position = Vector2(0, 16)
 texture = ExtResource("5_kre34")
@@ -762,7 +809,7 @@ centered = false
 region_enabled = true
 region_rect = Rect2(0, 48, 40, 16)
 
-[node name="Rings" type="Sprite2D" parent="Counters/Text"]
+[node name="Rings" type="Sprite2D" parent="Counters/Text" unique_id=162530235]
 visible = false
 position = Vector2(0, 32)
 texture = ExtResource("5_kre34")
@@ -770,7 +817,7 @@ centered = false
 region_enabled = true
 region_rect = Rect2(0, 64, 40, 16)
 
-[node name="BlueRings" type="Sprite2D" parent="Counters/Text"]
+[node name="BlueRings" type="Sprite2D" parent="Counters/Text" unique_id=1532802623]
 visible = false
 position = Vector2(0, 32)
 texture = ExtResource("5_kre34")
@@ -778,7 +825,11 @@ centered = false
 region_enabled = true
 region_rect = Rect2(0, 80, 40, 16)
 
-[node name="LevelCard" type="Control" parent="."]
+[node name="HideHUD" type="AnimationPlayer" parent="." unique_id=658090293]
+root_node = NodePath("../LifeCounter")
+libraries/ = SubResource("AnimationLibrary_0ei7l")
+
+[node name="LevelCard" type="Control" parent="." unique_id=1438904045]
 process_mode = 3
 visible = false
 layout_mode = 3
@@ -790,13 +841,13 @@ grow_vertical = 2
 size_flags_horizontal = 2
 size_flags_vertical = 2
 
-[node name="Cover" type="ColorRect" parent="LevelCard"]
+[node name="Cover" type="ColorRect" parent="LevelCard" unique_id=951923551]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0, 0, 0, 1)
 
-[node name="Banner" type="TextureRect" parent="LevelCard"]
+[node name="Banner" type="TextureRect" parent="LevelCard" unique_id=274898633]
 layout_mode = 0
 anchor_left = 0.5
 anchor_right = 0.5
@@ -807,7 +858,7 @@ size_flags_stretch_ratio = 0.0
 texture = ExtResource("7_ccygi")
 stretch_mode = 2
 
-[node name="LevelName" type="Label" parent="LevelCard/Banner"]
+[node name="LevelName" type="Label" parent="LevelCard/Banner" unique_id=924276600]
 layout_mode = 0
 offset_left = 32.0
 offset_top = 64.0
@@ -817,7 +868,7 @@ theme_override_fonts/font = ExtResource("7_uj3el")
 text = "BASE"
 uppercase = true
 
-[node name="Zone" type="Label" parent="LevelCard/Banner"]
+[node name="Zone" type="Label" parent="LevelCard/Banner" unique_id=281577299]
 layout_mode = 0
 offset_left = 32.0
 offset_top = 108.0
@@ -827,19 +878,19 @@ theme_override_fonts/font = ExtResource("7_uj3el")
 text = "ZONE"
 uppercase = true
 
-[node name="Act" type="Sprite2D" parent="LevelCard/Banner"]
+[node name="Act" type="Sprite2D" parent="LevelCard/Banner" unique_id=186012451]
 position = Vector2(133, 168)
 texture = ExtResource("9_3i4aq")
 centered = false
 hframes = 2
 vframes = 2
 
-[node name="PatternLeft" type="Control" parent="LevelCard"]
+[node name="PatternLeft" type="Control" parent="LevelCard" unique_id=392958040]
 anchors_preset = 0
 anchor_bottom = 1.0
 offset_bottom = 14816.0
 
-[node name="PatternLeft" type="TextureRect" parent="LevelCard/PatternLeft"]
+[node name="PatternLeft" type="TextureRect" parent="LevelCard/PatternLeft" unique_id=899979748]
 layout_mode = 1
 anchors_preset = -1
 offset_left = -32.0
@@ -849,13 +900,13 @@ grow_vertical = 2
 texture = ExtResource("10_xpi0a")
 stretch_mode = 1
 
-[node name="RightRatio" type="Control" parent="LevelCard"]
+[node name="RightRatio" type="Control" parent="LevelCard" unique_id=2007395380]
 anchors_preset = 0
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="PatternRight" type="Control" parent="LevelCard/RightRatio"]
+[node name="PatternRight" type="Control" parent="LevelCard/RightRatio" unique_id=1800361882]
 anchors_preset = 0
 anchor_left = 0.5
 anchor_right = 0.5
@@ -863,7 +914,7 @@ anchor_bottom = 1.0
 offset_top = -32.0
 offset_bottom = 14528.0
 
-[node name="PatternRight" type="TextureRect" parent="LevelCard/RightRatio/PatternRight"]
+[node name="PatternRight" type="TextureRect" parent="LevelCard/RightRatio/PatternRight" unique_id=964978501]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 1.0
@@ -872,28 +923,25 @@ anchor_right = 1.0
 anchor_bottom = 0.003
 offset_left = -32.0
 offset_top = -12.400002
-offset_right = 5408.0
+offset_right = 5504.0
 offset_bottom = 339.6
 grow_horizontal = 0
 grow_vertical = 2
 texture = ExtResource("10_xpi0a")
 stretch_mode = 1
 
-[node name="CardMover" type="AnimationPlayer" parent="LevelCard"]
-libraries = {
-&"": SubResource("AnimationLibrary_15hsr")
-}
-autoplay = "Slider"
+[node name="CardMover" type="AnimationPlayer" parent="LevelCard" unique_id=104523440]
+libraries/ = SubResource("AnimationLibrary_15hsr")
+autoplay = &"Slider"
 speed_scale = 4.0
 
-[node name="CardPlayer" type="AnimationPlayer" parent="LevelCard"]
-libraries = {
-&"": SubResource("AnimationLibrary_fgko3")
-}
-autoplay = "Start"
+[node name="CardPlayer" type="AnimationPlayer" parent="LevelCard" unique_id=26400794]
+libraries/ = SubResource("AnimationLibrary_fgko3")
+autoplay = &"Start"
 
-[node name="LevelClear" type="Control" parent="."]
+[node name="LevelClear" type="Control" parent="." unique_id=2094980072]
 process_mode = 1
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -903,46 +951,44 @@ grow_vertical = 2
 size_flags_horizontal = 2
 size_flags_vertical = 2
 
-[node name="Passed" type="Label" parent="LevelClear"]
+[node name="Passed" type="Label" parent="LevelClear" unique_id=1346593522]
 layout_mode = 0
-offset_left = -308.0
+offset_left = -256.0
 offset_top = 56.0
-offset_right = -155.0
+offset_right = -103.0
 offset_bottom = 82.0
 theme_override_fonts/font = ExtResource("10_8dyi8")
 text = "SONIC got"
 uppercase = true
 
-[node name="Through" type="Label" parent="LevelClear"]
+[node name="Through" type="Label" parent="LevelClear" unique_id=1455838355]
 layout_mode = 0
-offset_left = -308.0
+offset_left = -256.0
 offset_top = 80.0
-offset_right = -189.0
+offset_right = -137.0
 offset_bottom = 106.0
 theme_override_fonts/font = ExtResource("10_8dyi8")
 text = "through"
 uppercase = true
 
-[node name="Act" type="Sprite2D" parent="LevelClear"]
+[node name="Act" type="Sprite2D" parent="LevelClear" unique_id=896896847]
 position = Vector2(528, 75)
 texture = ExtResource("9_3i4aq")
 centered = false
 hframes = 2
 vframes = 2
 
-[node name="Animator" type="AnimationPlayer" parent="LevelClear"]
-libraries = {
-&"": SubResource("AnimationLibrary_21eah")
-}
+[node name="Animator" type="AnimationPlayer" parent="LevelClear" unique_id=38065732]
+libraries/ = SubResource("AnimationLibrary_21eah")
 
-[node name="Tally" type="Sprite2D" parent="LevelClear"]
+[node name="Tally" type="Sprite2D" parent="LevelClear" unique_id=208801630]
 position = Vector2(-256, 112)
 texture = ExtResource("10_ddlv5")
 centered = false
 region_enabled = true
 region_rect = Rect2(0, 0, 80, 48)
 
-[node name="ScoreText" type="Sprite2D" parent="LevelClear/Tally"]
+[node name="ScoreText" type="Sprite2D" parent="LevelClear/Tally" unique_id=1707150528]
 position = Vector2(0, 64)
 texture = ExtResource("10_ddlv5")
 centered = false
@@ -950,7 +996,7 @@ vframes = 5
 frame = 3
 region_rect = Rect2(0, 0, 40, 16)
 
-[node name="ScoreNumber" type="Label" parent="LevelClear/Tally"]
+[node name="ScoreNumber" type="Label" parent="LevelClear/Tally" unique_id=1738204698]
 offset_left = 104.0
 offset_top = 64.0
 offset_right = 112.0
@@ -959,14 +1005,14 @@ theme_override_fonts/font = ExtResource("6_synv7")
 text = "0"
 metadata/_edit_use_anchors_ = true
 
-[node name="TimeNumbers" type="Label" parent="LevelClear/Tally"]
+[node name="TimeNumbers" type="Label" parent="LevelClear/Tally" unique_id=1686343639]
 offset_left = 104.0
 offset_right = 104.0
 theme_override_fonts/font = ExtResource("6_synv7")
 text = "0"
 metadata/_edit_use_anchors_ = true
 
-[node name="RingNumbers" type="Label" parent="LevelClear/Tally"]
+[node name="RingNumbers" type="Label" parent="LevelClear/Tally" unique_id=69743444]
 offset_left = 104.0
 offset_top = 16.0
 offset_right = 104.0
@@ -975,7 +1021,7 @@ theme_override_fonts/font = ExtResource("6_synv7")
 text = "0"
 metadata/_edit_use_anchors_ = true
 
-[node name="CoolNumber" type="Label" parent="LevelClear/Tally"]
+[node name="CoolNumber" type="Label" parent="LevelClear/Tally" unique_id=2044607789]
 offset_left = 104.0
 offset_top = 32.0
 offset_right = 144.0
@@ -983,21 +1029,21 @@ offset_bottom = 40.0
 theme_override_fonts/font = ExtResource("6_synv7")
 text = "0"
 
-[node name="CounterWait" type="Timer" parent="LevelClear"]
+[node name="CounterWait" type="Timer" parent="LevelClear" unique_id=1250747399]
 wait_time = 6.0
 one_shot = true
 
-[node name="CounterCount" parent="LevelClear" instance=ExtResource("13_g84gd")]
+[node name="CounterCount" parent="LevelClear" unique_id=401127498 instance=ExtResource("13_g84gd")]
 
-[node name="Counter" type="AudioStreamPlayer" parent="LevelClear"]
+[node name="Counter" type="AudioStreamPlayer" parent="LevelClear" unique_id=985118832]
 stream = ExtResource("16")
 bus = &"SFX"
 
-[node name="Score" type="AudioStreamPlayer" parent="LevelClear"]
+[node name="Score" type="AudioStreamPlayer" parent="LevelClear" unique_id=1829234342]
 stream = ExtResource("17")
 bus = &"SFX"
 
-[node name="GameOver" type="Control" parent="."]
+[node name="GameOver" type="Control" parent="." unique_id=2075903552]
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -1007,14 +1053,14 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Game" type="Sprite2D" parent="GameOver"]
+[node name="Game" type="Sprite2D" parent="GameOver" unique_id=1013297768]
 position = Vector2(-256, 0)
 scale = Vector2(1, 1e-05)
 texture = ExtResource("15_oja0m")
 offset = Vector2(-40, 0)
 vframes = 3
 
-[node name="Over" type="Sprite2D" parent="GameOver"]
+[node name="Over" type="Sprite2D" parent="GameOver" unique_id=132244614]
 position = Vector2(256, 0)
 scale = Vector2(1, 1e-05)
 texture = ExtResource("15_oja0m")
@@ -1022,18 +1068,16 @@ offset = Vector2(40, 0)
 vframes = 3
 frame = 2
 
-[node name="GameOver" type="AnimationPlayer" parent="GameOver"]
-libraries = {
-&"": SubResource("AnimationLibrary_dmnhc")
-}
+[node name="GameOver" type="AnimationPlayer" parent="GameOver" unique_id=849192118]
+libraries/ = SubResource("AnimationLibrary_dmnhc")
 
-[node name="GameOverMusic" type="AudioStreamPlayer" parent="GameOver"]
+[node name="GameOverMusic" type="AudioStreamPlayer" parent="GameOver" unique_id=2015381748]
 stream = ExtResource("16_vq3lx")
 bus = &"Music"
 
-[node name="Water" type="CanvasLayer" parent="."]
+[node name="Water" type="CanvasLayer" parent="." unique_id=1828803288]
 
-[node name="WaterOverlay" type="ColorRect" parent="Water"]
+[node name="WaterOverlay" type="ColorRect" parent="Water" unique_id=558196970]
 visible = false
 material = ExtResource("13_1ly2g")
 anchors_preset = 15
@@ -1042,10 +1086,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ElecFlash" type="ColorRect" parent="Water/WaterOverlay"]
+[node name="ElecFlash" type="ColorRect" parent="Water/WaterOverlay" unique_id=1157147259]
 visible = false
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 
 [connection signal="timeout" from="LevelClear/CounterCount" to="." method="_on_CounterCount_timeout"]
+[connection signal="animation_finished" from="GameOver/GameOver" to="." method="_on_game_over_animation_finished"]

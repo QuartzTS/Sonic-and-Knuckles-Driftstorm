@@ -29,7 +29,7 @@ func _physics_process(delta):
 					i.sprite.flip_h = (i.direction < 0)
 				
 				# force slide state
-				if i.currentState != i.STATES.ROLL or i.animator.current_animation != "slide":
+				if (i.currentState != i.STATES.ROLL or i.animator.current_animation != "slide") and i.currentState != PlayerChar.STATES.DEBUG:
 					i.set_state(i.STATES.ROLL)
 					i.animator.play("slide")
 
@@ -39,6 +39,6 @@ func _on_ForceRoll_body_entered(body):
 
 
 func _on_ForceRoll_body_exited(body):
-	if players.has(body):
+	if players.has(body) and body.currentState != PlayerChar.STATES.DEBUG:
 		body.set_state(body.STATES.NORMAL)
 		players.erase(body)

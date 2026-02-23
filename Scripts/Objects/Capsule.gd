@@ -1,4 +1,5 @@
 extends StaticBody2D
+
 var getCam = null
 
 @onready var screenXSize = get_viewport_rect().size.x
@@ -11,29 +12,29 @@ var timer = 180.0/60.0
 
 func _physics_process(delta):
 	if timerActive and timer > 0:
-			# every 8/60 steps spawn an animal in the animal ground with an alarm of 12/60
-			if wrapf(timer,0,8.0/60.0) < wrapf(timer-delta,0,8.0/60.0):
-				var animal = Animal.instantiate()
-				# set animal sprite
-				animal.animal = Global.animals[round(randf())]
-				# deactivate animal to stop movement
-				animal.active = false
-				# random directions
-				animal.forceDirection = false
-				get_parent().add_child(animal)
-				animalTrackers.append(animal)
-				# set animal position, starting from -28 on the x position and increasing by 8 per animal
-				animal.global_position = global_position+Vector2(randf_range(-20,20),0)
-				# set alarms, starting at 1.0/60.0
-				animal.get_node("ActivationTimer").start(1.0/60.0)
-			
-			timer -= delta
+		# every 8/60 steps spawn an animal in the animal ground with an alarm of 12/60
+		if wrapf(timer,0,8.0/60.0) < wrapf(timer-delta,0,8.0/60.0):
+			var animal = Animal.instantiate()
+			# set animal sprite
+			animal.animal = Global.animals[round(randf())]
+			# deactivate animal to stop movement
+			animal.active = false
+			# random directions
+			animal.forceDirection = false
+			get_parent().add_child(animal)
+			animalTrackers.append(animal)
+			# set animal position, starting from -28 on the x position and increasing by 8 per animal
+			animal.global_position = global_position+Vector2(randf_range(-20,20),0)
+			# set alarms, starting at 1.0/60.0
+			animal.get_node("ActivationTimer").start(1.0/60.0)
+		
+		timer -= delta
 		
 	# after flickes are gone, set stage clear to 3 (2's for running off screen, see the goal post)
 	if checkAnimals and animalTrackers.size() > 0:
 		
 		for i in animalTrackers:
-			if i.active:
+			if i != null and i.active:
 				animalTrackers.erase(i)
 		
 		if animalTrackers.size() <= 0:
@@ -59,6 +60,7 @@ func activate():
 			# Camera limit set
 			i.limitLeft = global_position.x -screenXSize/2
 			i.limitRight = global_position.x +screenXSize/2
+			#i.camera.global_position.x = global_position.x
 
 
 

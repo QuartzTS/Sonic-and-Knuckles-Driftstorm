@@ -18,8 +18,7 @@ var collide: bool = true
 	#damage_area.set_collision_mask_value(24,collide)
 
 func _physics_process(_delta: float) -> void:
-	if velocity: # Check if the velocity is set (totally not by external means hehe lol..)
-		move_and_slide() # Moves.. (For real, what else to expect? Just move and slide xd..)
+	move_and_slide() # Moves.. (For real, what else to expect? Just move and slide xd..)
 	
 	#print(damage_area.get_collision_layer_value(24))
 	await get_child(0).animation_finished
