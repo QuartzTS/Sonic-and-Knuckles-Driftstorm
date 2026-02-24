@@ -1,6 +1,6 @@
 extends PlayerState
 
-func state_process(_delta: float) -> void:
+func state_process(delta: float) -> void:
 	# jumping off
 	if parent.inputs[parent.INPUTS.ACTION] == 1 or parent.inputs[parent.INPUTS.ACTION2] == 1 or parent.inputs[parent.INPUTS.ACTION3] == 1:
 		parent.action_jump(delta)

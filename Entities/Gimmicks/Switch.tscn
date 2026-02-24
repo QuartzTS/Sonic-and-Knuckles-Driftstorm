@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://chyrwm1qwvlyt"]
+[gd_scene format=3 uid="uid://chyrwm1qwvlyt"]
 
 [ext_resource type="Texture2D" uid="uid://btd1piynn8ofj" path="res://Graphics/Gimmicks/button.png" id="1"]
 [ext_resource type="Script" uid="uid://ko5ia4p1nsim" path="res://Scripts/Objects/Switch.gd" id="2"]
@@ -7,20 +7,20 @@
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(31, 9)
 
-[node name="Switch" type="StaticBody2D"]
+[node name="Switch" type="StaticBody2D" unique_id=964182593]
 collision_layer = 8192
 collision_mask = 8192
 script = ExtResource("2")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1674077850]
 texture = ExtResource("1")
 hframes = 2
 region_rect = Rect2(0, 0, 32, 16)
 
-[node name="HitBox" type="CollisionShape2D" parent="."]
+[node name="HitBox" type="CollisionShape2D" parent="." unique_id=1758279174]
 position = Vector2(0, 4)
 shape = SubResource("1")
 
-[node name="Switch" type="AudioStreamPlayer" parent="."]
+[node name="Switch" type="AudioStreamPlayer" parent="." unique_id=1878187560]
 stream = ExtResource("3")
 bus = &"SFX"

@@ -2,12 +2,12 @@ extends PlayerState
 var hammerTime = 1.0
 
 
-func state_process(_delta: float) -> void:
+func state_process(delta: float) -> void:
 	# handle jumping
 	if parent.any_action_pressed():
 		# reset animations
 		parent.get_avatar().get_animator().play("RESET")
-		parent.action_jump()
+		parent.action_jump(delta)
 		parent.set_state(parent.STATES.JUMP)
 
 

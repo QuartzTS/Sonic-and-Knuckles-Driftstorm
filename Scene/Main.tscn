@@ -1,6 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://byje3iiukvt4p"]
+[gd_scene format=3 uid="uid://byje3iiukvt4p"]
 
-[ext_resource type="Script" path="res://Scripts/Global/Main.gd" id="2"]
+[ext_resource type="Script" uid="uid://csh72sexg3lmq" path="res://Scripts/Global/Main.gd" id="2"]
 [ext_resource type="PackedScene" uid="uid://b2xskcomtpo2x" path="res://Entities/Misc/ControllerMenu.tscn" id="6"]
 [ext_resource type="PackedScene" uid="uid://c1xhc4uh26inb" path="res://Entities/Misc/PauseMenu.tscn" id="7"]
 
@@ -131,7 +131,7 @@ _data = {
 [node name="Main" type="Node2D" unique_id=1161493502]
 script = ExtResource("2")
 
-[node name="GUI" type="CanvasLayer" parent="."]
+[node name="GUI" type="CanvasLayer" parent="." unique_id=1323548650]
 process_mode = 3
 layer = 128
 
@@ -155,4 +155,4 @@ autoplay = &"RESET"
 
 [node name="ControllerMenu" parent="GUI" unique_id=1524359412 instance=ExtResource("6")]
 
-[node name="Pause" parent="GUI" instance=ExtResource("7")]
+[node name="Pause" parent="GUI" unique_id=39518293 instance=ExtResource("7")]

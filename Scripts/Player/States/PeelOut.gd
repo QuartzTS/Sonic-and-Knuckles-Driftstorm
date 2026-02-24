@@ -14,6 +14,7 @@ func state_process(delta: float) -> void:
 	
 	# how much power the player has from the peelout
 	var speedCalc = parent.spindashPower*60
+	var animator: PlayerCharAnimationPlayer = parent.get_avatar().get_animator()
 	
 	# increase spindashPower gradually
 	parent.spindashPower = min(parent.spindashPower+delta*24,dashPower)
@@ -21,11 +22,11 @@ func state_process(delta: float) -> void:
 	
 	# animation based on speed
 	if speedCalc < 6*60:
-		parent.animator.play("walk")
+		animator.play("walk")
 	elif parent.peelOutCharge < dashPower*60 or (parent.water and parent.peelOutCharge <= dashPower*60):
-		parent.animator.play("run")
+		animator.play("run")
 	elif !parent.water:
-		parent.animator.play("peelOut")
+		animator.play("peelOut")
 
 
 	# release
@@ -35,8 +36,8 @@ func state_process(delta: float) -> void:
 		
 		# Release
 		parent.movement.x = speedCalc*parent.get_direction_multiplier()
-		parent.sfx[32].play()
-		parent.sfx[31].stop()
+		parent.sfx[33].play()
+		parent.sfx[32].stop()
 		parent.peelOutCharge = 0.0
 		parent.set_state(parent.STATES.NORMAL)
 

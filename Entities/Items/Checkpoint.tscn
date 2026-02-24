@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bct374kjctkxr"]
+[gd_scene format=3 uid="uid://bct374kjctkxr"]
 
 [ext_resource type="Texture2D" uid="uid://b0rrjr0vqj386" path="res://Graphics/Items/starpost.png" id="1"]
 [ext_resource type="Script" uid="uid://b2e7frpgl3oyy" path="res://Scripts/Objects/Checkpoint.gd" id="2"]
@@ -98,35 +98,33 @@ _data = {
 &"spin": SubResource("4")
 }
 
-[node name="Checkpoint" type="Area2D"]
+[node name="Checkpoint" type="Area2D" unique_id=1810762177]
 collision_layer = 0
 collision_mask = 4096
 script = ExtResource("2")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1580202620]
 shape = SubResource("1")
 
-[node name="Post" type="Sprite2D" parent="."]
+[node name="Post" type="Sprite2D" parent="." unique_id=579686892]
 texture = ExtResource("1")
 hframes = 2
 
-[node name="Center" type="Node2D" parent="."]
+[node name="Center" type="Node2D" parent="." unique_id=1394888222]
 position = Vector2(0, -21)
 
-[node name="Orb" type="Sprite2D" parent="Center"]
+[node name="Orb" type="Sprite2D" parent="Center" unique_id=145429412]
 position = Vector2(0, -11)
 texture = ExtResource("1")
 hframes = 2
 vframes = 3
 frame = 5
 
-[node name="Spinner" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_cjryo")
-}
+[node name="Spinner" type="AnimationPlayer" parent="." unique_id=37421962]
+libraries/ = SubResource("AnimationLibrary_cjryo")
 next/spin = &"Flash"
 
-[node name="Checkpoint" type="AudioStreamPlayer" parent="."]
+[node name="Checkpoint" type="AudioStreamPlayer" parent="." unique_id=1405134661]
 stream = ExtResource("3")
 bus = &"SFX"
 

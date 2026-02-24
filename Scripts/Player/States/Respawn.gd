@@ -8,7 +8,8 @@ var knux_turn_timer = 0
 
 
 func _ready():
-	invulnerability = true # ironic
+	super()
+	_invulnerability = true # ironic
 
 func state_activated():
 	targetPoint = parent.get_partner().global_position
@@ -18,26 +19,27 @@ func state_activated():
 func state_process(delta):
 	# Animation
 	var animator: PlayerCharAnimationPlayer = parent.get_avatar().get_animator()
-	match(parent.character):
+	var partner: PlayerChar = parent.get_partner()
+	match (parent.character):
 		Global.CHARACTERS.TAILS:
 			animator.play("swim" if parent.water else "fly")
 		Global.CHARACTERS.KNUCKLES:
-			parent.animator.play("glide")
+			animator.play("glide")
 			# Turning, copied from Glide.gd
 			# left
-			if (parent.partner.movement.x > 0 or (parent.partner.movement.x == 0 and parent.partner.direction > 0 and abs(parent.global_position.x-parent.partner.global_position.x) >= 0)) and knux_turn_timer > 0:
+			if (partner.movement.x > 0 or (partner.movement.x == 0 and partner.get_direction_multiplier() > 0 and abs(parent.global_position.x-partner.global_position.x) >= 0)) and knux_turn_timer > 0:
 				knux_turn_timer -= 2.8125*delta*60
 			# right
-			elif (parent.partner.movement.x < 0 or (parent.partner.movement.x == 0 and parent.partner.direction < 0 and abs(parent.global_position.x-parent.partner.global_position.x) <= 0)) and knux_turn_timer < 180:
+			elif (partner.movement.x < 0 or (partner.movement.x == 0 and partner.get_direction_multiplier() < 0 and abs(parent.global_position.x-partner.global_position.x) <= 0)) and knux_turn_timer < 180:
 				knux_turn_timer += 2.8125*delta*60
 			
 			knux_turn_timer = clamp(knux_turn_timer,0,180)
 			
 			# Animation
-			var animSize = parent.animator.current_animation_length
+			var animSize = animator.current_animation_length
 			var offset = knux_turn_timer/180
 			
-			animator.advance(-parent.animator.current_animation_position+(animSize*offset))
+			animator.advance(-animator.current_animation_position+(animSize*offset))
 		Global.CHARACTERS.AMY:
 			animator.play("dropDash")
 		_:
@@ -63,7 +65,7 @@ func state_physics_process(delta: float) -> void:
 		partner_state == parent.STATES.NORMAL or
 		partner_state == parent.STATES.AIR or
 		partner_state == parent.STATES.JUMP or
-		partner_state.currentState == parent.STATES.ANIMATION
+		partner_state == parent.STATES.GIMMICK
 	)
 
 	var goToNormal = ((is_close_to_target and is_aligned_vertically) or is_partner_nearby) and \
@@ -102,7 +104,7 @@ func state_physics_process(delta: float) -> void:
 		if abs(distance)/16 > abs(parent.movement.x/60):
 			parent.movement.x = (distance/16)*60
 		
-		if parent.character != Global.CHARACTERS.KNUCKLES
+		if parent.character != Global.CHARACTERS.KNUCKLES:
 			parent.set_direction_signed(signf(distance))
 	else: # Go back to normal
 		# restore layer
@@ -110,8 +112,9 @@ func state_physics_process(delta: float) -> void:
 		parent.set_state(parent.STATES.AIR)
 
 func state_exit() -> void:
+	var partner: PlayerChar = parent.get_partner()
 	parent.set_ground_speed(0.0)
-	parent.get_avatar().get_animator().play("walk")
+	parent.get_avatar().get_animator().play("freefall")
 	parent.allowTranslate = false
 	parent.collision_layer = parent.defaultLayer
 	parent.collision_mask = parent.defaultMask

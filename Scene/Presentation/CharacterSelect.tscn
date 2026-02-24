@@ -424,14 +424,14 @@ z_index = -1
 position = Vector2(-9, 7)
 texture = ExtResource("4")
 region_enabled = true
-region_rect = Rect2(677, 28, 19, 20)
+region_rect = Rect2(488, 25, 16, 22)
 
 [node name="Amy" type="Sprite2D" parent="UI/Labels/CharacterOrigin/TailsAndAmy" unique_id=71410973]
 z_index = 2
 position = Vector2(-10, 3.5)
 texture = ExtResource("6_nah0p")
 region_enabled = true
-region_rect = Rect2(536, 8, 32, 40)
+region_rect = Rect2(488, 8, 32, 40)
 
 [node name="Tails" type="Sprite2D" parent="UI/Labels/CharacterOrigin" unique_id=2019105293]
 visible = false
@@ -456,7 +456,7 @@ texture = ExtResource("6_nah0p")
 region_enabled = true
 region_rect = Rect2(488, 8, 32, 40)
 
-[node name="Shadow" type="Sprite2D" parent="UI/Labels/CharacterOrigin"]
+[node name="Shadow" type="Sprite2D" parent="UI/Labels/CharacterOrigin" unique_id=773017015]
 visible = false
 z_index = 3
 position = Vector2(0, -4)
@@ -465,11 +465,9 @@ hframes = 16
 vframes = 18
 frame = 1
 
-[node name="CharacterAnimations" type="AnimationPlayer" parent="UI/Labels/CharacterOrigin"]
-libraries = {
-"": SubResource("AnimationLibrary_wio08")
-}
-autoplay = "Animate"
+[node name="CharacterAnimations" type="AnimationPlayer" parent="UI/Labels/CharacterOrigin" unique_id=616097119]
+libraries/ = SubResource("AnimationLibrary_wio08")
+autoplay = &"Animate"
 
 [node name="Control" type="Control" parent="UI/Labels" unique_id=601439596]
 layout_mode = 1
@@ -498,7 +496,7 @@ horizontal_alignment = 1
 vertical_alignment = 2
 uppercase = true
 
-[node name="MutliplayerMode" type="Label" parent="UI/Labels/Control"]
+[node name="MutliplayerMode" type="Label" parent="UI/Labels/Control" unique_id=1704526068]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -517,7 +515,7 @@ horizontal_alignment = 1
 vertical_alignment = 2
 uppercase = true
 
-[node name="Level" type="Label" parent="UI/Labels/Control"]
+[node name="Level" type="Label" parent="UI/Labels/Control" unique_id=510623284]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5

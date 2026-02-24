@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bass3w6af55vw"]
+[gd_scene format=3 uid="uid://bass3w6af55vw"]
 
 [ext_resource type="Script" uid="uid://1lagjyy12jcm" path="res://Tools/Timing/ProcessTimer.gd" id="1_22iwy"]
 
-[node name="ProcessTimer" type="Node"]
+[node name="ProcessTimer" type="Node" unique_id=1315148234]
 script = ExtResource("1_22iwy")

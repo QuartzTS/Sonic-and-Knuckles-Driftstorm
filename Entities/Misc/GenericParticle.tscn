@@ -1,4 +1,4 @@
-[gd_scene load_steps=99 format=3 uid="uid://dmrtm7r6hfbfr"]
+[gd_scene format=3 uid="uid://dmrtm7r6hfbfr"]
 
 [ext_resource type="Texture2D" uid="uid://bihgasvpr4jyb" path="res://Graphics/Items/invincible_stars.png" id="1"]
 [ext_resource type="Script" uid="uid://cajs1iuuagfky" path="res://Scripts/Misc/FreeOnAnimationCompletion.gd" id="2"]
@@ -698,7 +698,7 @@ animations = [{
 "speed": 30.0
 }]
 
-[node name="GenericParticle" type="AnimatedSprite2D"]
+[node name="GenericParticle" type="AnimatedSprite2D" unique_id=938018175]
 sprite_frames = SubResource("157")
 animation = &"DrillDiveDust"
 script = ExtResource("2")

@@ -134,9 +134,9 @@ func initialize_hud() -> void:
 
 func _process(delta):
 	# Change the life counter icon when character switching
-	# $LifeCounter/Icon.frame = Global.PlayerChar1-1
-	# life_icon.texture = lives_textures[Global.PlayerChar1]
-	# life_icon.material = Global.get_material_for_character(Global.PlayerChar1)
+	var life_icon: Sprite2D = $LifeCounter/Icon
+	life_icon.texture = lives_textures[Global.PlayerChar1]
+	life_icon.material = Global.get_material_for_character(Global.PlayerChar1)
 	# set score string to match global score with leading 0s
 	scoreText.text = "%6d" % Global.score
 	
@@ -235,12 +235,12 @@ func _process(delta):
 		# initialize stage clear sequence
 		if !isStageEnding:
 			isStageEnding = true
-			Global.currentZone = Global.nextZone
 			Global.discord_rpc_customize("Act Clear", "Just finished this level..")
 			# reset air in case we are under water
 			_reset_air()
 			# Change character name in case of character switching
-			$LevelClear/Passed.text = $LevelClear/Passed.text.replace(characterNames[Global.PlayerChar2-1],characterNames[Global.PlayerChar1-1])
+			var char_names: Array = Global.CHARACTERS.keys()
+			$LevelClear/Passed.text = $LevelClear/Passed.text.replace(char_names[Global.PlayerChar2-1],char_names[Global.PlayerChar1-1])
 			# show level clear elements
 			$LevelClear.visible = true
 			$LevelClear/Tally/ScoreNumber.text = scoreText.text
@@ -296,15 +296,16 @@ func _process(delta):
 				#Global.level_id = (Global.level_id + 1) as Global.LEVELS
 				$LevelClear/Animator.play_backwards("LevelClear")
 				await $LevelClear/Animator.animation_finished
-				Main.clear_dynamic_level_variables()
-				isStageEnding = false
 				$LevelCard/Cover.hide()
+				Main.clear_dynamic_level_variables()
 				Global.act_transition = true
+				isStageEnding = false
+				Global.emit_stage_end()
 			elif Global.level_id+1 != Global.LEVELS.size():
 				Main.change_scene_by_level_id((Global.level_id+1) % Global.LEVELS.size())
 			else:
 				Main.change_scene(Global.startScene)
-			Global.emit_stage_end()
+			
 	
 	# game over sequence
 	elif Global.gameOver and !gameOver:
@@ -319,13 +320,13 @@ func _process(delta):
 		$GameOver/GameOver.play("GameOver")
 		MusicController.play_music_theme(MusicController.MusicTheme.GAME_OVER)
 		# wait for animation to finish
-		await $GameOver/GameOver.animation_finished
+		await gameover_signal
 		# reset game
 		if Global.lives <= 0:
 			Main.reset_game()
 		# reset level (if time over and lives aren't out)
 		elif Global.time_limit:
-			Main.change_scene(Global.currentZone,"FadeOut")
+			Main.change_scene_by_level_id(Global.level_id)
 			await Main.scene_faded
 			Global.levelTime = 0
 			Global.timerActive = false

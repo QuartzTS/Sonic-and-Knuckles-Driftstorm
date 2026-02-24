@@ -36,7 +36,7 @@ func _ready() -> void:
 		Vector2(16,14)*2  # HORIZONTAL
 	]
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	# Copy orientational properties of the player srite to the flame sprite
 	$Sprite2D/Flames.flip_h = $Sprite2D.flip_h
 	$Sprite2D/Flames.flip_v = $Sprite2D.flip_v
@@ -77,7 +77,7 @@ func get_break_power(player: PlayerChar) -> int:
 ## Jumping is either A or C on Genesis layout
 func shadow_any_jump_pressed(player: PlayerChar) -> bool:
 	if (player.inputs[PlayerChar.INPUTS.ACTION] == 1 or
-	    player.inputs[PlayerChar.INPUTS.ACTION3] == 1):
+		player.inputs[PlayerChar.INPUTS.ACTION3] == 1):
 		return true
 	return false
 
@@ -132,13 +132,13 @@ func shadow_jump_actions_callback(_state: PlayerState, player: PlayerChar, _delt
 	
 	return true
 	
-func shadow_ground_actions_callback(_state: PlayerState, player: PlayerChar, _delta: float):
+func shadow_ground_actions_callback(_state: PlayerState, _player: PlayerChar, _delta: float):
 	# I think we need a horrible hack right here for now... or to postpone it for later.
 	return true
 #endregion
 
-func shadow_reset_abilities(state_exiting: PlayerState, state_entering: PlayerChar.STATES,
-		player: PlayerChar, character_state_entering: CHAR_STATES):
+func shadow_reset_abilities(_state_exiting: PlayerState, _state_entering: PlayerChar.STATES,
+		_player: PlayerChar, _character_state_entering: CHAR_STATES):
 	self.homing_attack_available = true
 	self.stomp_available = true
 

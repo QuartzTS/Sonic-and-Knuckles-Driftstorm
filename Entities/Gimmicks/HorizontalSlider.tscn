@@ -1,9 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://di85tknpw5cf0"]
+[gd_scene format=3 uid="uid://di85tknpw5cf0"]
 
 [ext_resource type="Texture2D" uid="uid://cc74vnlpkcfhq" path="res://Graphics/Gimmicks/LBZHookSlider.png" id="1_lbp0j"]
 
-[node name="HookSlider" type="Node2D"]
+[node name="HookSlider" type="Node2D" unique_id=85592180]
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=913720437]
 position = Vector2(0, 4)
 texture = ExtResource("1_lbp0j")

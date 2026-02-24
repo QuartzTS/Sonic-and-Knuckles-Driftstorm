@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://cyun8u3qemt5i"]
+[gd_scene format=3 uid="uid://cyun8u3qemt5i"]
 
 [ext_resource type="Texture2D" uid="uid://bxc21kbjhx0g3" path="res://Graphics/Gimmicks/Screw.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://5x1kqbrlpbt8" path="res://Graphics/Gimmicks/ScrewPipe.png" id="2"]
@@ -46,50 +46,50 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="7"]
 size = Vector2(64, 16)
 
-[node name="CorkScrew" type="Node2D"]
+[node name="CorkScrew" type="Node2D" unique_id=705475623]
 process_priority = 5
 script = ExtResource("3")
 
-[node name="ScrewPipe" type="Sprite2D" parent="."]
+[node name="ScrewPipe" type="Sprite2D" parent="." unique_id=420527454]
 texture = ExtResource("2")
 region_enabled = true
 region_rect = Rect2(0, 0, 32, 32)
 
-[node name="ScrewBottom" type="Sprite2D" parent="."]
+[node name="ScrewBottom" type="Sprite2D" parent="." unique_id=1772011623]
 position = Vector2(0, 20)
 texture = ExtResource("2")
 hframes = 2
 frame = 1
 
-[node name="Screw" type="AnimatableBody2D" parent="."]
+[node name="Screw" type="AnimatableBody2D" parent="." unique_id=733574941]
 z_index = 5
 position = Vector2(0, -4)
 collision_layer = 2105359
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Screw"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Screw" unique_id=2330940]
 shape = SubResource("1")
 
-[node name="Screw" type="AnimatedSprite2D" parent="Screw"]
+[node name="Screw" type="AnimatedSprite2D" parent="Screw" unique_id=1064597318]
 sprite_frames = SubResource("6")
 
-[node name="playerChecker" type="Area2D" parent="Screw"]
+[node name="playerChecker" type="Area2D" parent="Screw" unique_id=937110737]
 position = Vector2(0, -12)
 collision_layer = 0
 collision_mask = 4096
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Screw/playerChecker"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Screw/playerChecker" unique_id=1417370694]
 modulate = Color(0.258824, 0.6, 1, 1)
 shape = SubResource("7")
 
-[node name="FloorCheck" type="RayCast2D" parent="Screw"]
+[node name="FloorCheck" type="RayCast2D" parent="Screw" unique_id=624403780]
 target_position = Vector2(0, 12)
 
-[node name="CeilingCheck" type="RayCast2D" parent="Screw"]
+[node name="CeilingCheck" type="RayCast2D" parent="Screw" unique_id=2063412207]
 target_position = Vector2(0, -12)
 collision_mask = 4
 
-[node name="DeathTimer" type="Timer" parent="Screw"]
+[node name="DeathTimer" type="Timer" parent="Screw" unique_id=427581402]
 
 [connection signal="body_entered" from="Screw/playerChecker" to="." method="_on_playerChecker_body_entered"]
 [connection signal="body_exited" from="Screw/playerChecker" to="." method="_on_playerChecker_body_exited"]

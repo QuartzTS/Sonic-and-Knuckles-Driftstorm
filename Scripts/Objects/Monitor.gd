@@ -35,25 +35,25 @@ enum ITEMS {
 
 func _set_item_frame():
 	if item == ITEMS._1UP:
-		$Item.hframes = 1
-		$Item.vframes = 1
-		$Item.frame = 0
-		$Item.texture = _1up_textures[0 if Engine.is_editor_hint() else Global.PlayerChar1]
+		$MonitorBody/Item.hframes = 1
+		$MonitorBody/Item.vframes = 1
+		$MonitorBody/Item.frame = 0
+		$MonitorBody/Item.texture = _1up_textures[0 if Engine.is_editor_hint() else Global.PlayerChar1]
 		if !Engine.is_editor_hint():
-			$Item.material = Global.get_material_for_character(Global.PlayerChar1)
+			$MonitorBody/Item.material = Global.get_material_for_character(Global.PlayerChar1)
 	else:
-		$Item.vframes = _orig_vframes
-		$Item.hframes = _orig_hframes
-		$Item.frame = item - int(item > ITEMS._1UP) # skip 1up
-		$Item.texture = _orig_texture
+		$MonitorBody/Item.vframes = _orig_vframes
+		$MonitorBody/Item.hframes = _orig_hframes
+		$MonitorBody/Item.frame = item - int(item > ITEMS._1UP) # skip 1up
+		$MonitorBody/Item.texture = _orig_texture
 
 func _ready():
 	var in_editor: bool = Engine.is_editor_hint()
 	if _orig_texture == null:
 		# back up the original texture and the number of frames in it
-		_orig_texture = $Item.texture as Texture2D
-		_orig_vframes = $Item.vframes
-		_orig_hframes = $Item.hframes
+		_orig_texture = $MonitorBody/Item.texture as Texture2D
+		_orig_vframes = $MonitorBody/Item.vframes
+		_orig_hframes = $MonitorBody/Item.hframes
 		# resize the 1up textures array
 		var char_names: Array = Global.CHARACTERS.keys()
 		var num_characters: int = char_names.size()
@@ -123,20 +123,20 @@ func destroy():
 	monitor_body.remove_child(item_icon)
 	# Make the item icon a child to the monitor node itself. At least it's not gonna be inheriting the position of the monitor body node..
 	add_child(item_icon)
-	if item_icon.global_position != prev_pos and $Animator.current_animation != "DestroyMonitor":
+	if item_icon.global_position != prev_pos and $Monitor.current_animation != "DestroyMonitor":
 		item_icon.global_position = prev_pos # Reset the item icon position to the stored position after adding it as a child to a different node
 	# play destruction animation
-	$Animator.play("DestroyMonitor")
+	$Monitor.play("DestroyMonitor")
 	$SFX/Destroy.play()
 	Global.nodeMemory.append(get_path()) # Save the monitor destruction state to the node memory, so that it self-destructs when the player respawns
 	# Set swap cooldown to the length of monitor destruction animation so that no character switching occurs before playerTouch obtains the item
-	playerTouch.swap_cooldown = $Animator.current_animation_length
+	playerTouch.swap_cooldown = $Monitor.current_animation_length
 	# Now make a tween so that we can change the global position of the icon outside of the influence of the monitor body, and without using an animation player.
 	# But was that even needed anyway? I don't know..
-	await create_tween().tween_property(item_icon,"global_position",item_icon.global_position-Vector2(0,32),$Animator.current_animation_length).set_ease(Tween.EASE_OUT).finished
+	await create_tween().tween_property(item_icon,"global_position",item_icon.global_position-Vector2(0,32),$Monitor.current_animation_length).set_ease(Tween.EASE_OUT).finished
 	lock_x_pos = true # Set that to true after finishing tweening, so that the item icon x global position remains constant (Was that even-)
 	# wait for animation to finish
-	await $Animator.animation_finished
+	await $Monitor.animation_finished
 	# enable effect
 	match (item):
 		ITEMS.RING:
@@ -189,7 +189,7 @@ func set_destroyed():
 	# deactivate
 	isActive = false
 	physics = false
-	$Animator.play("DestroyMonitor")
+	$Monitor.play("DestroyMonitor")
 
 func _physics_process(delta):
 	# if physics are on make em fall

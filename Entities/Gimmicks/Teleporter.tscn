@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://bleoc0gltofoh"]
+[gd_scene format=3 uid="uid://bleoc0gltofoh"]
 
 [ext_resource type="Script" uid="uid://8g0ebxnx23h0" path="res://Scripts/Gimmicks/Teleporter.gd" id="1_slfda"]
 [ext_resource type="Texture2D" uid="uid://77onhgopdvvh" path="res://Graphics/Gimmicks/Teleporter.png" id="2_x0857"]
@@ -416,55 +416,53 @@ _data = {
 &"RESET": SubResource("Animation_t41o3")
 }
 
-[node name="Teleporter" type="Node2D"]
+[node name="Teleporter" type="Node2D" unique_id=802519653]
 script = ExtResource("1_slfda")
 
-[node name="Orb" type="AnimatedSprite2D" parent="."]
+[node name="Orb" type="AnimatedSprite2D" parent="." unique_id=428222008]
 position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_8wq5r")
 animation = &"off"
 autoplay = "off"
 
-[node name="Teleporter" type="Sprite2D" parent="."]
+[node name="Teleporter" type="Sprite2D" parent="." unique_id=1997152606]
 texture = ExtResource("2_x0857")
 offset = Vector2(0, -4)
 region_enabled = true
 region_rect = Rect2(0, 0, 48, 24)
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1464769720]
 collision_layer = 15
 collision_mask = 15
 
-[node name="shape" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="shape" type="CollisionShape2D" parent="StaticBody2D" unique_id=482603455]
 position = Vector2(0, -4)
 shape = SubResource("RectangleShape2D_o7i57")
 
-[node name="OrbCollider" type="StaticBody2D" parent="."]
+[node name="OrbCollider" type="StaticBody2D" parent="." unique_id=1023730293]
 collision_layer = 8193
 collision_mask = 8193
 script = ExtResource("3_hoy6i")
 
-[node name="shape" type="CollisionPolygon2D" parent="OrbCollider"]
+[node name="shape" type="CollisionPolygon2D" parent="OrbCollider" unique_id=1445198155]
 position = Vector2(0, -4)
 polygon = PackedVector2Array(-11, -14, -10, -14, -10, -16, -9, -16, -9, -17, -8, -17, -8, -18, -6, -18, -6, -19, -4, -19, -4, -20, 4, -20, 4, -19, 6, -19, 6, -18, 8, -18, 8, -17, 9, -17, 9, -16, 10, -16, 10, -14, 11, -14, 11, -12, -11, -12)
 one_way_collision = true
 
-[node name="ForceAngleSides" parent="." instance=ExtResource("3_8fkwi")]
+[node name="ForceAngleSides" parent="." unique_id=1337399286 instance=ExtResource("3_8fkwi")]
 visible = false
 position = Vector2(0, -16)
 scale = Vector2(0.747275, 0.747275)
 speedRange = 0
 
-[node name="BeamAnimator" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_07x4t")
-}
+[node name="BeamAnimator" type="AnimationPlayer" parent="." unique_id=354583909]
+libraries/ = SubResource("AnimationLibrary_07x4t")
 
-[node name="Beam" type="Node2D" parent="."]
+[node name="Beam" type="Node2D" parent="." unique_id=1490992128]
 z_index = 50
 position = Vector2(0, -16)
 
-[node name="BeamL" type="Sprite2D" parent="Beam"]
+[node name="BeamL" type="Sprite2D" parent="Beam" unique_id=356150706]
 texture_repeat = 1
 position = Vector2(0, -8)
 scale = Vector2(-1, 1)
@@ -475,7 +473,7 @@ flip_h = true
 region_enabled = true
 region_rect = Rect2(0, 0, 0, 8)
 
-[node name="BeamR" type="Sprite2D" parent="Beam"]
+[node name="BeamR" type="Sprite2D" parent="Beam" unique_id=184430147]
 texture_repeat = 1
 position = Vector2(0, -8)
 scale = Vector2(1, 1000)
@@ -486,15 +484,15 @@ flip_h = true
 region_enabled = true
 region_rect = Rect2(0, 0, 0, 8)
 
-[node name="BeamWarmUp" type="AudioStreamPlayer" parent="."]
+[node name="BeamWarmUp" type="AudioStreamPlayer" parent="." unique_id=1523335295]
 stream = ExtResource("6_yj68g")
 bus = &"SFX"
 
-[node name="Warp" type="AudioStreamPlayer" parent="."]
+[node name="Warp" type="AudioStreamPlayer" parent="." unique_id=1485569543]
 stream = ExtResource("7_eleuh")
 bus = &"SFX"
 
-[node name="OrbReference" type="Sprite2D" parent="."]
+[node name="OrbReference" type="Sprite2D" parent="." unique_id=1440032667]
 position = Vector2(0, -512)
 texture = ExtResource("2_x0857")
 hframes = 3

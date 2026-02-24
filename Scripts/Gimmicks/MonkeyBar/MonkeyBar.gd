@@ -83,7 +83,7 @@ func check_grab(player: PlayerChar) -> bool:
 	# We don't grab if the player isn't low enough to grab
 	if player.global_position.y < $MonkeyBarHanger.global_position.y + 7:
 		return false
-	if player.currentState == PlayerChar.STATES.DEBUG:
+	if player.get_state() == PlayerChar.STATES.DEBUG:
 		return false
 
 	# If we didn't hit any of the ejection conditions then we are good to grab
@@ -236,10 +236,10 @@ func brachiate_connect(player : PlayerChar, brachiate_target : Brachiatable) -> 
 	# Play the animation associated with your current brachiation arm
 	if next_arm == ARM_SELECTION.RIGHT:
 		player.get_avatar().get_animator().play("brachiateRight", -1,
-		                                        brachiate_target.brachiate_speed)
+												brachiate_target.brachiate_speed)
 	else:
 		player.get_avatar().get_animator().play("brachiateLeft", -1,
-		                                        brachiate_target.brachiate_speed)
+												brachiate_target.brachiate_speed)
 
 ## Checks if the player can swing like a monkey from one monkeybar to another
 ## and if so, starts the process.

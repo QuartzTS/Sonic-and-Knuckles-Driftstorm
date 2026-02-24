@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://ra3mqewhj6kl"]
+[gd_scene format=3 uid="uid://ra3mqewhj6kl"]
 
 [ext_resource type="Texture2D" uid="uid://cmjgdekpeg5ql" path="res://Graphics/Hazards/sawblade.png" id="1"]
 [ext_resource type="Script" uid="uid://co3ed00su86fa" path="res://Scripts/Objects/Hazard.gd" id="2"]
@@ -29,21 +29,21 @@ animations = [{
 "speed": 60.0
 }]
 
-[node name="Saw" type="Area2D"]
+[node name="Saw" type="Area2D" unique_id=830519634]
 collision_layer = 0
 collision_mask = 4096
 script = ExtResource("2")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1915563289]
 modulate = Color(1, 0, 0, 1)
 shape = SubResource("1")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=976682984]
 sprite_frames = SubResource("4")
 autoplay = "default"
 frame = 1
 
-[node name="SawNoise" type="AudioStreamPlayer2D" parent="."]
+[node name="SawNoise" type="AudioStreamPlayer2D" parent="." unique_id=2105004421]
 stream = ExtResource("3")
 volume_db = -10.0
 autoplay = true

@@ -1,7 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://blwewyk2fnrew"]
+[gd_scene format=3 uid="uid://blwewyk2fnrew"]
 
 [ext_resource type="Texture2D" uid="uid://cggbnk4jjwqa1" path="res://Graphics/Obstacles/Walls/shutter.png" id="1"]
-[ext_resource type="Script" path="res://Scripts/Gimmicks/Shutter.gd" id="2"]
+[ext_resource type="Script" uid="uid://d16b6q15w74p6" path="res://Scripts/Gimmicks/Shutter.gd" id="2"]
 [ext_resource type="AudioStream" uid="uid://idw7ykg4p5x" path="res://Audio/SFX/Gimmicks/Shutter.wav" id="3_dylc3"]
 
 [sub_resource type="RectangleShape2D" id="1"]
@@ -11,45 +11,45 @@ size = Vector2(16, 64)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jaxra"]
 size = Vector2(112, 64)
 
-[node name="Shutter" type="CharacterBody2D"]
+[node name="Shutter" type="CharacterBody2D" unique_id=1628752808]
 collision_layer = 8207
 collision_mask = 0
 script = ExtResource("2")
 
-[node name="Shutter" type="Sprite2D" parent="."]
+[node name="Shutter" type="Sprite2D" parent="." unique_id=156723906]
 texture = ExtResource("1")
 
-[node name="Mask" type="CollisionShape2D" parent="."]
+[node name="Mask" type="CollisionShape2D" parent="." unique_id=1981282968]
 shape = SubResource("1")
 
-[node name="ShutterSound" type="AudioStreamPlayer2D" parent="."]
+[node name="ShutterSound" type="AudioStreamPlayer2D" parent="." unique_id=1171234472]
 stream = ExtResource("3_dylc3")
 volume_db = 4.0
 max_distance = 1000.0
 
-[node name="OpenArea" type="Area2D" parent="."]
+[node name="OpenArea" type="Area2D" parent="." unique_id=173130598]
 position = Vector2(-64, 0)
 collision_layer = 0
 collision_mask = 4096
 
-[node name="Mask" type="CollisionShape2D" parent="OpenArea"]
+[node name="Mask" type="CollisionShape2D" parent="OpenArea" unique_id=1346116359]
 modulate = Color(0, 0.298039, 1, 1)
 shape = SubResource("RectangleShape2D_jaxra")
 
-[node name="CloseArea" type="Area2D" parent="."]
+[node name="CloseArea" type="Area2D" parent="." unique_id=493611277]
 position = Vector2(-128, 0)
 collision_layer = 0
 collision_mask = 4096
 
-[node name="Mask" type="CollisionShape2D" parent="CloseArea"]
+[node name="Mask" type="CollisionShape2D" parent="CloseArea" unique_id=1956999115]
 modulate = Color(1, 0, 0, 1)
 shape = SubResource("1")
 
-[node name="CloseArea2" type="Area2D" parent="."]
+[node name="CloseArea2" type="Area2D" parent="." unique_id=1642912165]
 position = Vector2(16, 0)
 collision_layer = 0
 collision_mask = 4096
 
-[node name="Mask" type="CollisionShape2D" parent="CloseArea2"]
+[node name="Mask" type="CollisionShape2D" parent="CloseArea2" unique_id=488016480]
 modulate = Color(1, 0, 0, 1)
 shape = SubResource("1")

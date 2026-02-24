@@ -41,13 +41,14 @@ var move_speed: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	invulnerability = true
+	super()
+	_invulnerability = true
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
+func state_process(_delta: float) -> void:
 	if Input.is_action_just_pressed("ui_debug_mode"):
-		parent.set_state(parent.STATES.NORMAL)
+		parent.set_state(PlayerChar.STATES.NORMAL)
 	if object_preview:
 		object_preview.process_mode = Node.PROCESS_MODE_DISABLED
 		object_preview.global_position = parent.global_position
@@ -81,10 +82,10 @@ func _process(_delta: float) -> void:
 		object_spawn.global_position = parent.global_position
 		object_spawn.process_mode = Node.PROCESS_MODE_INHERIT
 
-func _physics_process(_delta: float) -> void:
+func state_physics_process(_delta: float) -> void:
 	moved = parent.get_x_input() or parent.get_y_input()
 	move_speed = (move_speed + 2)*int(moved)
-	parent.movement = (move_speed*parent.acc*60*Vector2(
+	parent.movement = (move_speed*parent.get_physics().acceleration*60*Vector2(
 		parent.get_x_input(),
 		parent.get_y_input()
 	)).clamp(Vector2(-16*60,-16*60),Vector2(16*60,16*60))
@@ -93,8 +94,8 @@ func state_activated() -> void:
 	parent.unset_active_gimmick()
 	parent.allowTranslate = true
 	parent.get_node("HitBox").disabled = true
-	parent.spriteController.visible = false
-	parent.animator.process_mode = PROCESS_MODE_DISABLED
+	parent.get_avatar().visible = false
+	parent.get_avatar().get_animator().process_mode = PROCESS_MODE_DISABLED
 	parent.movement = Vector2.ZERO
 	parent.z_index = 100
 	parent.rotation = 0
@@ -107,8 +108,8 @@ func state_activated() -> void:
 func state_exit() -> void:
 	parent.allowTranslate = false
 	parent.get_node("HitBox").disabled = false
-	parent.spriteController.visible = true
-	parent.animator.process_mode = PROCESS_MODE_INHERIT
+	parent.get_avatar().visible = true
+	parent.get_avatar().get_animator().process_mode = PROCESS_MODE_INHERIT
 	parent.movement = Vector2.ZERO
 	parent.z_index = parent.defaultZIndex
 	if object_preview:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://msycxndhmuin"]
+[gd_scene format=3 uid="uid://msycxndhmuin"]
 
 [ext_resource type="Texture2D" uid="uid://b7fiakcwbo2rt" path="res://Graphics/Obstacles/Blocks/moving_block_2.png" id="1"]
 [ext_resource type="Script" uid="uid://bpsew1ldqn4cn" path="res://Scripts/Objects/InvisibleBarrier.gd" id="2"]
@@ -6,16 +6,16 @@
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(32, 32)
 
-[node name="InvisibleBarrier" type="StaticBody2D"]
+[node name="InvisibleBarrier" type="StaticBody2D" unique_id=873005367]
 z_index = 20
 collision_layer = 2105344
 collision_mask = 0
 script = ExtResource("2")
 
-[node name="MovingBlock2" type="Sprite2D" parent="."]
+[node name="MovingBlock2" type="Sprite2D" parent="." unique_id=1181519217]
 modulate = Color(1, 0, 0, 0.392157)
 texture = ExtResource("1")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1495419412]
 visible = false
 shape = SubResource("1")

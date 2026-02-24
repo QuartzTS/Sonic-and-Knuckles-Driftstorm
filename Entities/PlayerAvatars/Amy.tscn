@@ -1,13 +1,13 @@
-[gd_scene load_steps=69 format=3 uid="uid://d3vtvdbdn6g8v"]
+[gd_scene format=3 uid="uid://bf3fj0c5j13ks"]
 
-[ext_resource type="Script" path="res://Scripts/Player/PlayerAvatars/AmyAvatar.gd" id="1_onyi3"]
-[ext_resource type="Script" path="res://Scripts/Player/PlayerAnimation.gd" id="1_x2red"]
+[ext_resource type="Script" uid="uid://m58dbkopp4tc" path="res://Scripts/Player/PlayerAvatars/AmyAvatar.gd" id="1_onyi3"]
+[ext_resource type="Script" uid="uid://dqy2ff72wb6r1" path="res://Scripts/Player/PlayerAnimation.gd" id="1_x2red"]
 [ext_resource type="Texture2D" uid="uid://bfesqgvh63scg" path="res://Graphics/Players/Amy.png" id="2_vki44"]
 [ext_resource type="Material" uid="uid://dh6lceurc5knf" path="res://Shaders/PlayerPalettes/AmyPalette.tres" id="3_8c8t7"]
 [ext_resource type="Texture2D" uid="uid://dlomjk6vm15ep" path="res://Graphics/Misc/DashDust.png" id="3_dg7ud"]
 [ext_resource type="Texture2D" uid="uid://dvqglf8dididc" path="res://Graphics/Items/shield_plain.png" id="4_nx0xn"]
 [ext_resource type="Texture2D" uid="uid://decpuepom6w1d" path="res://Graphics/Tools/bar_helper.png" id="7_drhm3"]
-[ext_resource type="Script" path="res://Scripts/Player/States/AmyHammerSwing.gd" id="8_5egt6"]
+[ext_resource type="Script" uid="uid://cvtlqsf26getj" path="res://Scripts/Player/States/AmyHammerSwing.gd" id="8_5egt6"]
 
 [sub_resource type="Animation" id="86"]
 length = 0.001
@@ -1151,52 +1151,52 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_36uej"]
 _data = {
-"RESET": SubResource("86"),
-"air": SubResource("108"),
-"brachiate": SubResource("Animation_rt6ym"),
-"brachiateLeft": SubResource("Animation_nsifk"),
-"brachiateRight": SubResource("Animation_mp6ka"),
-"clingVerticalBar": SubResource("Animation_kwfke"),
-"corkScrew": SubResource("76"),
-"corkScrewOffset": SubResource("88"),
-"crouch": SubResource("77"),
-"current": SubResource("Animation_tn47m"),
-"die": SubResource("98"),
-"dropDash": SubResource("107"),
-"drown": SubResource("99"),
-"edge1": SubResource("104"),
-"edge2": SubResource("105"),
-"edge3": SubResource("106"),
-"grabVerticalBar": SubResource("123"),
-"grabVerticalBarOffset": SubResource("124"),
-"hammerSwing": SubResource("Animation_eeuda"),
-"hang": SubResource("112"),
-"hangShimmy": SubResource("Animation_y4gk6"),
-"hurt": SubResource("78"),
-"idle": SubResource("79"),
-"idle1": SubResource("113"),
-"idle2": SubResource("114"),
-"idle3": SubResource("116"),
-"lookUp": SubResource("80"),
-"peelOut": SubResource("87"),
-"push": SubResource("103"),
-"roll": SubResource("81"),
-"run": SubResource("82"),
-"skid": SubResource("100"),
-"skidTurn": SubResource("101"),
-"slide": SubResource("120"),
-"spinDash": SubResource("83"),
-"spring": SubResource("84"),
-"springScrew": SubResource("119"),
-"super": SubResource("97"),
-"swingHorizontalBarMHZ": SubResource("Animation_jkllx"),
-"swingVerticalBar": SubResource("121"),
-"swingVerticalBarManaged": SubResource("125"),
-"swingVerticalBarOffset": SubResource("122"),
-"walk": SubResource("85"),
-"yRotation": SubResource("126"),
-"yRotationLookDown": SubResource("127"),
-"yRotationLookUp": SubResource("128")
+&"RESET": SubResource("86"),
+&"air": SubResource("108"),
+&"brachiate": SubResource("Animation_rt6ym"),
+&"brachiateLeft": SubResource("Animation_nsifk"),
+&"brachiateRight": SubResource("Animation_mp6ka"),
+&"clingVerticalBar": SubResource("Animation_kwfke"),
+&"corkScrew": SubResource("76"),
+&"corkScrewOffset": SubResource("88"),
+&"crouch": SubResource("77"),
+&"current": SubResource("Animation_tn47m"),
+&"die": SubResource("98"),
+&"dropDash": SubResource("107"),
+&"drown": SubResource("99"),
+&"edge1": SubResource("104"),
+&"edge2": SubResource("105"),
+&"edge3": SubResource("106"),
+&"grabVerticalBar": SubResource("123"),
+&"grabVerticalBarOffset": SubResource("124"),
+&"hammerSwing": SubResource("Animation_eeuda"),
+&"hang": SubResource("112"),
+&"hangShimmy": SubResource("Animation_y4gk6"),
+&"hurt": SubResource("78"),
+&"idle": SubResource("79"),
+&"idle1": SubResource("113"),
+&"idle2": SubResource("114"),
+&"idle3": SubResource("116"),
+&"lookUp": SubResource("80"),
+&"peelOut": SubResource("87"),
+&"push": SubResource("103"),
+&"roll": SubResource("81"),
+&"run": SubResource("82"),
+&"skid": SubResource("100"),
+&"skidTurn": SubResource("101"),
+&"slide": SubResource("120"),
+&"spinDash": SubResource("83"),
+&"spring": SubResource("84"),
+&"springScrew": SubResource("119"),
+&"super": SubResource("97"),
+&"swingHorizontalBarMHZ": SubResource("Animation_jkllx"),
+&"swingVerticalBar": SubResource("121"),
+&"swingVerticalBarManaged": SubResource("125"),
+&"swingVerticalBarOffset": SubResource("122"),
+&"walk": SubResource("85"),
+&"yRotation": SubResource("126"),
+&"yRotationLookDown": SubResource("127"),
+&"yRotationLookUp": SubResource("128")
 }
 
 [sub_resource type="AtlasTexture" id="89"]
@@ -1309,24 +1309,22 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_yhl61"]
 _data = {
-"Flash": SubResource("Animation_o1vbe"),
-"PowerDown": SubResource("Animation_t7log"),
-"RESET": SubResource("Animation_y01gt")
+&"Flash": SubResource("Animation_o1vbe"),
+&"PowerDown": SubResource("Animation_t7log"),
+&"RESET": SubResource("Animation_y01gt")
 }
 
-[node name="Amy" type="Node2D"]
+[node name="Amy" type="Node2D" unique_id=1606872767]
 script = ExtResource("1_onyi3")
 metadata/_edit_horizontal_guides_ = [-23.0]
 
-[node name="PlayerAnimation" type="AnimationPlayer" parent="."]
+[node name="PlayerAnimation" type="AnimationPlayer" parent="." unique_id=1547860807]
 root_node = NodePath("../..")
-libraries = {
-"": SubResource("AnimationLibrary_36uej")
-}
-autoplay = "idle"
+libraries/ = SubResource("AnimationLibrary_36uej")
+autoplay = &"idle"
 script = ExtResource("1_x2red")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1611019407]
 z_index = 5
 material = ExtResource("3_8c8t7")
 texture = ExtResource("2_vki44")
@@ -1334,7 +1332,7 @@ offset = Vector2(0, -6)
 hframes = 16
 vframes = 18
 
-[node name="DashDust" type="AnimatedSprite2D" parent="Sprite2D"]
+[node name="DashDust" type="AnimatedSprite2D" parent="Sprite2D" unique_id=1635684678]
 visible = false
 position = Vector2(0, -4)
 sprite_frames = SubResource("96")
@@ -1342,29 +1340,27 @@ autoplay = "default"
 frame = 3
 offset = Vector2(-9, -4)
 
-[node name="CrouchBox" type="CollisionShape2D" parent="."]
+[node name="CrouchBox" type="CollisionShape2D" parent="." unique_id=329946185]
 position = Vector2(0, 5.5)
 shape = SubResource("111")
 disabled = true
 
-[node name="SuperPalette" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_yhl61")
-}
+[node name="SuperPalette" type="AnimationPlayer" parent="." unique_id=1981417578]
+libraries/ = SubResource("AnimationLibrary_yhl61")
 
-[node name="CenterReference" type="Sprite2D" parent="."]
+[node name="CenterReference" type="Sprite2D" parent="." unique_id=364209770]
 visible = false
 modulate = Color(1, 1, 1, 0.501961)
 texture = ExtResource("4_nx0xn")
 hframes = 4
 
-[node name="HandsReference" type="Sprite2D" parent="."]
+[node name="HandsReference" type="Sprite2D" parent="." unique_id=1969460427]
 visible = false
 z_index = 50
 texture = ExtResource("7_drhm3")
 
-[node name="CharacterStates" type="Node" parent="."]
+[node name="CharacterStates" type="Node" parent="." unique_id=1434465744]
 
-[node name="AmyHammerSwing" type="Node" parent="CharacterStates"]
+[node name="AmyHammerSwing" type="Node" parent="CharacterStates" unique_id=472254867]
 process_priority = 1
 script = ExtResource("8_5egt6")

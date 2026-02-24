@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://c12gx50tlqv8b"]
+[gd_scene format=3 uid="uid://c12gx50tlqv8b"]
 
 [ext_resource type="Texture2D" uid="uid://1njf2n5mf43y" path="res://Graphics/Misc/CountDown.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://ceangqioyo4uf" path="res://Graphics/Items/air_bubbles.png" id="2"]
@@ -365,7 +365,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="BubbleCountDown" type="AnimatedSprite2D"]
+[node name="BubbleCountDown" type="AnimatedSprite2D" unique_id=1176395964]
 z_index = 100
 sprite_frames = SubResource("19")
 autoplay = "default"

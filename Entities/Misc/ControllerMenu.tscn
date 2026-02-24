@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://b2xskcomtpo2x"]
+[gd_scene format=3 uid="uid://b2xskcomtpo2x"]
 
 [ext_resource type="Script" uid="uid://bhq4unb07xmxd" path="res://Scripts/Misc/ControlBind.gd" id="1"]
 [ext_resource type="Script" uid="uid://cca62pmrr85i0" path="res://Scripts/Global/ControlerMenu.gd" id="2"]
 
-[node name="ControllerMenu" type="Control"]
+[node name="ControllerMenu" type="Control" unique_id=998636036]
 visible = false
 layout_mode = 3
 anchors_preset = 15
@@ -13,27 +13,27 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=833837996]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0, 0.333333, 0.560784, 0.72549)
 
-[node name="Title" type="Label" parent="."]
+[node name="Title" type="Label" parent="." unique_id=1324374128]
 layout_mode = 0
 anchor_right = 1.0
 offset_bottom = 14.0
 text = "Controls"
 uppercase = true
 
-[node name="CurrentMapList" type="Label" parent="."]
+[node name="CurrentMapList" type="Label" parent="." unique_id=1697237370]
 layout_mode = 0
 anchor_right = 1.0
 offset_top = 15.0973
 offset_bottom = 29.0973
 uppercase = true
 
-[node name="ClearInfo" type="Label" parent="."]
+[node name="ClearInfo" type="Label" parent="." unique_id=83221162]
 layout_mode = 0
 anchor_left = 0.5
 anchor_top = 1.0
@@ -45,7 +45,7 @@ offset_right = 160.0
 horizontal_alignment = 1
 uppercase = true
 
-[node name="Confirm" type="Button" parent="."]
+[node name="Confirm" type="Button" parent="." unique_id=1856648023]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -61,7 +61,7 @@ text = "OK"
 script = ExtResource("1")
 bind = ""
 
-[node name="PlayerSwap" type="Button" parent="."]
+[node name="PlayerSwap" type="Button" parent="." unique_id=1924396022]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -80,7 +80,7 @@ text = "SWAP"
 script = ExtResource("1")
 bind = ""
 
-[node name="Label" type="Label" parent="PlayerSwap"]
+[node name="Label" type="Label" parent="PlayerSwap" unique_id=772192879]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -94,7 +94,7 @@ text = "P1"
 horizontal_alignment = 1
 uppercase = true
 
-[node name="SaveInputs" type="Button" parent="."]
+[node name="SaveInputs" type="Button" parent="." unique_id=1667683934]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -113,7 +113,7 @@ text = "SAVE"
 script = ExtResource("1")
 bind = ""
 
-[node name="Defaults" type="Button" parent="."]
+[node name="Defaults" type="Button" parent="." unique_id=335051307]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -132,7 +132,7 @@ text = "DEFAULT"
 script = ExtResource("1")
 bind = ""
 
-[node name="Pause" type="Button" parent="."]
+[node name="Pause" type="Button" parent="." unique_id=1517399471]
 layout_mode = 0
 anchor_left = 0.5
 anchor_top = 0.908
@@ -148,7 +148,7 @@ text = "_"
 script = ExtResource("1")
 bind = "gm_pause"
 
-[node name="Label" type="Label" parent="Pause"]
+[node name="Label" type="Label" parent="Pause" unique_id=660988101]
 layout_mode = 0
 anchor_left = 0.5
 anchor_top = 1.0
@@ -162,7 +162,7 @@ text = "Start"
 horizontal_alignment = 1
 uppercase = true
 
-[node name="Action" type="Button" parent="."]
+[node name="Action" type="Button" parent="." unique_id=558172524]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.916
@@ -178,7 +178,7 @@ focus_previous = NodePath("../Pause")
 text = "_"
 script = ExtResource("1")
 
-[node name="Label" type="Label" parent="Action"]
+[node name="Label" type="Label" parent="Action" unique_id=1262614748]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -194,7 +194,7 @@ grow_vertical = 0
 text = "A"
 horizontal_alignment = 1
 
-[node name="Action2" type="Button" parent="."]
+[node name="Action2" type="Button" parent="." unique_id=1848467110]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.916
@@ -211,7 +211,7 @@ text = "_"
 script = ExtResource("1")
 bind = "gm_action2"
 
-[node name="Label" type="Label" parent="Action2"]
+[node name="Label" type="Label" parent="Action2" unique_id=1914046569]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -227,7 +227,7 @@ grow_vertical = 0
 text = "B"
 horizontal_alignment = 1
 
-[node name="Action3" type="Button" parent="."]
+[node name="Action3" type="Button" parent="." unique_id=1293792008]
 layout_mode = 0
 anchor_left = 0.916
 anchor_top = 0.5
@@ -243,7 +243,7 @@ text = "_"
 script = ExtResource("1")
 bind = "gm_action3"
 
-[node name="Label" type="Label" parent="Action3"]
+[node name="Label" type="Label" parent="Action3" unique_id=3419967]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -259,7 +259,7 @@ grow_vertical = 0
 text = "C"
 horizontal_alignment = 1
 
-[node name="Super" type="Button" parent="."]
+[node name="Super" type="Button" parent="." unique_id=389808866]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.916
@@ -276,7 +276,7 @@ text = "_"
 script = ExtResource("1")
 bind = "gm_super"
 
-[node name="Label" type="Label" parent="Super"]
+[node name="Label" type="Label" parent="Super" unique_id=608785418]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -293,7 +293,7 @@ text = "super"
 horizontal_alignment = 1
 uppercase = true
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="." unique_id=994642063]
 anchors_preset = 0
 anchor_left = 0.024
 anchor_top = 0.25
@@ -304,7 +304,7 @@ offset_top = 7.0
 offset_right = 0.399994
 offset_bottom = -8.00002
 
-[node name="Up" type="Button" parent="Control"]
+[node name="Up" type="Button" parent="Control" unique_id=188591686]
 layout_mode = 0
 anchor_left = 0.5
 anchor_right = 0.5
@@ -317,7 +317,7 @@ text = "_"
 script = ExtResource("1")
 bind = "gm_up"
 
-[node name="Label" type="Label" parent="Control/Up"]
+[node name="Label" type="Label" parent="Control/Up" unique_id=1563244325]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -333,7 +333,7 @@ grow_vertical = 0
 text = "UP"
 horizontal_alignment = 1
 
-[node name="Down" type="Button" parent="Control"]
+[node name="Down" type="Button" parent="Control" unique_id=1020963014]
 layout_mode = 0
 anchor_left = 0.5
 anchor_top = 1.0
@@ -348,7 +348,7 @@ text = "_"
 script = ExtResource("1")
 bind = "gm_down"
 
-[node name="Label" type="Label" parent="Control/Down"]
+[node name="Label" type="Label" parent="Control/Down" unique_id=103232217]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -364,7 +364,7 @@ grow_vertical = 0
 text = "DOWN"
 horizontal_alignment = 1
 
-[node name="Right" type="Button" parent="Control"]
+[node name="Right" type="Button" parent="Control" unique_id=1877396186]
 layout_mode = 0
 anchor_left = 1.0
 anchor_top = 0.5
@@ -379,7 +379,7 @@ text = "_"
 script = ExtResource("1")
 bind = "gm_right"
 
-[node name="Label" type="Label" parent="Control/Right"]
+[node name="Label" type="Label" parent="Control/Right" unique_id=1477861208]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -395,7 +395,7 @@ grow_vertical = 0
 text = "RIGHT"
 horizontal_alignment = 1
 
-[node name="Left" type="Button" parent="Control"]
+[node name="Left" type="Button" parent="Control" unique_id=64370404]
 layout_mode = 0
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -408,7 +408,7 @@ text = "_"
 script = ExtResource("1")
 bind = "gm_left"
 
-[node name="Label" type="Label" parent="Control/Left"]
+[node name="Label" type="Label" parent="Control/Left" unique_id=564467117]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5

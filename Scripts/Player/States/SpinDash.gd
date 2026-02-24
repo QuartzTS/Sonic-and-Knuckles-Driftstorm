@@ -44,9 +44,9 @@ func state_process(delta: float) -> void:
 		
 		var dust = parent.Particle.instantiate()
 		dust.play("DropDash")
-		dust.global_position = parent.global_position+Vector2(-9*parent.direction,2).rotated(parent.rotation)
+		dust.global_position = parent.global_position+Vector2(-9*parent.get_direction_multiplier(),2).rotated(parent.rotation)
 		dust.z_index = dash.z_index
-		dust.scale.x = parent.direction
+		dust.scale.x = parent.get_direction_multiplier()
 		parent.get_parent().add_child(dust)
 		animator.play("roll")
 	
@@ -55,7 +55,7 @@ func state_process(delta: float) -> void:
 
 ## Physics function that the player invokes while this state is active
 ## Override this when creating your state if you need this funcitonality
-func state_physics_process(_delta: float) -> void:
+func state_physics_process(delta: float) -> void:
 	# Gravity
 	if !parent.ground:
 		#parent.set_state(parent.STATES.AIR)

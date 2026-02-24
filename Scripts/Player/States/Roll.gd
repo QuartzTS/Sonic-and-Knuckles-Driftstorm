@@ -1,6 +1,6 @@
 extends PlayerState
 
-func state_process(_delta: float) -> void:
+func state_process(delta: float) -> void:
 	# Player cannot jump unless a ceiling check fails.
 	if parent.any_action_pressed() and !parent.check_for_ceiling():
 		# use parent.action_jump("roll",false) to have jump lock similar to sonic 1-3

@@ -12,7 +12,7 @@ var Particle = preload("res://Entities/Misc/GenericParticle.tscn")
 var big = false
 
 func _ready():
-	if Global.nodeMemory.has(get_path()) and Global.players[0].currentState != PlayerChar.STATES.DEBUG:
+	if Global.nodeMemory.has(get_path()) and Global.players[0].current_state != PlayerChar.STATES.DEBUG:
 		queue_free()
 
 func _process(delta):
@@ -26,7 +26,7 @@ func _process(delta):
 			# make the ring blink at the end of its lifetime
 			if lifetime <= 1.0:
 				visible = !visible
-		elif lifetime <= 0 or (lifetime <= 192.0/60.0 and big)
+		elif lifetime <= 0 or (lifetime <= 192.0/60.0 and big):
 			queue_free()
 	if player:
 		# collect ring

@@ -74,19 +74,21 @@ func _ready() -> void:
 	$Shutter.texture = texture
 	$Shutter.position.y = -texture.get_height() if currently_open else 0
 	_update_areas()
+	#set_process(not Engine.is_editor_hint())
+	#set_physics_process(not Engine.is_editor_hint())
 
 func _process(delta) -> void:
-	if not Engine.is_editor_hint():
-		# move shutter
-		$Shutter.position = $Shutter.position.move_toward(Vector2(0.0, -texture.get_height() if currently_open else 0), delta * 512.0)
-		# disable mask if opened
-		$Mask.disabled = currently_open
+	# move shutter
+	$Shutter.position = $Shutter.position.move_toward(Vector2(0.0, -texture.get_height() if currently_open else 0), delta * 512.0)
+	# disable mask if opened
+	$Mask.disabled = currently_open
 
 func _physics_process(_delta: float) -> void:
-	if $OpenArea.has_overlapping_bodies():
-		currently_open = true
-	elif $CloseArea.has_overlapping_bodies() or $CloseArea2.has_overlapping_bodies():
-		currently_open = false
+	if not Engine.is_editor_hint():
+		if $OpenArea.has_overlapping_bodies():
+			currently_open = true
+		elif $CloseArea.has_overlapping_bodies() or $CloseArea2.has_overlapping_bodies():
+			currently_open = false
 
 # force open and force close is used for switches
 func force_open() -> void:

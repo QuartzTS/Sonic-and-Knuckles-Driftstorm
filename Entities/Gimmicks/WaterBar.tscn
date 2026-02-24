@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://c43isa3fib6s6"]
+[gd_scene format=3 uid="uid://c43isa3fib6s6"]
 
 [ext_resource type="Texture2D" uid="uid://kbe5exva8pfl" path="res://Graphics/Gimmicks/CurrentPole.png" id="1_s3624"]
 [ext_resource type="Script" uid="uid://jdbcdsyh80g5" path="res://Scripts/Gimmicks/WaterBar.gd" id="2_nky22"]
@@ -7,35 +7,35 @@
 [sub_resource type="RectangleShape2D" id="2"]
 size = Vector2(32, 64)
 
-[node name="WaterBar" type="Node2D"]
+[node name="WaterBar" type="Node2D" unique_id=477735896]
 script = ExtResource("2_nky22")
 
-[node name="VerticalBarSpriteMiddle" type="Sprite2D" parent="."]
+[node name="VerticalBarSpriteMiddle" type="Sprite2D" parent="." unique_id=1518365182]
 texture = ExtResource("1_s3624")
 region_enabled = true
 region_rect = Rect2(9, 5, 8, 54)
 
-[node name="VerticalBarSpriteTop" type="Sprite2D" parent="."]
+[node name="VerticalBarSpriteTop" type="Sprite2D" parent="." unique_id=76809211]
 position = Vector2(0, -29.5)
 texture = ExtResource("1_s3624")
 region_enabled = true
 region_rect = Rect2(0, 0, 8, 5)
 
-[node name="VerticalBarSpriteBottom" type="Sprite2D" parent="."]
+[node name="VerticalBarSpriteBottom" type="Sprite2D" parent="." unique_id=1922632829]
 position = Vector2(0, 29.5)
 scale = Vector2(1, 1.143)
 texture = ExtResource("1_s3624")
 region_enabled = true
 region_rect = Rect2(18, 0, 8, 5)
 
-[node name="Grab" type="AudioStreamPlayer" parent="."]
+[node name="Grab" type="AudioStreamPlayer" parent="." unique_id=264944038]
 stream = ExtResource("3_5ecld")
 bus = &"SFX"
 
-[node name="VerticalBarArea" type="Area2D" parent="."]
+[node name="VerticalBarArea" type="Area2D" parent="." unique_id=363558956]
 collision_layer = 0
 collision_mask = 4096
 monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="VerticalBarArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VerticalBarArea" unique_id=148087068]
 shape = SubResource("2")

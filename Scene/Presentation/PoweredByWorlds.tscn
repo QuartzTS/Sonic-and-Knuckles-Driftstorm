@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://c58ontqoxjuti"]
+[gd_scene format=3 uid="uid://c58ontqoxjuti"]
 
 [ext_resource type="FontFile" uid="uid://btb3lh3cpnc6x" path="res://Graphics/Fonts/mid_font.png" id="2_84rl6"]
 [ext_resource type="AudioStream" uid="uid://botxtfwf3ns1j" path="res://Audio/SFX/Misc/SpecialWarp.wav" id="3"]
@@ -43,18 +43,18 @@ _data = {
 &"RESET": SubResource("2")
 }
 
-[node name="PoweredByWorlds" type="Node2D"]
+[node name="PoweredByWorlds" type="Node2D" unique_id=158929372]
 script = ExtResource("6")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1085333585]
 layer = -1
 
-[node name="Back" type="ColorRect" parent="CanvasLayer"]
+[node name="Back" type="ColorRect" parent="CanvasLayer" unique_id=223304867]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Labels" type="Control" parent="CanvasLayer"]
+[node name="Labels" type="Control" parent="CanvasLayer" unique_id=411760703]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -62,7 +62,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PoweredBy" type="Label" parent="CanvasLayer/Labels"]
+[node name="PoweredBy" type="Label" parent="CanvasLayer/Labels" unique_id=54646148]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -76,7 +76,7 @@ text = "POWERED BY"
 horizontal_alignment = 1
 uppercase = true
 
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer" unique_id=1006365195]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -90,24 +90,22 @@ texture = ExtResource("4")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="Cover" type="CanvasLayer" parent="."]
+[node name="Cover" type="CanvasLayer" parent="." unique_id=1590296199]
 layer = 0
 
-[node name="Cover" type="ColorRect" parent="Cover"]
+[node name="Cover" type="ColorRect" parent="Cover" unique_id=542196796]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0, 0, 0, 1)
 
-[node name="Emerald" type="AudioStreamPlayer" parent="."]
+[node name="Emerald" type="AudioStreamPlayer" parent="." unique_id=1245313590]
 stream = ExtResource("5")
 bus = &"SFX"
 
-[node name="Warp" type="AudioStreamPlayer" parent="."]
+[node name="Warp" type="AudioStreamPlayer" parent="." unique_id=1794487866]
 stream = ExtResource("3")
 bus = &"SFX"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_s27jj")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1629790006]
+libraries/ = SubResource("AnimationLibrary_s27jj")

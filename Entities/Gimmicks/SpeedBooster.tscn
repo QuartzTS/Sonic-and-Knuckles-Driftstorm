@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bqj1smfkc5m7n"]
+[gd_scene format=3 uid="uid://bqj1smfkc5m7n"]
 
 [ext_resource type="Script" uid="uid://bs5fd2r1pf85o" path="res://Scripts/Gimmicks/SpeedBooster.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://r7ggpq8j3dr1" path="res://Graphics/Gimmicks/speed_booster.png" id="2"]
@@ -25,27 +25,27 @@ animations = [{
 "speed": 30.0
 }]
 
-[node name="SpeedBooster" type="Area2D"]
+[node name="SpeedBooster" type="Area2D" unique_id=897429575]
 collision_layer = 0
 collision_mask = 4096
 script = ExtResource("1")
 
-[node name="HitBox" type="CollisionShape2D" parent="."]
+[node name="HitBox" type="CollisionShape2D" parent="." unique_id=401026532]
 shape = SubResource("1")
 
-[node name="Booster" type="Sprite2D" parent="."]
+[node name="Booster" type="Sprite2D" parent="." unique_id=1729213170]
 z_index = 10
 position = Vector2(0, -4)
 texture = ExtResource("2")
 vframes = 2
 
-[node name="ShineAnimator" type="AnimatedSprite2D" parent="Booster"]
+[node name="ShineAnimator" type="AnimatedSprite2D" parent="Booster" unique_id=1057663934]
 sprite_frames = SubResource("3")
 autoplay = "default"
 frame = 1
 frame_progress = 0.382781
 
-[node name="sfxSpring" type="AudioStreamPlayer" parent="."]
+[node name="sfxSpring" type="AudioStreamPlayer" parent="." unique_id=16533484]
 stream = ExtResource("3")
 bus = &"SFX"
 

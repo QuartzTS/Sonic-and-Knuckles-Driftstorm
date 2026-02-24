@@ -9,7 +9,7 @@
 [ext_resource type="TileSet" uid="uid://uplqwsi0o4gi" path="res://Tileset/Levels/EHZ_HTZ_Tiles.tres" id="4_2qtjs"]
 [ext_resource type="PackedScene" uid="uid://dggjdwwkl527b" path="res://Entities/Items/Ring.tscn" id="5_qk7kl"]
 [ext_resource type="PackedScene" uid="uid://bg66ofhfkxsx6" path="res://Entities/Gimmicks/Bridge.tscn" id="8_ilja7"]
-[ext_resource type="Texture2D" uid="uid://cq00b7dbfimt7" path="res://Graphics/Gimmicks/bridge_log_ehz.png" id="9_nlxt1"]
+[ext_resource type="Texture2D" uid="uid://ccdojfkmox7qp" path="res://Graphics/Gimmicks/bridge_log_ehz.png" id="9_nlxt1"]
 [ext_resource type="PackedScene" uid="uid://dkn7hhll7o4or" path="res://Entities/MainObjects/LayerSwitcher.tscn" id="10_7wbk5"]
 [ext_resource type="PackedScene" uid="uid://4q0hpddgto2k" path="res://Entities/Gimmicks/Spring.tscn" id="11_5v5rq"]
 [ext_resource type="PackedScene" uid="uid://fn82q8rojkjl" path="res://Entities/Gimmicks/CorkscrewLoop.tscn" id="11_ff84k"]
@@ -28,7 +28,6 @@ defaultTopBoundry = 0
 defaultRightBoundry = 11264
 defaultBottomBoundry = 1024
 player = NodePath("Player")
-spawn_position = Vector2(95, 655)
 
 [node name="DWDebugTool" parent="." unique_id=302662726 instance=ExtResource("3_ne0j7")]
 

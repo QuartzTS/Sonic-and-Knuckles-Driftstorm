@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cvmvjmj7qlrnp"]
+[gd_scene format=3 uid="uid://cvmvjmj7qlrnp"]
 
 [ext_resource type="Texture2D" uid="uid://dxb8f0gyty7av" path="res://Graphics/Enemies/buzzBomberProjectile.png" id="1"]
 [ext_resource type="Script" uid="uid://suh3qf15mqyp" path="res://Scripts/Enemies/EnemyProjectileBase.gd" id="2"]
@@ -6,29 +6,29 @@
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(4, 4)
 
-[node name="EnemyProjectileBase" type="CharacterBody2D"]
+[node name="EnemyProjectileBase" type="CharacterBody2D" unique_id=566030320]
 collision_layer = 16384
 collision_mask = 0
 script = ExtResource("2")
 
-[node name="CollissionMask" type="CollisionShape2D" parent="."]
+[node name="CollissionMask" type="CollisionShape2D" parent="." unique_id=1074734017]
 shape = SubResource("1")
 
-[node name="DamageArea" type="Area2D" parent="."]
+[node name="DamageArea" type="Area2D" parent="." unique_id=684370844]
 collision_layer = 0
 collision_mask = 528384
 
-[node name="HitBox" type="CollisionShape2D" parent="DamageArea"]
+[node name="HitBox" type="CollisionShape2D" parent="DamageArea" unique_id=663780633]
 modulate = Color(1, 0, 0, 1)
 shape = SubResource("1")
 
-[node name="projectile" type="Sprite2D" parent="."]
+[node name="projectile" type="Sprite2D" parent="." unique_id=120802306]
 texture = ExtResource("1")
 hframes = 2
 vframes = 2
 frame = 2
 
-[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=1097037956]
 scale = Vector2(2.1, 2.1)
 
 [connection signal="area_entered" from="DamageArea" to="." method="_on_DamageArea_area_entered"]

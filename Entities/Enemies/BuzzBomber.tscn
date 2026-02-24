@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://ds7bmlo2s41ji"]
+[gd_scene format=3 uid="uid://ds7bmlo2s41ji"]
 
 [ext_resource type="Texture2D" uid="uid://c5mhr5w1s4w8y" path="res://Graphics/Enemies/buzzBomber.png" id="1"]
 [ext_resource type="Script" uid="uid://v3xhbil6d6j0" path="res://Scripts/Enemies/BuzzBomber.gd" id="2"]
@@ -65,58 +65,58 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="8"]
 size = Vector2(80, 192)
 
-[node name="BuzzBomber" type="CharacterBody2D" groups=["Enemy"]]
+[node name="BuzzBomber" type="CharacterBody2D" unique_id=1022634889 groups=["Enemy"]]
 collision_layer = 16384
 collision_mask = 0
 script = ExtResource("2")
 flyDirection = 0
 speed = 192
 
-[node name="CollissionMask" type="CollisionShape2D" parent="."]
+[node name="CollissionMask" type="CollisionShape2D" parent="." unique_id=2038843393]
 position = Vector2(0, -3)
 shape = SubResource("1")
 
-[node name="DamageArea" type="Area2D" parent="."]
+[node name="DamageArea" type="Area2D" parent="." unique_id=998778992]
 collision_layer = 0
 collision_mask = 8916992
 
-[node name="HitBox" type="CollisionShape2D" parent="DamageArea"]
+[node name="HitBox" type="CollisionShape2D" parent="DamageArea" unique_id=564898224]
 modulate = Color(1, 0, 0, 1)
 position = Vector2(0, -3)
 shape = SubResource("1")
 
-[node name="Sprite2D" type="Node2D" parent="."]
+[node name="Sprite2D" type="Node2D" parent="." unique_id=1611740345]
 
-[node name="Wings" type="AnimatedSprite2D" parent="Sprite2D"]
+[node name="Wings" type="AnimatedSprite2D" parent="Sprite2D" unique_id=132273878]
 sprite_frames = SubResource("7")
 animation = &"wing"
 autoplay = "wing"
 frame_progress = 0.24432
 
-[node name="BuzzBomber" type="Sprite2D" parent="Sprite2D"]
+[node name="BuzzBomber" type="Sprite2D" parent="Sprite2D" unique_id=1324587493]
 texture = ExtResource("1")
 hframes = 2
 vframes = 3
 
-[node name="Fire" type="AnimatedSprite2D" parent="Sprite2D"]
+[node name="Fire" type="AnimatedSprite2D" parent="Sprite2D" unique_id=185959609]
 sprite_frames = SubResource("7")
 autoplay = "default"
 frame_progress = 0.33304
 
-[node name="PlayerCheck" type="Area2D" parent="Sprite2D"]
+[node name="PlayerCheck" type="Area2D" parent="Sprite2D" unique_id=1798342768]
 z_index = -1
 collision_layer = 0
 collision_mask = 4096
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/PlayerCheck"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/PlayerCheck" unique_id=1643531509]
 modulate = Color(1, 1, 1, 0.352941)
 position = Vector2(-40, 86)
 shape = SubResource("8")
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="." unique_id=1211114490]
 scale = Vector2(2.7, 2.7)
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." unique_id=1075536594]
 
 [connection signal="area_entered" from="DamageArea" to="." method="_on_DamageArea_area_entered"]
 [connection signal="body_entered" from="DamageArea" to="." method="_on_body_entered"]

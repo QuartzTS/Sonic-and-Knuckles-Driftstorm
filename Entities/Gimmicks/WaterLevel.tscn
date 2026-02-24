@@ -1,12 +1,12 @@
-[gd_scene load_steps=3 format=3 uid="uid://bnn5io8fk2i4h"]
+[gd_scene format=3 uid="uid://bnn5io8fk2i4h"]
 
 [ext_resource type="Script" uid="uid://dgephgy1p5xg7" path="res://Scripts/Gimmicks/WaterLevel.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://bn7jec7ob5rft" path="res://Graphics/Gimmicks/WaterSurface1.png" id="2"]
 
-[node name="WaterLevel" type="Node2D"]
+[node name="WaterLevel" type="Node2D" unique_id=80543089]
 script = ExtResource("1")
 
-[node name="Water" type="Sprite2D" parent="."]
+[node name="Water" type="Sprite2D" parent="." unique_id=1487403351]
 z_index = 15
 texture = ExtResource("2")
 region_enabled = true

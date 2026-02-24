@@ -28,7 +28,7 @@ func _physics_process(delta):
 			# force slide state
 			if (i.get_state() != PlayerChar.STATES.ROLL or
 					animator.current_animation != "slide" or
-					i.get_state != PlayerChar.STATES.DEBUG):
+					i.get_state() != PlayerChar.STATES.DEBUG):
 				i.set_state(i.STATES.ROLL)
 				animator.play("slide")
 

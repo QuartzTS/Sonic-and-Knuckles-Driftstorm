@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://dl60ab8cdu0iq"]
+[gd_scene format=3 uid="uid://dl60ab8cdu0iq"]
 
 [ext_resource type="Texture2D" uid="uid://cf4j1ed0nh7oq" path="res://Graphics/Items/ChaosEmeralds.png" id="1"]
 [ext_resource type="AudioStream" uid="uid://cy0i0dbqpb5eu" path="res://Audio/SFX/Misc/Emerald.wav" id="2"]
@@ -238,18 +238,18 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="SpecialStageResults" type="Node2D"]
+[node name="SpecialStageResults" type="Node2D" unique_id=723711543]
 script = ExtResource("3")
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=453531159]
 layer = -1
 
-[node name="Back" type="ColorRect" parent="HUD"]
+[node name="Back" type="ColorRect" parent="HUD" unique_id=570731046]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Label" type="Label" parent="HUD"]
+[node name="Label" type="Label" parent="HUD" unique_id=969960298]
 modulate = Color(1, 1, 0, 1)
 anchors_preset = 8
 anchor_left = 0.5
@@ -269,7 +269,7 @@ Press Action 2(X) to Lose"
 horizontal_alignment = 1
 uppercase = true
 
-[node name="Stage" type="Label" parent="HUD"]
+[node name="Stage" type="Label" parent="HUD" unique_id=1584267766]
 modulate = Color(1, 1, 0, 1)
 anchors_preset = 7
 anchor_left = 0.5
@@ -283,7 +283,7 @@ text = "Stage 1"
 horizontal_alignment = 1
 uppercase = true
 
-[node name="ColorRect" type="ColorRect" parent="HUD"]
+[node name="ColorRect" type="ColorRect" parent="HUD" unique_id=1804076466]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -297,7 +297,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.768627, 0.768627, 0.768627, 1)
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HUD/ColorRect"]
+[node name="HBoxContainer" type="HBoxContainer" parent="HUD/ColorRect" unique_id=1966007499]
 layout_mode = 0
 anchor_top = 0.5
 anchor_right = 1.0
@@ -307,69 +307,69 @@ offset_bottom = -0.5
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="Red" type="Control" parent="HUD/ColorRect/HBoxContainer"]
+[node name="Red" type="Control" parent="HUD/ColorRect/HBoxContainer" unique_id=1507727336]
 layout_mode = 2
 
-[node name="RedEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Red"]
+[node name="RedEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Red" unique_id=547886676]
 sprite_frames = SubResource("29")
 animation = &"red"
 autoplay = "red"
 frame_progress = 0.52311516
 
-[node name="Blue" type="Control" parent="HUD/ColorRect/HBoxContainer"]
+[node name="Blue" type="Control" parent="HUD/ColorRect/HBoxContainer" unique_id=120500823]
 layout_mode = 2
 
-[node name="BlueEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Blue"]
+[node name="BlueEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Blue" unique_id=1214142625]
 sprite_frames = SubResource("29")
 animation = &"blue"
 autoplay = "blue"
 frame_progress = 0.22641274
 
-[node name="Green" type="Control" parent="HUD/ColorRect/HBoxContainer"]
+[node name="Green" type="Control" parent="HUD/ColorRect/HBoxContainer" unique_id=1595898109]
 layout_mode = 2
 
-[node name="GreenEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Green"]
+[node name="GreenEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Green" unique_id=1831748133]
 sprite_frames = SubResource("29")
 animation = &"green"
 autoplay = "green"
 frame_progress = 0.37361175
 
-[node name="Yellow" type="Control" parent="HUD/ColorRect/HBoxContainer"]
+[node name="Yellow" type="Control" parent="HUD/ColorRect/HBoxContainer" unique_id=512240564]
 layout_mode = 2
 
-[node name="YellowEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Yellow"]
+[node name="YellowEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Yellow" unique_id=1592296153]
 sprite_frames = SubResource("29")
 animation = &"yellow"
 autoplay = "yellow"
 frame_progress = 0.7933053
 
-[node name="Cyan" type="Control" parent="HUD/ColorRect/HBoxContainer"]
+[node name="Cyan" type="Control" parent="HUD/ColorRect/HBoxContainer" unique_id=86174578]
 layout_mode = 2
 
-[node name="CyanEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Cyan"]
+[node name="CyanEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Cyan" unique_id=1676184532]
 sprite_frames = SubResource("29")
 animation = &"cyan"
 autoplay = "cyan"
 frame_progress = 0.95809907
 
-[node name="Silver" type="Control" parent="HUD/ColorRect/HBoxContainer"]
+[node name="Silver" type="Control" parent="HUD/ColorRect/HBoxContainer" unique_id=1173218839]
 layout_mode = 2
 
-[node name="SilverEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Silver"]
+[node name="SilverEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Silver" unique_id=450843848]
 sprite_frames = SubResource("29")
 animation = &"silver"
 autoplay = "silver"
 frame_progress = 0.84668833
 
-[node name="Purple" type="Control" parent="HUD/ColorRect/HBoxContainer"]
+[node name="Purple" type="Control" parent="HUD/ColorRect/HBoxContainer" unique_id=1605224072]
 layout_mode = 2
 
-[node name="PurpleEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Purple"]
+[node name="PurpleEmerald" type="AnimatedSprite2D" parent="HUD/ColorRect/HBoxContainer/Purple" unique_id=1751699109]
 sprite_frames = SubResource("29")
 animation = &"purple"
 autoplay = "purple"
 frame_progress = 0.5527694
 
-[node name="Emerald" type="AudioStreamPlayer" parent="."]
+[node name="Emerald" type="AudioStreamPlayer" parent="." unique_id=1324386004]
 stream = ExtResource("2")
 bus = &"SFX"

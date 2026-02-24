@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://cejf7f3r45h0c"]
+[gd_scene format=3 uid="uid://cejf7f3r45h0c"]
 
 [ext_resource type="Texture2D" uid="uid://ceangqioyo4uf" path="res://Graphics/Items/air_bubbles.png" id="1"]
 [ext_resource type="Script" uid="uid://ryjidgo4shlc" path="res://Scripts/Gimmicks/BubbleGenerator.gd" id="2"]
@@ -32,15 +32,15 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="BubbleGenerator" type="Node2D"]
+[node name="BubbleGenerator" type="Node2D" unique_id=982464669]
 script = ExtResource("2")
 
-[node name="Bubbles" type="AnimatedSprite2D" parent="."]
+[node name="Bubbles" type="AnimatedSprite2D" parent="." unique_id=364005451]
 z_index = 6
 sprite_frames = SubResource("4")
 autoplay = "default"
 frame = 2
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="." unique_id=1013989335]
 position = Vector2(0, -51)
 scale = Vector2(1, 6.1)

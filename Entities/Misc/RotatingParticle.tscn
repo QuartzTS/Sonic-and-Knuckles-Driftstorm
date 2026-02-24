@@ -1,7 +1,7 @@
-[gd_scene load_steps=66 format=3 uid="uid://cbqdlnlxkmxi5"]
+[gd_scene format=3 uid="uid://cbqdlnlxkmxi5"]
 
 [ext_resource type="Texture2D" uid="uid://bihgasvpr4jyb" path="res://Graphics/Items/invincible_stars.png" id="1"]
-[ext_resource type="Script" path="res://Scripts/Misc/RotatingParticle.gd" id="2"]
+[ext_resource type="Script" uid="uid://yueq0qw1phw1" path="res://Scripts/Misc/RotatingParticle.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://bu6a2evw5s7ne" path="res://Graphics/Misc/water_splash.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://bu207ncbrfjm3" path="res://Graphics/Misc/skid_dust.png" id="4"]
 [ext_resource type="Texture2D" uid="uid://7hwanyy5pso6" path="res://Graphics/Misc/SuperSparkles.png" id="5"]
@@ -507,9 +507,9 @@ animations = [{
 "speed": 30.0
 }]
 
-[node name="RotatingParticle" type="Node2D"]
+[node name="RotatingParticle" type="Node2D" unique_id=909511178]
 
-[node name="GenericParticle" type="AnimatedSprite2D" parent="."]
+[node name="GenericParticle" type="AnimatedSprite2D" parent="." unique_id=611837872]
 position = Vector2(0, -16)
 sprite_frames = SubResource("157")
 animation = &"DropDash"

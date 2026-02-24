@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dwybbnboecmkw"]
+[gd_scene format=3 uid="uid://dwybbnboecmkw"]
 
 [ext_resource type="Script" uid="uid://bems5a47xm1wj" path="res://Scripts/Objects/Bumper.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://twldqgya2vgk" path="res://Graphics/Obstacles/bumpers.png" id="2"]
@@ -36,20 +36,20 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="Bumper" type="StaticBody2D"]
+[node name="Bumper" type="StaticBody2D" unique_id=1354354854]
 collision_layer = 65536
 collision_mask = 8192
 script = ExtResource("1")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2012970991]
 modulate = Color(0.968627, 0, 1, 1)
 shape = SubResource("5")
 
-[node name="Bumper" type="AnimatedSprite2D" parent="."]
+[node name="Bumper" type="AnimatedSprite2D" parent="." unique_id=451198894]
 sprite_frames = SubResource("4")
 frame = 2
 frame_progress = 1.0
 
-[node name="BumperSFX" type="AudioStreamPlayer" parent="."]
+[node name="BumperSFX" type="AudioStreamPlayer" parent="." unique_id=83786163]
 stream = ExtResource("3")
 bus = &"SFX"

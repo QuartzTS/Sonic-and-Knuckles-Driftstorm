@@ -93,7 +93,7 @@ func disconnect_player(player: PlayerChar, do_launch: bool = true):
 	temp_lock_gimmick(player)
 
 ## Disconnects either on animation or when the player attempts to jump off
-func player_process(player : PlayerChar, _delta : float):
+func player_process(player : PlayerChar, delta : float):
 	if player.get_avatar().get_animator().get_loops() >= rotations:
 		disconnect_player(player, true)
 	
@@ -102,7 +102,7 @@ func player_process(player : PlayerChar, _delta : float):
 		disconnect_player(player, false)
 		var sprite: Sprite2D = player.sprite
 		player.position.x += (sprite.offset.x / 2.0) # TODO This gimmick should stop faking x position via offsets
-		player.action_jump("roll",true, false)
+		player.action_jump(delta,"roll",true, false)
 
 ## Checks if the player should grab the bar
 func check_grab(player: PlayerChar) -> bool:

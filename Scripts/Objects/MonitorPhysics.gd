@@ -40,9 +40,9 @@ func physics_collision(body, hitVector):
 		# check if player is not an ai or spindashing or drilldiving
 		# if true then destroy
 		elif body.movement.y != 0 and !body.ground and (body.playerControl == 1 or body.playerControl == -1):
-			if body.currentState != body.STATES.SPINDASH and !body.get_collision_layer_value(24):
+			if body.get_state() != PlayerChar.STATES.SPINDASH and !body.get_collision_layer_value(24):
 				body.movement.y = -abs(body.movement.y)
-				if body.currentState == body.STATES.ROLL:
+				if body.get_state() == body.STATES.ROLL:
 					body.movement.y = 0
 				body.ground = false
 				parent.playerTouch = body

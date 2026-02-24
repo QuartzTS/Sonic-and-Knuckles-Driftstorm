@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://c1n8wnllp8pk2"]
+[gd_scene format=3 uid="uid://c1n8wnllp8pk2"]
 
 [ext_resource type="AudioStream" uid="uid://botxtfwf3ns1j" path="res://Audio/SFX/Misc/SpecialWarp.wav" id="1"]
 [ext_resource type="Texture2D" uid="uid://ud30wfcj20xf" path="res://Graphics/Items/GiantRing.png" id="2"]
@@ -159,32 +159,32 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(32, 32)
 
-[node name="GiantRing" type="Node2D"]
+[node name="GiantRing" type="Node2D" unique_id=2009555616]
 z_index = 1
 script = ExtResource("3")
 
-[node name="Ring" type="AnimatedSprite2D" parent="."]
+[node name="Ring" type="AnimatedSprite2D" parent="." unique_id=2022795663]
 z_index = 4
 sprite_frames = SubResource("14")
 frame = 2
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="Hitbox" type="Area2D" parent="." unique_id=1146206176]
 collision_layer = 0
 collision_mask = 4096
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=1353367414]
 modulate = Color(1, 0, 0.819608, 1)
 shape = SubResource("1")
 
-[node name="RingEnter" type="AudioStreamPlayer" parent="."]
+[node name="RingEnter" type="AudioStreamPlayer" parent="." unique_id=1309651113]
 stream = ExtResource("4")
 bus = &"SFX"
 
-[node name="Warp" type="AudioStreamPlayer" parent="."]
+[node name="Warp" type="AudioStreamPlayer" parent="." unique_id=469406282]
 stream = ExtResource("1")
 bus = &"SFX"
 
-[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=1875887967]
 scale = Vector2(3.2, 3.2)
 
 [connection signal="body_entered" from="Hitbox" to="." method="_on_Hitbox_body_entered"]

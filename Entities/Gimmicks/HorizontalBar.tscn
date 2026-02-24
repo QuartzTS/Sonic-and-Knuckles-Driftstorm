@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://urapmknlu0s5"]
+[gd_scene format=3 uid="uid://urapmknlu0s5"]
 
 [ext_resource type="Script" uid="uid://bbwsb3jblouwb" path="res://Scripts/Gimmicks/HorizontalBar.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://d1hcoy1ga1m5o" path="res://Graphics/Gimmicks/HorizontalBar.png" id="1_5txwq"]
@@ -10,48 +10,48 @@ size = Vector2(37, 8)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0e4kp"]
 size = Vector2(45, 40)
 
-[node name="HorizontalBar" type="Node2D"]
+[node name="HorizontalBar" type="Node2D" unique_id=1136246928]
 script = ExtResource("1")
 spriteTexture = ExtResource("1_5txwq")
 width = 65
 
-[node name="Left_Anchor" type="Sprite2D" parent="."]
+[node name="Left_Anchor" type="Sprite2D" parent="." unique_id=72273296]
 texture = ExtResource("1_5txwq")
 centered = false
 region_enabled = true
 region_rect = Rect2(0, 8, 6, 8)
 
-[node name="Main_Body" type="Sprite2D" parent="."]
+[node name="Main_Body" type="Sprite2D" parent="." unique_id=43672358]
 position = Vector2(6, 0)
 texture = ExtResource("1_5txwq")
 centered = false
 region_enabled = true
 region_rect = Rect2(0, 0, 53, 8)
 
-[node name="Right_Anchor" type="Sprite2D" parent="."]
+[node name="Right_Anchor" type="Sprite2D" parent="." unique_id=1278337377]
 position = Vector2(59, 0)
 texture = ExtResource("1_5txwq")
 centered = false
 region_enabled = true
 region_rect = Rect2(0, 16, 6, 8)
 
-[node name="Bar_Area" type="Area2D" parent="."]
+[node name="Bar_Area" type="Area2D" parent="." unique_id=644540444]
 collision_layer = 0
 collision_mask = 4096
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Bar_Area"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bar_Area" unique_id=549796629]
 position = Vector2(33, 3)
 shape = SubResource("RectangleShape2D_8bnge")
 
-[node name="Bar_Area_Exit" type="Area2D" parent="."]
+[node name="Bar_Area_Exit" type="Area2D" parent="." unique_id=1400495347]
 collision_layer = 0
 collision_mask = 4096
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Bar_Area_Exit"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bar_Area_Exit" unique_id=1906650232]
 position = Vector2(33, 3)
 shape = SubResource("RectangleShape2D_0e4kp")
 
-[node name="Grab_Sound" type="AudioStreamPlayer" parent="."]
+[node name="Grab_Sound" type="AudioStreamPlayer" parent="." unique_id=773759818]
 stream = ExtResource("3_u5fuj")
 bus = &"SFX"
 

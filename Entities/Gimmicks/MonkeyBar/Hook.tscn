@@ -1,17 +1,17 @@
-[gd_scene load_steps=5 format=3 uid="uid://xpsg8eoppqbo"]
+[gd_scene format=3 uid="uid://xpsg8eoppqbo"]
 
 [ext_resource type="PackedScene" uid="uid://kobbay7ehwah" path="res://Entities/Gimmicks/MonkeyBar/RetractibleChain.tscn" id="1_opmfd"]
 [ext_resource type="Texture2D" uid="uid://dgskksiri8iq7" path="res://Graphics/Gimmicks/FFZHookLink.png" id="2_gxa7o"]
 [ext_resource type="PackedScene" uid="uid://btna3kqcoupda" path="res://Entities/Gimmicks/MonkeyBar/MonkeyBar.tscn" id="3_desd7"]
 [ext_resource type="Texture2D" uid="uid://dm2px67qgxkn8" path="res://Graphics/Gimmicks/FFZHook.png" id="4_mn75u"]
 
-[node name="FFZHook" type="Node2D"]
+[node name="FFZHook" type="Node2D" unique_id=1606023879]
 
-[node name="RetractibleChain" parent="." node_paths=PackedStringArray("end_of_chain") instance=ExtResource("1_opmfd")]
+[node name="RetractibleChain" parent="." unique_id=1358732795 node_paths=PackedStringArray("end_of_chain") instance=ExtResource("1_opmfd")]
 link_texture = ExtResource("2_gxa7o")
 end_of_chain = NodePath("../MonkeyBar")
 
-[node name="MonkeyBar" parent="." instance=ExtResource("3_desd7")]
+[node name="MonkeyBar" parent="." unique_id=2142146744 instance=ExtResource("3_desd7")]
 position = Vector2(0, 100)
 
 [node name="MonkeyBarSprite" parent="MonkeyBar" index="0"]

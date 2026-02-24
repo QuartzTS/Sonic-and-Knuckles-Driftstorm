@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bscx6vlcpedji"]
+[gd_scene format=3 uid="uid://bscx6vlcpedji"]
 
 [ext_resource type="Script" uid="uid://df5l06nm4mglj" path="res://Tools/Graphics/AnimatedTextureDrawer.gd" id="1"]
 
-[node name="AnimatedTextureDrawer" type="Node2D"]
+[node name="AnimatedTextureDrawer" type="Node2D" unique_id=432662345]
 script = ExtResource("1")

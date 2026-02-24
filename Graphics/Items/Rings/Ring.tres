@@ -1,4 +1,4 @@
-[gd_resource type="AnimatedTexture" load_steps=5 format=3 uid="uid://dt51ojxk80oqh"]
+[gd_resource type="AnimatedTexture" format=3 uid="uid://dt51ojxk80oqh"]
 
 [ext_resource type="Texture2D" uid="uid://dxdognx60rps2" path="res://Graphics/Items/Rings/Ring4.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://cpcs473co21gu" path="res://Graphics/Items/Rings/Ring3.png" id="2"]

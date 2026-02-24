@@ -45,7 +45,7 @@ func state_exit():
 	parent.reflective = false
 
 
-func state_process(_delta: float) -> void:
+func state_process(delta: float) -> void:
 	var animator: PlayerCharAnimationPlayer = parent.get_avatar().get_animator()
 
 	# Jump and Spindash cancel

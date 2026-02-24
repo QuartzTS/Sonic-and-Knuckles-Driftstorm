@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://beebd7dn4ioe1"]
+[gd_scene format=3 uid="uid://beebd7dn4ioe1"]
 
 [ext_resource type="Script" uid="uid://dguca80wgl1ol" path="res://Scripts/Gimmicks/WindCurrent.gd" id="1_jo0wr"]
 [ext_resource type="Texture2D" uid="uid://c31kq7jrr61gd" path="res://Graphics/EditorUI/WaterPath.png" id="2"]
@@ -6,16 +6,16 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gjva2"]
 size = Vector2(16, 16)
 
-[node name="WindCurrent" type="Area2D"]
+[node name="WindCurrent" type="Area2D" unique_id=1707354551]
 collision_layer = 0
 collision_mask = 4096
 script = ExtResource("1_jo0wr")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1160845762]
 position = Vector2(8, 0)
 shape = SubResource("RectangleShape2D_gjva2")
 
-[node name="WaterPath" type="Sprite2D" parent="."]
+[node name="WaterPath" type="Sprite2D" parent="." unique_id=377890032]
 visible = false
 modulate = Color(1, 1, 1, 0.156863)
 position = Vector2(8, 0)

@@ -51,7 +51,7 @@ func state_process(delta: float) -> void:
 	if parent.any_action_pressed():
 		if abs(parent.movement.x) <= 1*60 and parent.inputs[parent.INPUTS.YINPUT] > 0:
 			parent.movement = Vector2.ZERO
-			parent.animator.play("spinDash")
+			animator.play("spinDash")
 			parent.sfx[2].play()
 			parent.sfx[2].pitch_scale = 1
 			parent.spindashPower = 0
@@ -62,16 +62,16 @@ func state_process(delta: float) -> void:
 			# in case DW puts a character in the NORMAL state while they are airborne again.
 			if !parent.check_for_ceiling() and parent.is_on_ground():
 				# reset animations
-				parent.animator.play("RESET")
+				animator.play("RESET")
 				parent.action_jump(delta)
-		return null
+		return
 	
 	if parent.is_on_ground() and !skid:
 		if parent.movement.x == 0 and parent.inputs[parent.INPUTS.XINPUT] == 0:
 			if parent.inputs[parent.INPUTS.YINPUT] > 0:
 				lookTimer = max(0,lookTimer+delta*0.5)
 				if parent.lastActiveAnimation != "crouch":
-					parent.animator.play("crouch")
+					animator.play("crouch")
 			elif parent.inputs[parent.INPUTS.YINPUT] < 0:
 				lookTimer = min(0,lookTimer-delta*0.5)
 				if parent.lastActiveAnimation != "lookUp":
@@ -169,11 +169,11 @@ func state_process(delta: float) -> void:
 								animator.play("edge1")
 					
 		elif sign(parent.pushingWall) == sign(parent.movement.x) and parent.pushingWall != 0:
-			parent.animator.play("push")
+			animator.play("push")
 		elif abs(parent.movement.x) < 6*60:
-			parent.animator.play("walk")
+			animator.play("walk")
 		elif abs(parent.movement.x) < 10*60:
-			parent.animator.play("run")
+			animator.play("run")
 		else:
 			animator.play("peelOut")
 	

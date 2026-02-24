@@ -1,17 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://c1ldunfxhq0he"]
+[gd_scene format=3 uid="uid://c1ldunfxhq0he"]
 
 [ext_resource type="Script" uid="uid://dpm3rxxmi3lgo" path="res://Scripts/Objects/ForceAngleSides.gd" id="1"]
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(64, 64)
 
-[node name="ForceAngleSides" type="Area2D"]
+[node name="ForceAngleSides" type="Area2D" unique_id=1305119620]
 z_index = 15
 collision_layer = 0
 collision_mask = 4096
 script = ExtResource("1")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=798162830]
 modulate = Color(1, 0.909804, 0.160784, 0.462745)
 shape = SubResource("1")
 

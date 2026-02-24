@@ -17,10 +17,12 @@ extends Node2D
 var selected = false
 
 const characters: Array[Dictionary] = [
+	{ label="Sonic and Knuckles", char1=Global.CHARACTERS.SONIC,    char2=Global.CHARACTERS.KNUCKLES },
 	{ label="Sonic and Tails", char1=Global.CHARACTERS.SONIC,    char2=Global.CHARACTERS.TAILS },
 	{ label="Sonic",           char1=Global.CHARACTERS.SONIC,    char2=Global.CHARACTERS.NONE },
-	{ label="Tails",           char1=Global.CHARACTERS.TAILS,    char2=Global.CHARACTERS.NONE },
 	{ label="Knuckles",        char1=Global.CHARACTERS.KNUCKLES, char2=Global.CHARACTERS.NONE },
+	{ label="Tails and Amy", char1=Global.CHARACTERS.TAILS,    char2=Global.CHARACTERS.AMY },
+	{ label="Tails",           char1=Global.CHARACTERS.TAILS,    char2=Global.CHARACTERS.NONE },
 	{ label="Amy",             char1=Global.CHARACTERS.AMY,      char2=Global.CHARACTERS.NONE },
 	{ label="Shadow",          char1=Global.CHARACTERS.SHADOW,   char2=Global.CHARACTERS.NONE },
 ]

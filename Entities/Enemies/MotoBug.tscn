@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://cqcgjcw101xxo"]
+[gd_scene format=3 uid="uid://cqcgjcw101xxo"]
 
 [ext_resource type="Texture2D" uid="uid://b2qm01hytxx4d" path="res://Graphics/Enemies/Motobug.png" id="1"]
 [ext_resource type="Script" uid="uid://b7a8cw1wlpkes" path="res://Scripts/Enemies/MotoBug.gd" id="2"]
@@ -9,34 +9,34 @@ size = Vector2(16, 28)
 [sub_resource type="RectangleShape2D" id="2"]
 size = Vector2(40, 32)
 
-[node name="Motobug" type="CharacterBody2D" groups=["Enemy"]]
+[node name="Motobug" type="CharacterBody2D" unique_id=1968312373 groups=["Enemy"]]
 collision_layer = 16384
 collision_mask = 15
 script = ExtResource("2")
 
-[node name="CollissionMask" type="CollisionShape2D" parent="."]
+[node name="CollissionMask" type="CollisionShape2D" parent="." unique_id=1677547727]
 shape = SubResource("1")
 
-[node name="DamageArea" type="Area2D" parent="."]
+[node name="DamageArea" type="Area2D" parent="." unique_id=1694184873]
 collision_layer = 0
 collision_mask = 8916992
 
-[node name="HitBox" type="CollisionShape2D" parent="DamageArea"]
+[node name="HitBox" type="CollisionShape2D" parent="DamageArea" unique_id=258918549]
 modulate = Color(1, 0, 0, 1)
 shape = SubResource("2")
 
-[node name="Motobug" type="Sprite2D" parent="."]
+[node name="Motobug" type="Sprite2D" parent="." unique_id=660957964]
 position = Vector2(0, 1)
 texture = ExtResource("1")
 hframes = 2
 vframes = 2
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="." unique_id=2019421448]
 z_index = -100
 position = Vector2(-1.90735e-06, -1.90735e-06)
 scale = Vector2(3.2, 3.2)
 
-[node name="FloorCheck" type="RayCast2D" parent="."]
+[node name="FloorCheck" type="RayCast2D" parent="." unique_id=1875691647]
 position = Vector2(-8, 14)
 target_position = Vector2(0, 14)
 

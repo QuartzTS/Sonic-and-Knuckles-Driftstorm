@@ -44,7 +44,7 @@ func _process(_delta):
 		$Mask.scale = size
 		queue_redraw()
 	else:
-		visible = Global.players[0].currentState == PlayerChar.STATES.DEBUG
+		visible = Global.players[0].get_state() == PlayerChar.STATES.DEBUG
 
 func _draw():
 	# draw texture based on size, note this is purely for the editor

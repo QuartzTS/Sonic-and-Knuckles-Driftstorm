@@ -8,7 +8,7 @@ enum BREAK_STATE {BREAKABLE, DRILLDIVE_ONLY, UNBREAKABLE}
 
 func physics_collision(body, hitVector):
 	if hitVector == Vector2.DOWN and body.get_collision_layer_value(20):
-		if break_state == BREAK_STATE.BREAKABLE or (break_state == BREAK_STATE.DRILLDIVE_ONLY and body.get_collision_layer_value(24)):
+		if break_state != BREAK_STATE.UNBREAKABLE:
 			var parent: Node = get_parent()
 			
 			# disable collision
@@ -42,8 +42,8 @@ func physics_collision(body, hitVector):
 						sprite_texture,
 						Rect2(piece_size*Vector2(i,j),piece_size),
 						z_index)
-					
-		return true
+		
+			return true
 
 		else:
 			body.ground = true

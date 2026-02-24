@@ -10,13 +10,15 @@ class_name Zone extends Node2D
 @export var act1_level_id: Global.LEVELS
 ## The music that plays during the first act
 @export var act1_music: AudioStreamOggVorbis = preload("res://Audio/Soundtrack/6. SWD_TLZa1.ogg")
+## The alternate music that the level can fade to
+@export var act1_music_alt: AudioStream = null
 ## The music that plays during a bossfight in the first act
 @export var act1_boss_music: AudioStreamOggVorbis = preload("res://Audio/Soundtrack/5. SWD_Boss.ogg")
 
 ## One of the animals that spawn in the first act
-@export_enum("Bird", "Squirrel", "Rabbit", "Chicken", "Penguin", "Seal", "Pig", "Eagle", "Mouse", "Monkey", "Turtle", "Bear")var act1_animal1: int = 0
+@export var act1_animal1: Animal.ANIMAL_TYPE = Animal.ANIMAL_TYPE.BIRD
 ## The other animal that spawns in the first act
-@export_enum("Bird", "Squirrel", "Rabbit", "Chicken", "Penguin", "Seal", "Pig", "Eagle", "Mouse", "Monkey", "Turtle", "Bear")var act1_animal2: int = 1
+@export var act1_animal2: Animal.ANIMAL_TYPE = Animal.ANIMAL_TYPE.SQUIRREL
 
 ## Boundries of the first act
 @export var act1_set_default_left: bool = true
@@ -56,13 +58,15 @@ var act1_attract_reel_inputs_arr: Array[Array]
 @export var act2_level_id: Global.LEVELS
 ## The music that plays during the second act
 @export var act2_music: AudioStreamOggVorbis = preload("res://Audio/Soundtrack/6. SWD_TLZa1.ogg")
+## The alternate music that the level can fade to
+@export var act2_music_alt: AudioStream = null
 ## The music that plays during a bossfight in the second act
 @export var act2_boss_music: AudioStreamOggVorbis = preload("res://Audio/Soundtrack/5. SWD_Boss.ogg")
 
 ## One of the animals that spawn in the second act
-@export_enum("Bird", "Squirrel", "Rabbit", "Chicken", "Penguin", "Seal", "Pig", "Eagle", "Mouse", "Monkey", "Turtle", "Bear")var act2_animal1: int = 0
+@export var act2_animal1: Animal.ANIMAL_TYPE = Animal.ANIMAL_TYPE.BIRD
 ## The other animal that spawns in the second act
-@export_enum("Bird", "Squirrel", "Rabbit", "Chicken", "Penguin", "Seal", "Pig", "Eagle", "Mouse", "Monkey", "Turtle", "Bear")var act2_animal2: int = 1
+@export var act2_animal2: Animal.ANIMAL_TYPE = Animal.ANIMAL_TYPE.SQUIRREL
 
 ## Boundries for the second act
 @export var act2_set_default_left: bool = true
@@ -170,25 +174,18 @@ func act1_setup() -> void:
 	current_level_act_number = act1_level_id
 	if act1_spawn_marker and player and Global.currentCheckPoint == -1:
 		player.global_position = act1_spawn_marker.global_position
-		player.camera.global_position = act1_spawn_marker.global_position
-		if player.partner:
-			player.partner.global_position = act1_spawn_marker.global_position-Vector2(24,0)
-			player.partner.camera.global_position = act1_spawn_marker.global_position
+		player.get_camera().global_position = act1_spawn_marker.global_position
+		if player.get_partner() != null:
+			player.get_partner().global_position = act1_spawn_marker.global_position-Vector2(24,0)
 		act1_spawn_marker.queue_free()
 		act2_spawn_marker.queue_free()
 	# music handling
-	Global.bossMusic.stop()
-	if Global.music != null:
-		if act1_music != null:
-			Global.music.stream = act1_music
-			Global.music.play()
-			Global.music.stream_paused = false
-		else:
-			Global.music.stop()
-			Global.music.stream = null
+	MusicController.reset_music_themes()
+	if act1_music != null:
+		MusicController.set_level_music(act1_music, act1_music_alt)
 	
-	if Global.bossMusic != null and act1_boss_music != null:
-		Global.bossMusic.stream = act1_boss_music
+	#if Global.bossMusic != null and act1_boss_music != null:
+		#Global.bossMusic.stream = act1_boss_music
 	
 	if act1_set_default_left:
 		Global.hardBorderLeft = act1_default_left_boundry
@@ -212,25 +209,18 @@ func act2_setup() -> void:
 	current_level_act_number = act2_level_id
 	if act2_spawn_marker and player and !Global.act_transition and Global.currentCheckPoint == -1:
 		player.global_position = act2_spawn_marker.global_position
-		player.camera.global_position = act2_spawn_marker.global_position
-		if player.partner:
-			player.partner.global_position = act2_spawn_marker.global_position-Vector2(24,0)
-			player.partner.camera.global_position = act2_spawn_marker.global_position
+		player.get_camera().global_position = act2_spawn_marker.global_position
+		if player.get_partner() != null:
+			player.get_partner().global_position = act2_spawn_marker.global_position-Vector2(24,0)
 		act1_spawn_marker.queue_free()
 		act2_spawn_marker.queue_free()
 	# music handling
-	Global.bossMusic.stop()
-	if Global.music != null:
-		if act2_music != null:
-			Global.music.stream = act2_music
-			Global.music.play()
-			Global.music.stream_paused = false
-		else:
-			Global.music.stop()
-			Global.music.stream = null
+	MusicController.reset_music_themes()
+	if act2_music != null:
+		MusicController.set_level_music(act2_music, act2_music_alt)
 	
-	if Global.bossMusic != null and act2_boss_music != null:
-		Global.bossMusic.stream = act2_boss_music
+	#if Global.bossMusic != null and act2_boss_music != null:
+		#Global.bossMusic.stream = act2_boss_music
 	
 	if act2_set_default_left and !Global.act_transition:
 		Global.hardBorderLeft = act2_default_left_boundry

@@ -1,18 +1,18 @@
-[gd_scene load_steps=4 format=4 uid="uid://b2n5ptpbq5ysg"]
+[gd_scene format=4 uid="uid://b2n5ptpbq5ysg"]
 
 [ext_resource type="Script" uid="uid://fnngda5182lw" path="res://Tools/Debug/DWDebugTool.gd" id="1_8ihaf"]
 [ext_resource type="TileSet" uid="uid://b52aenq8bhfsf" path="res://Tileset/Worlds/WorldsTileMap.tres" id="1_n6fbn"]
 [ext_resource type="AudioStream" uid="uid://jt28gfxybprb" path="res://Audio/SFX/Objects/RingStereo.wav" id="3_jyft0"]
 
-[node name="DWDebugTool" type="Node2D"]
+[node name="DWDebugTool" type="Node2D" unique_id=1454972173]
 script = ExtResource("1_8ihaf")
 
-[node name="BigMovingBrick" type="TileMapLayer" parent="."]
+[node name="BigMovingBrick" type="TileMapLayer" parent="." unique_id=232713195]
 visible = false
 tile_map_data = PackedByteArray("AAD/////AAAHADQAAAD//wAAAAAHADQAAAAAAP//AAAHADQAAAAAAAAAAAAHADQAAAD+//7/AAABAAAAAAD+////AAABAAEAAAD+/wAAAAABAAEAAAD+/wEAAAABAAIAAAD///7/AAACAAAAAAD//wEAAAACAAIAAAAAAP7/AAACAAAAAAAAAAEAAAACAAIAAAABAP7/AAADAAAAAAABAP//AAADAAEAAAABAAAAAAADAAEAAAABAAEAAAADAAIAAAA=")
 tile_set = ExtResource("1_n6fbn")
 
-[node name="Ring" type="AudioStreamPlayer" parent="."]
+[node name="Ring" type="AudioStreamPlayer" parent="." unique_id=429796502]
 stream = ExtResource("3_jyft0")
 volume_db = -5.0
 bus = &"SFX"

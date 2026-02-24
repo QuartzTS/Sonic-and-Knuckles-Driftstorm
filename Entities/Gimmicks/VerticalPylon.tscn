@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://3qpa54q3wjoh"]
+[gd_scene format=3 uid="uid://3qpa54q3wjoh"]
 
 [ext_resource type="Texture2D" uid="uid://dbs3csa84c8lh" path="res://Graphics/Gimmicks/FBZPylonCenter.png" id="1"]
 [ext_resource type="Script" uid="uid://b3eb3bu7k6v2h" path="res://Scripts/Gimmicks/VerticalPylon.gd" id="2"]
@@ -51,42 +51,40 @@ _data = {
 &"main": SubResource("1")
 }
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_sk8wj"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tu7ap"]
 size = Vector2(12, 96)
 
-[node name="FBZ_Pylon_Controller" type="Node2D"]
+[node name="FBZ_Pylon_Controller" type="Node2D" unique_id=1569673198]
 script = ExtResource("2")
 
-[node name="FBZ_Pylon_Sprite" type="Sprite2D" parent="."]
+[node name="FBZ_Pylon_Sprite" type="Sprite2D" parent="." unique_id=925322832]
 position = Vector2(0, -65)
 texture = ExtResource("1")
 hframes = 3
 region_enabled = true
 region_rect = Rect2(0, 0, 48, 96)
 
-[node name="FBZ_Pylon_Bottom" type="Sprite2D" parent="."]
+[node name="FBZ_Pylon_Bottom" type="Sprite2D" parent="." unique_id=519977296]
 position = Vector2(0, -8.5)
 texture = ExtResource("3")
 hframes = 3
 vframes = 2
 frame = 3
 
-[node name="FBZ_Pylon_Top" type="Sprite2D" parent="."]
+[node name="FBZ_Pylon_Top" type="Sprite2D" parent="." unique_id=1703483331]
 position = Vector2(0, -121.5)
 texture = ExtResource("3")
 hframes = 3
 vframes = 2
 
-[node name="FBZ_Pylon_Animator" type="AnimationPlayer" parent="."]
+[node name="FBZ_Pylon_Animator" type="AnimationPlayer" parent="." unique_id=832280208]
 callback_mode_method = 1
-libraries = {
-&"": SubResource("AnimationLibrary_lyh0a")
-}
+libraries/ = SubResource("AnimationLibrary_lyh0a")
 
-[node name="FBZ_Pylon_Area" type="Area2D" parent="."]
+[node name="FBZ_Pylon_Area" type="Area2D" parent="." unique_id=181568284]
 collision_layer = 0
 collision_mask = 4096
 
-[node name="FBZ_Pylon_Collision" type="CollisionShape2D" parent="FBZ_Pylon_Area"]
+[node name="FBZ_Pylon_Collision" type="CollisionShape2D" parent="FBZ_Pylon_Area" unique_id=1470325192]
 position = Vector2(0, -65)
-shape = SubResource("RectangleShape2D_sk8wj")
+shape = SubResource("RectangleShape2D_tu7ap")

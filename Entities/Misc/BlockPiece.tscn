@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://d4bqdidnyddxq"]
+[gd_scene format=3 uid="uid://d4bqdidnyddxq"]
 
 [ext_resource type="Script" uid="uid://dpvil7vnpav1j" path="res://Scripts/Misc/BreakableBlockPiece.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://dnmy18lc2iyh6" path="res://Graphics/Obstacles/Blocks/breakable_block.png" id="2"]
 
-[node name="BlockPiece" type="Sprite2D"]
+[node name="BlockPiece" type="Sprite2D" unique_id=1882559138]
 texture = ExtResource("2")
 region_enabled = true
 region_rect = Rect2(0, 0, 16, 16)

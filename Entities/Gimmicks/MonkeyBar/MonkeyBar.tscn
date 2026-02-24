@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://btna3kqcoupda"]
+[gd_scene format=3 uid="uid://btna3kqcoupda"]
 
 [ext_resource type="Script" uid="uid://bgcsevoicdr54" path="res://Scripts/Gimmicks/MonkeyBar/MonkeyBar.gd" id="1_4gcsp"]
 [ext_resource type="Texture2D" uid="uid://bjof6o7bmi80f" path="res://Graphics/Gimmicks/FBZMonkeyBar.png" id="2_likc6"]
@@ -11,38 +11,38 @@ size = Vector2(16, 10)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fu4hr"]
 size = Vector2(10, 20)
 
-[node name="MonkeyBar" type="Node2D"]
+[node name="MonkeyBar" type="Node2D" unique_id=886400538]
 script = ExtResource("1_4gcsp")
 
-[node name="MonkeyBarSprite" type="Sprite2D" parent="."]
+[node name="MonkeyBarSprite" type="Sprite2D" parent="." unique_id=298020094]
 position = Vector2(0, 20)
 texture = ExtResource("2_likc6")
 
-[node name="MonkeyBarHanger" type="Area2D" parent="."]
+[node name="MonkeyBarHanger" type="Area2D" parent="." unique_id=165803186]
 position = Vector2(0, 43)
 collision_layer = 0
 collision_mask = 4096
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MonkeyBarHanger"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MonkeyBarHanger" unique_id=876899598]
 shape = SubResource("RectangleShape2D_4jv0b")
 
-[node name="LeftLinker" type="Area2D" parent="."]
+[node name="LeftLinker" type="Area2D" parent="." unique_id=2110304376]
 position = Vector2(-25, 38)
 collision_layer = 0
 collision_mask = 4096
 
-[node name="LeftLinkerShape" type="CollisionShape2D" parent="LeftLinker"]
+[node name="LeftLinkerShape" type="CollisionShape2D" parent="LeftLinker" unique_id=1916594867]
 shape = SubResource("RectangleShape2D_fu4hr")
 
-[node name="RightLinker" type="Area2D" parent="."]
+[node name="RightLinker" type="Area2D" parent="." unique_id=746156447]
 position = Vector2(25, 38)
 collision_layer = 0
 collision_mask = 4096
 
-[node name="RightLinkerShape" type="CollisionShape2D" parent="RightLinker"]
+[node name="RightLinkerShape" type="CollisionShape2D" parent="RightLinker" unique_id=1688387452]
 shape = SubResource("RectangleShape2D_fu4hr")
 
-[node name="MountPlayer" type="AudioStreamPlayer2D" parent="."]
+[node name="MountPlayer" type="AudioStreamPlayer2D" parent="." unique_id=223825483]
 stream = ExtResource("3_7nlb7")
 volume_db = -5.0
 max_distance = 600.0

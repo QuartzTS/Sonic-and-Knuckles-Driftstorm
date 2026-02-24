@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dvmttrmkfraht"]
+[gd_scene format=3 uid="uid://dvmttrmkfraht"]
 
 [ext_resource type="Texture2D" uid="uid://d1cdsc21qx80t" path="res://Graphics/Gimmicks/CNZBarrel.png" id="1"]
 [ext_resource type="Script" uid="uid://cf5fp4vglwnts" path="res://Scripts/Gimmicks/CNZBarrelChild.gd" id="2"]
@@ -46,31 +46,31 @@ size = Vector2(64, 11)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sikni"]
 size = Vector2(64, 53)
 
-[node name="CNZTrampolineBarrel" type="Node2D"]
+[node name="CNZTrampolineBarrel" type="Node2D" unique_id=979226466]
 script = ExtResource("3")
 trampolineMode = true
 
-[node name="Bodies" type="Node2D" parent="."]
+[node name="Bodies" type="Node2D" parent="." unique_id=1069919565]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Bodies"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Bodies" unique_id=1385205272]
 position = Vector2(0, 31)
 sprite_frames = SubResource("5")
 autoplay = "default"
 frame = 1
 
-[node name="CNZBarrelActiveBody" type="AnimatableBody2D" parent="Bodies"]
+[node name="CNZBarrelActiveBody" type="AnimatableBody2D" parent="Bodies" unique_id=689212381]
 collision_layer = 8192
 collision_mask = 0
 script = ExtResource("2")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Bodies/CNZBarrelActiveBody"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bodies/CNZBarrelActiveBody" unique_id=1566138852]
 position = Vector2(0, 4.5)
 shape = SubResource("RectangleShape2D_ilf75")
 
-[node name="CNZBarrelInactiveBody" type="AnimatableBody2D" parent="Bodies"]
+[node name="CNZBarrelInactiveBody" type="AnimatableBody2D" parent="Bodies" unique_id=613248294]
 collision_layer = 15
 collision_mask = 15
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Bodies/CNZBarrelInactiveBody"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bodies/CNZBarrelInactiveBody" unique_id=1333863824]
 position = Vector2(0, 36.5)
 shape = SubResource("RectangleShape2D_sikni")

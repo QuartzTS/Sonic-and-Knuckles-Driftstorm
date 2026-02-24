@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://bajkhxm4in8l6" path="res://Scripts/Level/Level.gd" id="2"]
 [ext_resource type="AudioStream" uid="uid://dlw2n41flld4n" path="res://Audio/Soundtrack/11. Sonic Megamix 5.0 OST Extended -Dark Fortress Zone [TubeRipper.cc].ogg" id="2_uemc5"]
 [ext_resource type="Script" uid="uid://bax00oqd3rn4x" path="res://Scripts/Objects/StateMovers/StateMoverPositional.gd" id="3"]
-[ext_resource type="PackedScene" uid="uid://b2n5ptpbq5ysg" path="res://Tools/Debug/DWDebugTool.tscn" id="3_w8bgu"]
 [ext_resource type="PackedScene" uid="uid://c30uceea18q1w" path="res://Entities/Misc/HUD.tscn" id="4"]
 [ext_resource type="Script" uid="uid://bi37hcdm87aom" path="res://Scripts/Objects/StateMovers/StateMoverMaster.gd" id="5"]
 [ext_resource type="Script" uid="uid://dlhes7ujy35ah" path="res://Tools/Editor/disposal.gd" id="5_bdrgf"]
@@ -23,7 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://cioq5saowvqxj" path="res://Entities/MainObjects/Player.tscn" id="18"]
 [ext_resource type="Script" uid="uid://dwf3hprb50hbp" path="res://Scripts/Objects/CollapseLayer.gd" id="21_fdxp4"]
 [ext_resource type="PackedScene" uid="uid://urapmknlu0s5" path="res://Entities/Gimmicks/HorizontalBar.tscn" id="22_ethvu"]
-[ext_resource type="PackedScene" uid="uid://blfw540cqicg3" path="res://Entities/Gimmicks/CatapultDEZ.tscn" id="23_6d3ti"]
+[ext_resource type="PackedScene" uid="uid://btcc4wdvvxilw" path="res://Entities/Gimmicks/CatapultDEZ.tscn" id="23_6d3ti"]
 [ext_resource type="PackedScene" uid="uid://4q0hpddgto2k" path="res://Entities/Gimmicks/Spring.tscn" id="23_n1r7l"]
 [ext_resource type="PackedScene" uid="uid://ctg1aeiewvyvj" path="res://Entities/Gimmicks/ForceRoll.tscn" id="23_nxyu5"]
 [ext_resource type="Texture2D" uid="uid://b4cw5q2u4jyb8" path="res://Graphics/Gimmicks/HorizontalBarAlt.png" id="24_ipqgj"]
@@ -36,16 +35,16 @@
 [ext_resource type="PackedScene" uid="uid://bleoc0gltofoh" path="res://Entities/Gimmicks/Teleporter.tscn" id="30_hr13y"]
 [ext_resource type="PackedScene" uid="uid://di85tknpw5cf0" path="res://Entities/Gimmicks/HorizontalSlider.tscn" id="31_x0wx6"]
 [ext_resource type="AudioStream" uid="uid://ewf3mg6kdb4j" path="res://Audio/SFX/Gimmicks/ChainLift.wav" id="32_hp7tg"]
-[ext_resource type="Script" path="res://Scripts/Gimmicks/MonkeyBar/HorizontalSlider.gd" id="33_8dlmw"]
+[ext_resource type="Script" uid="uid://bisjclathvg10" path="res://Scripts/Gimmicks/MonkeyBar/HorizontalSlider.gd" id="33_8dlmw"]
 [ext_resource type="PackedScene" uid="uid://xpsg8eoppqbo" path="res://Entities/Gimmicks/MonkeyBar/Hook.tscn" id="33_ix8uv"]
 [ext_resource type="PackedScene" uid="uid://c2esop5orct10" path="res://Entities/MainObjects/GoalPost.tscn" id="34"]
 [ext_resource type="PackedScene" uid="uid://chyrwm1qwvlyt" path="res://Entities/Gimmicks/Switch.tscn" id="36_bann4"]
-[ext_resource type="PackedScene" uid="uid://cbix8ljuynffp" path="res://Entities/Gimmicks/CatapultWFZ.tscn" id="37_rbgxl"]
+[ext_resource type="PackedScene" uid="uid://bunod4xywfvi6" path="res://Entities/Gimmicks/CatapultWFZ.tscn" id="37_rbgxl"]
 [ext_resource type="PackedScene" uid="uid://dasp221fqgrno" path="res://Entities/Obstacles/Platform.tscn" id="38"]
 [ext_resource type="PackedScene" uid="uid://cfteqnft5ynr7" path="res://Entities/Hazards/Spikes.tscn" id="39_13rhf"]
 [ext_resource type="PackedScene" uid="uid://c1n8wnllp8pk2" path="res://Entities/Items/SpecialStageRing.tscn" id="40_mjl70"]
-[ext_resource type="PackedScene" path="res://Entities/Backgrounds/GHZWaterfall.tscn" id="41_mosa4"]
-[ext_resource type="PackedScene" uid="uid://dneumyovipdy3" path="res://Entities/Gimmicks/CatapultFBZ.tscn" id="41_w8bgu"]
+[ext_resource type="PackedScene" uid="uid://ccru0b34x80xt" path="res://Entities/Backgrounds/GHZWaterfall.tscn" id="41_mosa4"]
+[ext_resource type="PackedScene" uid="uid://b7vexy8ctfsus" path="res://Entities/Gimmicks/CatapultFBZ.tscn" id="41_w8bgu"]
 
 [sub_resource type="Animation" id="1"]
 resource_name = "Glow"
@@ -113,7 +112,7 @@ defaultBottomBoundry = 1392
 metadata/_edit_vertical_guides_ = [6500.0]
 metadata/_edit_horizontal_guides_ = [1392.0]
 
-[node name="DWDebugTool" parent="." unique_id=179073664 instance=ExtResource("3_w8bgu")]
+[node name="DWDebugTool" parent="." unique_id=179073664 instance=ExtResource("17_f05cn")]
 
 [node name="Notes (not visible during gameplay)" type="Node" parent="." unique_id=1155214511]
 script = ExtResource("5_bdrgf")
@@ -151,7 +150,7 @@ centered = false
 region_enabled = true
 region_rect = Rect2(0, 0, 512, 512)
 
-[node name="Player" parent="Players" unique_id=424257675 instance=ExtResource("18")]
+[node name="Players#Player" parent="." unique_id=424257675 instance=ExtResource("18")]
 position = Vector2(49, 749)
 
 [node name="Default" type="TileMapLayer" parent="." unique_id=1722441916]
@@ -188,7 +187,7 @@ metadata/_edit_lock_ = true
 
 [node name="Entities" type="Node" parent="." unique_id=1070405181]
 
-[node name="GoalPost" parent="Entities" instance=ExtResource("34")]
+[node name="GoalPost" parent="Entities" unique_id=1299954504 instance=ExtResource("34")]
 position = Vector2(6200, 431)
 
 [node name="PlatformStatefulMover" type="Node2D" parent="Entities" unique_id=1602727646]
@@ -235,7 +234,7 @@ position = Vector2(256, 0)
 script = ExtResource("8")
 interpolationMode = 1
 
-[node name="TranslationalState_1" type="Node2D" parent="Entities/PlatformStatefulMover2"]
+[node name="TranslationalState_1" type="Node2D" parent="Entities/PlatformStatefulMover2" unique_id=772517445]
 visible = false
 position = Vector2(-256, 0)
 script = ExtResource("8")
@@ -325,32 +324,32 @@ tile_set = ExtResource("6_1cyhs")
 position = Vector2(-32, -92)
 shape = SubResource("RectangleShape2D_n7iqd")
 
-[node name="Catapult" parent="Entities" instance=ExtResource("41_w8bgu")]
+[node name="Catapult" parent="Entities" unique_id=1763499619 instance=ExtResource("41_w8bgu")]
 position = Vector2(2832, 1312)
 
-[node name="Catapult2" parent="Entities" instance=ExtResource("23_6d3ti")]
+[node name="Catapult2" parent="Entities" unique_id=1680616427 instance=ExtResource("23_6d3ti")]
 position = Vector2(2608, 1312)
 scale = Vector2(-1, 1)
-direction = 0
 launch_velocity = Vector2(-960, 0)
+direction = 0
 
-[node name="Catapult3" parent="Entities" instance=ExtResource("41_w8bgu")]
+[node name="Catapult3" parent="Entities" unique_id=1060281126 instance=ExtResource("41_w8bgu")]
 position = Vector2(4176, 464)
 scale = Vector2(-1, 1)
-direction = 0
 launch_velocity = Vector2(-960, 0)
+direction = 0
 
-[node name="ForceRoll" parent="Entities" instance=ExtResource("23_nxyu5")]
+[node name="ForceRoll" parent="Entities" unique_id=97774618 instance=ExtResource("23_nxyu5")]
 z_index = 50
 position = Vector2(3040, 1144)
 scale = Vector2(2, 9)
 
-[node name="ForceRoll2" parent="Entities" instance=ExtResource("23_nxyu5")]
+[node name="ForceRoll2" parent="Entities" unique_id=699356475 instance=ExtResource("23_nxyu5")]
 z_index = 50
 position = Vector2(2400, 1144)
 scale = Vector2(2, 9)
 
-[node name="HorizontalBar" parent="." instance=ExtResource("22_ethvu")]
+[node name="HorizontalBar" parent="." unique_id=739654369 instance=ExtResource("22_ethvu")]
 position = Vector2(864, 235)
 width = 320
 allowBrake = true
@@ -418,14 +417,14 @@ swingContactSpeed = 3000.0
 z_index = 5
 position = Vector2(1652, -13)
 
-[node name="RetractibleChain" parent="ChainedMonkeyBar2" index="0"]
+[node name="RetractibleChain" parent="ChainedMonkeyBar2" index="0" unique_id=1064364311]
 initial_height = 720
 default_target_height = 280
 chain_speed_up = 360
 chain_speed_down = 360
 metadata/_edit_lock_ = true
 
-[node name="MonkeyBar" parent="ChainedMonkeyBar2" index="1"]
+[node name="MonkeyBar" parent="ChainedMonkeyBar2" index="1" unique_id=210878087]
 position = Vector2(0, 720)
 hold_down_to_drop = true
 impart_locked = true
@@ -435,14 +434,14 @@ metadata/_edit_lock_ = true
 z_index = 5
 position = Vector2(1686, -13)
 
-[node name="RetractibleChain" parent="ChainedMonkeyBar3" index="0"]
+[node name="RetractibleChain" parent="ChainedMonkeyBar3" index="0" unique_id=1064364311]
 initial_height = 280
 default_target_height = 280
 chain_speed_up = 360
 chain_speed_down = 360
 metadata/_edit_lock_ = true
 
-[node name="MonkeyBar" parent="ChainedMonkeyBar3" index="1"]
+[node name="MonkeyBar" parent="ChainedMonkeyBar3" index="1" unique_id=210878087]
 position = Vector2(0, 280)
 hold_down_to_drop = true
 metadata/_edit_lock_ = true
@@ -451,14 +450,14 @@ metadata/_edit_lock_ = true
 z_index = 5
 position = Vector2(1720, -13)
 
-[node name="RetractibleChain" parent="ChainedMonkeyBar4" index="0"]
+[node name="RetractibleChain" parent="ChainedMonkeyBar4" index="0" unique_id=1064364311]
 initial_height = 280
 default_target_height = 280
 chain_speed_up = 360
 chain_speed_down = 360
 metadata/_edit_lock_ = true
 
-[node name="MonkeyBar" parent="ChainedMonkeyBar4" index="1"]
+[node name="MonkeyBar" parent="ChainedMonkeyBar4" index="1" unique_id=210878087]
 position = Vector2(0, 280)
 hold_down_to_drop = true
 metadata/_edit_lock_ = true
@@ -467,14 +466,14 @@ metadata/_edit_lock_ = true
 z_index = 5
 position = Vector2(1754, -13)
 
-[node name="RetractibleChain" parent="ChainedMonkeyBar5" index="0"]
+[node name="RetractibleChain" parent="ChainedMonkeyBar5" index="0" unique_id=1064364311]
 initial_height = 280
 default_target_height = 280
 chain_speed_up = 360
 chain_speed_down = 360
 metadata/_edit_lock_ = true
 
-[node name="MonkeyBar" parent="ChainedMonkeyBar5" index="1"]
+[node name="MonkeyBar" parent="ChainedMonkeyBar5" index="1" unique_id=210878087]
 position = Vector2(0, 280)
 hold_down_to_drop = true
 metadata/_edit_lock_ = true
@@ -483,14 +482,14 @@ metadata/_edit_lock_ = true
 z_index = 5
 position = Vector2(1788, -13)
 
-[node name="RetractibleChain" parent="ChainedMonkeyBar6" index="0"]
+[node name="RetractibleChain" parent="ChainedMonkeyBar6" index="0" unique_id=1064364311]
 initial_height = 280
 default_target_height = 280
 chain_speed_up = 360
 chain_speed_down = 360
 metadata/_edit_lock_ = true
 
-[node name="MonkeyBar" parent="ChainedMonkeyBar6" index="1"]
+[node name="MonkeyBar" parent="ChainedMonkeyBar6" index="1" unique_id=210878087]
 position = Vector2(0, 280)
 hold_down_to_drop = true
 metadata/_edit_lock_ = true
@@ -499,14 +498,14 @@ metadata/_edit_lock_ = true
 z_index = 5
 position = Vector2(1822, -13)
 
-[node name="RetractibleChain" parent="ChainedMonkeyBar7" index="0"]
+[node name="RetractibleChain" parent="ChainedMonkeyBar7" index="0" unique_id=1064364311]
 initial_height = 280
 default_target_height = 280
 chain_speed_up = 360
 chain_speed_down = 360
 metadata/_edit_lock_ = true
 
-[node name="MonkeyBar" parent="ChainedMonkeyBar7" index="1"]
+[node name="MonkeyBar" parent="ChainedMonkeyBar7" index="1" unique_id=210878087]
 position = Vector2(0, 280)
 hold_down_to_drop = true
 metadata/_edit_lock_ = true
@@ -515,14 +514,14 @@ metadata/_edit_lock_ = true
 z_index = 5
 position = Vector2(1856, -13)
 
-[node name="RetractibleChain" parent="ChainedMonkeyBar8" index="0"]
+[node name="RetractibleChain" parent="ChainedMonkeyBar8" index="0" unique_id=1064364311]
 initial_height = 280
 default_target_height = 280
 chain_speed_up = 360
 chain_speed_down = 360
 metadata/_edit_lock_ = true
 
-[node name="MonkeyBar" parent="ChainedMonkeyBar8" index="1"]
+[node name="MonkeyBar" parent="ChainedMonkeyBar8" index="1" unique_id=210878087]
 position = Vector2(0, 280)
 hold_down_to_drop = true
 metadata/_edit_lock_ = true
@@ -531,23 +530,23 @@ metadata/_edit_lock_ = true
 z_index = 5
 position = Vector2(1890, -13)
 
-[node name="RetractibleChain" parent="ChainedMonkeyBar9" index="0"]
+[node name="RetractibleChain" parent="ChainedMonkeyBar9" index="0" unique_id=1064364311]
 initial_height = 280
 default_target_height = 284
 chain_speed_up = 360
 chain_speed_down = 360
 metadata/_edit_lock_ = true
 
-[node name="ChainMovingSound" parent="ChainedMonkeyBar9/RetractibleChain" index="0"]
+[node name="ChainMovingSound" parent="ChainedMonkeyBar9/RetractibleChain" index="0" unique_id=1520352908]
 position = Vector2(8, 16)
 stream = null
 
-[node name="MonkeyBar" parent="ChainedMonkeyBar9" index="1"]
+[node name="MonkeyBar" parent="ChainedMonkeyBar9" index="1" unique_id=210878087]
 position = Vector2(0, 280)
 hold_down_to_drop = true
 metadata/_edit_lock_ = true
 
-[node name="MountPlayer" parent="ChainedMonkeyBar9/MonkeyBar" index="4"]
+[node name="MountPlayer" parent="ChainedMonkeyBar9/MonkeyBar" index="4" unique_id=223825483]
 stream = null
 
 [node name="SwitchPlayer" type="AudioStreamPlayer2D" parent="ChainedMonkeyBar9" unique_id=1583959956]
@@ -559,13 +558,13 @@ script = ExtResource("28_qm53g")
 z_index = 5
 position = Vector2(2648, 831)
 
-[node name="RetractibleChain" parent="ChainedMonkeyBar10" index="0"]
+[node name="RetractibleChain" parent="ChainedMonkeyBar10" index="0" unique_id=1064364311]
 default_target_height = 400
 chain_speed_up = 150
 chain_speed_down = 150
 metadata/_edit_lock_ = true
 
-[node name="MonkeyBar" parent="ChainedMonkeyBar10" index="1"]
+[node name="MonkeyBar" parent="ChainedMonkeyBar10" index="1" unique_id=210878087]
 hold_down_to_drop = true
 depart_locked = true
 impart_locked = true
@@ -575,13 +574,13 @@ metadata/_edit_lock_ = true
 z_index = 5
 position = Vector2(2680, 831)
 
-[node name="RetractibleChain" parent="ChainedMonkeyBar11" index="0"]
+[node name="RetractibleChain" parent="ChainedMonkeyBar11" index="0" unique_id=1064364311]
 default_target_height = 400
 chain_speed_up = 150
 chain_speed_down = 150
 metadata/_edit_lock_ = true
 
-[node name="MonkeyBar" parent="ChainedMonkeyBar11" index="1"]
+[node name="MonkeyBar" parent="ChainedMonkeyBar11" index="1" unique_id=210878087]
 hold_down_to_drop = true
 depart_locked = true
 impart_locked = true
@@ -613,123 +612,122 @@ braking_acceleration = 800.0
 z_index = -1
 position = Vector2(0, 12)
 
-[node name="RetractibleChain" parent="HookSliderAssembly/HookSlider/MobileHook" index="0"]
+[node name="RetractibleChain" parent="HookSliderAssembly/HookSlider/MobileHook" index="0" unique_id=1358732795]
 initial_height = 40
 default_target_height = 0
 metadata/_edit_lock_ = true
 
-[node name="ChainMovingSound" parent="HookSliderAssembly/HookSlider/MobileHook/RetractibleChain" index="0"]
+[node name="ChainMovingSound" parent="HookSliderAssembly/HookSlider/MobileHook/RetractibleChain" index="0" unique_id=1520352908]
 z_index = 51
 stream = ExtResource("32_hp7tg")
 max_distance = 600.0
 
-[node name="MonkeyBar" parent="HookSliderAssembly/HookSlider/MobileHook" index="1"]
+[node name="MonkeyBar" parent="HookSliderAssembly/HookSlider/MobileHook" index="1" unique_id=2142146744]
 position = Vector2(0, 40)
 metadata/_edit_lock_ = true
 
-[node name="MonkeyBarHanger" parent="HookSliderAssembly/HookSlider/MobileHook/MonkeyBar" index="1"]
+[node name="MonkeyBarHanger" parent="HookSliderAssembly/HookSlider/MobileHook/MonkeyBar" index="1" unique_id=165803186]
 position = Vector2(0, 34)
 
-[node name="LeftLinker" parent="HookSliderAssembly/HookSlider/MobileHook/MonkeyBar" index="2"]
+[node name="LeftLinker" parent="HookSliderAssembly/HookSlider/MobileHook/MonkeyBar" index="2" unique_id=2110304376]
 position = Vector2(-25, 29)
 
-[node name="RightLinker" parent="HookSliderAssembly/HookSlider/MobileHook/MonkeyBar" index="3"]
+[node name="RightLinker" parent="HookSliderAssembly/HookSlider/MobileHook/MonkeyBar" index="3" unique_id=746156447]
 position = Vector2(25, 29)
 
-[node name="Spring4" parent="." instance=ExtResource("23_n1r7l")]
+[node name="Spring4" parent="." unique_id=892893407 instance=ExtResource("23_n1r7l")]
 position = Vector2(2768, 1304)
 
-[node name="Spring5" parent="." instance=ExtResource("23_n1r7l")]
+[node name="Spring5" parent="." unique_id=723742458 instance=ExtResource("23_n1r7l")]
 position = Vector2(4000, 1336)
 type = 1
 
-[node name="Catapult3" parent="." instance=ExtResource("37_rbgxl")]
+[node name="Catapult3" parent="." unique_id=835563243 instance=ExtResource("37_rbgxl")]
 position = Vector2(4080, 864)
-launch_velocity = Vector2(1253.07, -384)
 
-[node name="Catapult4" parent="." instance=ExtResource("37_rbgxl")]
+[node name="Catapult4" parent="." unique_id=1020964348 instance=ExtResource("37_rbgxl")]
 position = Vector2(5680, 864)
 scale = Vector2(-1, 1)
-direction = 0
 launch_velocity = Vector2(-1253.07, -384)
+direction = 0
 
-[node name="Spring6" parent="." instance=ExtResource("23_n1r7l")]
+[node name="Spring6" parent="." unique_id=618277890 instance=ExtResource("23_n1r7l")]
 position = Vector2(4496, 984)
 
-[node name="Spring7" parent="." instance=ExtResource("23_n1r7l")]
+[node name="Spring7" parent="." unique_id=1272286788 instance=ExtResource("23_n1r7l")]
 position = Vector2(5264, 984)
 
-[node name="Spring8" parent="." instance=ExtResource("23_n1r7l")]
+[node name="Spring8" parent="." unique_id=837841756 instance=ExtResource("23_n1r7l")]
 position = Vector2(5744, 856)
 type = 1
 
-[node name="Spikes7" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes7" parent="." unique_id=950190908 instance=ExtResource("39_13rhf")]
 position = Vector2(4528, 976)
 
-[node name="Spikes8" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes8" parent="." unique_id=303126611 instance=ExtResource("39_13rhf")]
 position = Vector2(4560, 976)
 
-[node name="Spikes9" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes9" parent="." unique_id=488369387 instance=ExtResource("39_13rhf")]
 position = Vector2(4592, 976)
 
-[node name="Spikes10" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes10" parent="." unique_id=1135596451 instance=ExtResource("39_13rhf")]
 position = Vector2(4624, 976)
 
-[node name="Spikes11" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes11" parent="." unique_id=418936210 instance=ExtResource("39_13rhf")]
 position = Vector2(4656, 976)
 
-[node name="Spikes12" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes12" parent="." unique_id=1043569815 instance=ExtResource("39_13rhf")]
 position = Vector2(4688, 976)
 
-[node name="Spikes13" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes13" parent="." unique_id=856995115 instance=ExtResource("39_13rhf")]
 position = Vector2(4720, 976)
 
-[node name="Spikes14" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes14" parent="." unique_id=598916552 instance=ExtResource("39_13rhf")]
 position = Vector2(4752, 976)
 
-[node name="Spikes15" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes15" parent="." unique_id=1354711564 instance=ExtResource("39_13rhf")]
 position = Vector2(4784, 976)
 
-[node name="Spikes16" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes16" parent="." unique_id=2132304363 instance=ExtResource("39_13rhf")]
 position = Vector2(4816, 976)
 
-[node name="Spikes17" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes17" parent="." unique_id=1831680216 instance=ExtResource("39_13rhf")]
 position = Vector2(4848, 976)
 
-[node name="Spikes18" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes18" parent="." unique_id=339757072 instance=ExtResource("39_13rhf")]
 position = Vector2(4880, 976)
 
-[node name="Spikes19" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes19" parent="." unique_id=1576419205 instance=ExtResource("39_13rhf")]
 position = Vector2(4912, 976)
 
-[node name="Spikes20" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes20" parent="." unique_id=2138476298 instance=ExtResource("39_13rhf")]
 position = Vector2(4944, 976)
 
-[node name="Spikes21" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes21" parent="." unique_id=828160300 instance=ExtResource("39_13rhf")]
 position = Vector2(4976, 976)
 
-[node name="Spikes22" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes22" parent="." unique_id=2112813987 instance=ExtResource("39_13rhf")]
 position = Vector2(5008, 976)
 
-[node name="Spikes23" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes23" parent="." unique_id=417455249 instance=ExtResource("39_13rhf")]
 position = Vector2(5040, 976)
 
-[node name="Spikes24" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes24" parent="." unique_id=1982748541 instance=ExtResource("39_13rhf")]
 position = Vector2(5072, 976)
 
-[node name="Spikes25" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes25" parent="." unique_id=1676606946 instance=ExtResource("39_13rhf")]
 position = Vector2(5104, 976)
 
-[node name="Spikes26" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes26" parent="." unique_id=2113641508 instance=ExtResource("39_13rhf")]
 position = Vector2(5136, 976)
 
-[node name="Spikes27" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes27" parent="." unique_id=1268554082 instance=ExtResource("39_13rhf")]
 position = Vector2(5168, 976)
 
-[node name="Spikes28" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes28" parent="." unique_id=1948702312 instance=ExtResource("39_13rhf")]
 position = Vector2(5200, 976)
 
-[node name="Spikes29" parent="." instance=ExtResource("39_13rhf")]
+[node name="Spikes29" parent="." unique_id=671545819 instance=ExtResource("39_13rhf")]
 position = Vector2(5232, 976)
 
 [node name="IndependentMB1" parent="." unique_id=425766062 instance=ExtResource("28_usl31")]
@@ -762,7 +760,7 @@ z_index = 1
 position = Vector2(2213, 812)
 hold_down_to_drop = true
 
-[node name="Monitor" parent="." instance=ExtResource("15")]
+[node name="Monitor" parent="." unique_id=1600613309 instance=ExtResource("15")]
 position = Vector2(2576, 1200)
 item = 5
 
@@ -1120,7 +1118,7 @@ position = Vector2(3776, 1344)
 [node name="Spikes6" parent="." unique_id=605082580 instance=ExtResource("39_13rhf")]
 position = Vector2(3808, 1344)
 
-[node name="GiantRing" parent="." instance=ExtResource("40_mjl70")]
+[node name="GiantRing" parent="." unique_id=1511064124 instance=ExtResource("40_mjl70")]
 position = Vector2(4000, 1280)
 
 [node name="GHZWaterfall" parent="." unique_id=1696133477 instance=ExtResource("41_mosa4")]
@@ -1150,13 +1148,13 @@ hold_down_to_drop = true
 [node name="ChainedMonkeyBar" parent="." unique_id=808137073 instance=ExtResource("27_obgon")]
 position = Vector2(3794, 576)
 
-[node name="RetractibleChain" parent="ChainedMonkeyBar" index="0"]
+[node name="RetractibleChain" parent="ChainedMonkeyBar" index="0" unique_id=1064364311]
 initial_height = 609
 default_target_height = 380
 chain_speed_up = 180
 chain_speed_down = 180
 
-[node name="MonkeyBar" parent="ChainedMonkeyBar" index="1"]
+[node name="MonkeyBar" parent="ChainedMonkeyBar" index="1" unique_id=210878087]
 position = Vector2(0, 609)
 
 [node name="MonkeyBarMarker" type="Node2D" parent="ChainedMonkeyBar" unique_id=1672369355]
@@ -1172,7 +1170,7 @@ position = Vector2(3648, 823)
 position = Vector2(3669, 632)
 travelDistance = 252
 
-[node name="DWDebugTool" parent="." instance=ExtResource("17_f05cn")]
+[node name="DWDebugTool2" parent="." unique_id=365069556 instance=ExtResource("17_f05cn")]
 position = Vector2(-134, 546)
 
 [connection signal="body_entered" from="Entities/AdvancedPlatform" to="Entities/AdvancedPlatform" method="_on_body_entered"]
@@ -1185,12 +1183,11 @@ position = Vector2(-134, 546)
 [connection signal="pressed" from="HookSliderAssembly/MiddleSwitch" to="HookSliderAssembly/HookSlider" method="send_to_target" binds= [0]]
 [connection signal="pressed" from="HookSliderAssembly/MiddleSwitch" to="HookSliderAssembly/HookSlider/MobileHook/RetractibleChain" method="send_to_height" binds= [120]]
 [connection signal="target_reached" from="HookSliderAssembly/HookSlider/MobileHook/RetractibleChain" to="HookSliderAssembly/HookSlider" method="send_to_target" binds= [615]]
-[connection signal="pressed" from="Switch" to="ChainedMonkeyBar/RetractibleChain" method="set_default_target" binds= [170]]
 [connection signal="pressed" from="Switch" to="ChainedMonkeyBar/RetractibleChain" method="send_to_height" binds= [609]]
+[connection signal="pressed" from="Switch" to="ChainedMonkeyBar/RetractibleChain" method="set_default_target" binds= [170]]
 [connection signal="pressed" from="Switch2" to="ChainedMonkeyBar/RetractibleChain" method="set_home_height" binds= [170]]
-[connection signal="pressed" from="Switch2" to="ChainedMonkeyBar/RetractibleChain" method="set_default_target" binds= [0]]
 [connection signal="pressed" from="Switch2" to="ChainedMonkeyBar/RetractibleChain" method="send_to_height" binds= [170]]
-[connection signal="pressed" from="Switch2" to="ChainedMonkeyBar/RetractibleChain" method="set_home_height" binds= [170]]
+[connection signal="pressed" from="Switch2" to="ChainedMonkeyBar/RetractibleChain" method="set_default_target" binds= [0]]
 
 [editable path="ChainedMonkeyBar2"]
 [editable path="ChainedMonkeyBar3"]

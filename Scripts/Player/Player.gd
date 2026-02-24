@@ -389,7 +389,7 @@ func _process(delta):
 					snap_angle(_partner.angle) == 0 or
 					(_partner.pushingWall != 0 and pushingWall == 0)):
 					# check partners position, only jump ever 0.25 seconds (prevent jump spam)
-					if global_position.y+32 < _partner.global_position.y and _partner.inputs[INPUTS.ACTION] == 0 and _partner.is_on_ground() and _ground and (fmod(Global.globalTimer+delta,0.25) < fmod(Global.globalTimer,0.25)):
+					if global_position.y+32 < _partner.global_position.y and _partner.inputs[INPUTS.ACTION] == 0 and _partner.ground and ground and (fmod(Global.globalTimer+delta,0.25) < fmod(Global.globalTimer,0.25)):
 						_partner.inputs[INPUTS.ACTION] = 1
 					elif global_position.y < _partner.global_position.y and ground and !_partner.ground:
 						_partner.inputs[INPUTS.ACTION] = 2
@@ -587,11 +587,11 @@ func _process(delta):
 		airTimer = defaultAirTime
 	
 	# drowning theme related
-	if playerControl == 1 or playerControl == -1:
-		if !Global.drowning.playing and airTimer <= panicTime and airTimer > 0:
-			Global.drowning.play()
-		elif Global.drowning.playing and airTimer > panicTime or airTimer <= 0:
-			Global.drowning.stop()
+	#if playerControl == 1 or playerControl == -1:
+		#if !Global.drowning.playing and airTimer <= panicTime and airTimer > 0:
+			#Global.drowning.play()
+		#elif Global.drowning.playing and airTimer > panicTime or airTimer <= 0:
+			#Global.drowning.stop()
 	
 	# partner control timer for player 2
 	if partnerControlTime > 0:
@@ -1517,7 +1517,7 @@ func get_state_object(for_state: PlayerChar.STATES) -> PlayerState:
 func set_state(new_state: PlayerChar.STATES,
 		force_mask:Vector2 = Vector2.ZERO,
 		skip_supplements:bool = false,
-		new_character_state: int = -1):	
+		new_character_state: int = -1):
 	
 	var new_state_obj: PlayerState = null
 	var old_state_obj: PlayerState = state_list[current_state]

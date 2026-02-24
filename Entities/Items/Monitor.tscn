@@ -5,7 +5,6 @@
 [ext_resource type="Script" uid="uid://c8x6d645256j2" path="res://Scripts/Objects/MonitorPhysics.gd" id="2_rvnba"]
 [ext_resource type="Script" uid="uid://bbpmknqu30s4w" path="res://Scripts/Objects/Monitor.gd" id="3"]
 [ext_resource type="AudioStream" uid="uid://ivlmvt8mk3u4" path="res://Audio/SFX/Objects/DestroyObject.wav" id="4"]
-[ext_resource type="Material" uid="uid://bveqi5m5ihsgj" path="res://Shaders/PlayerPalette.tres" id="6"]
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(30, 30)
@@ -153,7 +152,7 @@ collision_mask = 8912896
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MonitorBody/DamageArea" unique_id=2058653396]
 shape = SubResource("1")
 
-[node name="Animator" type="AnimationPlayer" parent="." unique_id=505793442]
+[node name="Monitor" type="AnimationPlayer" parent="." unique_id=505793442]
 libraries/ = SubResource("AnimationLibrary_b4dus")
 next/DestroyMonitor = &"fadeIcon"
 

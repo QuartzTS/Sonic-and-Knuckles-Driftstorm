@@ -17,12 +17,10 @@ func _process(delta):
 	$Logo/BigCog/CogCircle.rotate(delta*2*speed)
 	$Logo/Sonic/Cog.rotate(-delta*1.5*speed)
 	# Play an attract reel after music finishes
-	if $CanvasLayer/Labels.visible:
-		await Global.music.finished
-		if !titleEnd:
-			titleEnd = true
-			Global.attract_reel = true
-			Main.change_scene_by_level_id(Global.attract_reel_id)
+	#if $CanvasLayer/Labels.visible and MusicController.is_music_theme_playing(MusicController.MusicTheme.LEVEL_THEME) and !titleEnd:
+		#titleEnd = true
+		#Global.attract_reel = true
+		#Main.change_scene_by_level_id(Global.attract_reel_id)
 	
 
 func _input(event):

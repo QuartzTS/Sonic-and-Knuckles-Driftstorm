@@ -34,10 +34,11 @@ func _physics_process(_delta):
 		camera.target_limit_left = global_position.x - half_screen_width
 		camera.target_limit_right = global_position.x + half_screen_width
 		if player.get_partner() != null:
-			var partner = player.get_partner()
-			if partner.global_position.x > player.limitLeft and partner.global_position.y <= global_position.y:
-				partner.limitLeft = global_position.x - half_screen_width
-				partner.limitRight = global_position.x + half_screen_width
+			var partner: PlayerChar = player.get_partner()
+			var partner_camera: PlayerCamera = partner.get_camera()
+			if partner.global_position.x > camera.target_limit_left and partner.global_position.y <= global_position.y:
+				partner_camera.target_limit_left = global_position.x - half_screen_width
+				partner_camera.target_limit_right = global_position.x + half_screen_width
 
 		# set the texture for frame 127 to the one that corresponds to the player character
 		# (this is not done in _ready, in case the character was changed mid-level)

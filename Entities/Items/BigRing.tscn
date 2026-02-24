@@ -1,6 +1,6 @@
-[gd_scene load_steps=13 format=3 uid="uid://bfh812sfnsg66"]
+[gd_scene format=3 uid="uid://cyqjc2i4cos7h"]
 
-[ext_resource type="Script" path="res://Scripts/Objects/Ring.gd" id="1_6ff7w"]
+[ext_resource type="Script" uid="uid://bv0k0kd61glo2" path="res://Scripts/Objects/Ring.gd" id="1_6ff7w"]
 [ext_resource type="Texture2D" uid="uid://dd5w4k780vuop" path="res://Graphics/Items/big_ring.png" id="2_hoyhl"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sknf7"]
@@ -70,25 +70,25 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(29, 29)
 
-[node name="HyperRing" type="Node2D"]
+[node name="HyperRing" type="Node2D" unique_id=1077860015]
 z_index = 1
 script = ExtResource("1_6ff7w")
 
-[node name="RingSprite" type="AnimatedSprite2D" parent="."]
+[node name="RingSprite" type="AnimatedSprite2D" parent="." unique_id=1785004408]
 process_mode = 1
 z_index = 4
 sprite_frames = SubResource("2")
 autoplay = "default"
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="Hitbox" type="Area2D" parent="." unique_id=959189010]
 collision_layer = 0
 collision_mask = 4096
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" unique_id=346607024]
 modulate = Color(1, 0, 0.819608, 1)
 shape = SubResource("1")
 
-[node name="FloorCheck" type="RayCast2D" parent="."]
+[node name="FloorCheck" type="RayCast2D" parent="." unique_id=1130833087]
 target_position = Vector2(0, 16)
 
 [connection signal="area_shape_entered" from="Hitbox" to="." method="_on_Hitbox_area_shape_entered"]

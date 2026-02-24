@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://4q0hpddgto2k"]
+[gd_scene format=3 uid="uid://4q0hpddgto2k"]
 
 [ext_resource type="Texture2D" uid="uid://c7218f78hwl8o" path="res://Graphics/Gimmicks/springs_yellow.png" id="1"]
 [ext_resource type="Script" uid="uid://nr2t7i4rf4so" path="res://Scripts/Gimmicks/Spring.gd" id="2"]
@@ -129,31 +129,29 @@ _data = {
 &"SpringUpRight": SubResource("6")
 }
 
-[node name="Spring" type="StaticBody2D"]
+[node name="Spring" type="StaticBody2D" unique_id=1982377372]
 collision_layer = 8192
 collision_mask = 8192
 script = ExtResource("2")
 
-[node name="HitBox" type="CollisionShape2D" parent="."]
+[node name="HitBox" type="CollisionShape2D" parent="." unique_id=1687347832]
 shape = SubResource("1")
 
-[node name="DiagonalHitBox" type="Area2D" parent="."]
+[node name="DiagonalHitBox" type="Area2D" parent="." unique_id=956714628]
 collision_layer = 0
 collision_mask = 4096
 
-[node name="AreaShape" type="CollisionShape2D" parent="DiagonalHitBox"]
+[node name="AreaShape" type="CollisionShape2D" parent="DiagonalHitBox" unique_id=942580344]
 modulate = Color(0, 0.298039, 1, 1)
 shape = SubResource("2")
 disabled = true
 
-[node name="Spring" type="Sprite2D" parent="."]
+[node name="Spring" type="Sprite2D" parent="." unique_id=1449973600]
 texture = ExtResource("1")
 region_enabled = true
 region_rect = Rect2(0, 16, 32, 16)
 
-[node name="SpringAnimator" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_3avuf")
-}
+[node name="SpringAnimator" type="AnimationPlayer" parent="." unique_id=1058879461]
+libraries/ = SubResource("AnimationLibrary_3avuf")
 
 [connection signal="body_entered" from="DiagonalHitBox" to="." method="_on_Diagonal_body_entered"]

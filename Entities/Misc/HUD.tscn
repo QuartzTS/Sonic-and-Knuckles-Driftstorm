@@ -800,7 +800,7 @@ offset_bottom = 51.0
 theme_override_fonts/font = ExtResource("6_synv7")
 text = "0"
 
-[node name="BlueRingCount" type="Label" parent="Counters/Text"]
+[node name="BlueRingCount" type="Label" parent="Counters/Text" unique_id=1365282075]
 visible = false
 offset_left = 40.0
 offset_top = 32.0
@@ -809,7 +809,7 @@ offset_bottom = 51.0
 theme_override_fonts/font = ExtResource("7_fiwnx")
 text = "AB0"
 
-[node name="Time" type="Sprite2D" parent="Counters/Text"]
+[node name="Time" type="Sprite2D" parent="Counters/Text" unique_id=1754099874]
 visible = false
 position = Vector2(0, 16)
 texture = ExtResource("5_kre34")
@@ -896,8 +896,7 @@ vframes = 2
 [node name="PatternLeft" type="Control" parent="LevelCard" unique_id=392958040]
 anchors_preset = 0
 anchor_bottom = 1.0
-offset_top = -32.0
-offset_bottom = 14784.0
+offset_bottom = 14816.0
 
 [node name="PatternLeft" type="TextureRect" parent="LevelCard/PatternLeft" unique_id=899979748]
 layout_mode = 1
@@ -930,21 +929,18 @@ anchor_left = 1.0
 anchor_top = 0.003
 anchor_right = 1.0
 anchor_bottom = 0.003
-offset_left = -32.0
 offset_top = -12.400002
-offset_right = 5504.0
+offset_right = 5536.0
 offset_bottom = 339.6
 grow_horizontal = 0
 grow_vertical = 2
 texture = ExtResource("10_xpi0a")
 stretch_mode = 1
 
-[node name="CardMover" type="AnimationPlayer" parent="LevelCard"]
+[node name="CardMover" type="AnimationPlayer" parent="LevelCard" unique_id=139233982]
 process_mode = 1
-libraries = {
-"": SubResource("AnimationLibrary_15hsr")
-}
-autoplay = "Slider"
+libraries/ = SubResource("AnimationLibrary_15hsr")
+autoplay = &"Slider"
 
 [node name="CardPlayer" type="AnimationPlayer" parent="LevelCard" unique_id=26400794]
 libraries/ = SubResource("AnimationLibrary_fgko3")
@@ -965,9 +961,9 @@ size_flags_vertical = 2
 [node name="Passed" type="Label" parent="LevelClear" unique_id=1346593522]
 layout_mode = 0
 offset_left = -256.0
-offset_top = 64.0
+offset_top = 56.0
 offset_right = -103.0
-offset_bottom = 90.0
+offset_bottom = 82.0
 theme_override_fonts/font = ExtResource("10_8dyi8")
 text = "SONIC got"
 uppercase = true
@@ -975,9 +971,9 @@ uppercase = true
 [node name="Through" type="Label" parent="LevelClear" unique_id=1455838355]
 layout_mode = 0
 offset_left = -256.0
-offset_top = 108.0
+offset_top = 80.0
 offset_right = -137.0
-offset_bottom = 134.0
+offset_bottom = 106.0
 theme_override_fonts/font = ExtResource("10_8dyi8")
 text = "through"
 uppercase = true
@@ -1082,7 +1078,7 @@ frame = 2
 [node name="GameOver" type="AnimationPlayer" parent="GameOver" unique_id=849192118]
 libraries/ = SubResource("AnimationLibrary_dmnhc")
 
-[node name="Water" type="CanvasLayer" parent="."]
+[node name="Water" type="CanvasLayer" parent="." unique_id=1307763995]
 
 [node name="WaterOverlay" type="ColorRect" parent="Water" unique_id=558196970]
 visible = false

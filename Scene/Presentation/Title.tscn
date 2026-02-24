@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://qs5dmtxxf1w1"]
+[gd_scene format=3 uid="uid://qs5dmtxxf1w1"]
 
 [ext_resource type="Script" uid="uid://droa6h4kvohpb" path="res://Scripts/Level/Title.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://cbloyreqnle13" path="res://Graphics/title/Sonic_Worlds_Next_Logo.png" id="2_qt26u"]
@@ -204,97 +204,95 @@ point_count = 2
 offsets = PackedFloat32Array(0.294461, 0.466472, 0.769679, 1)
 colors = PackedColorArray(1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1)
 
-[node name="TitleScreen" type="Node2D"]
+[node name="TitleScreen" type="Node2D" unique_id=562202302]
 script = ExtResource("2")
 speed = 1
 
-[node name="Logo" type="Control" parent="."]
+[node name="Logo" type="Control" parent="." unique_id=1724211174]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
-[node name="BackCog" type="Sprite2D" parent="Logo"]
+[node name="BackCog" type="Sprite2D" parent="Logo" unique_id=1618777901]
 position = Vector2(208, 72)
 texture = ExtResource("2_qt26u")
 region_enabled = true
 region_rect = Rect2(114, 21, 52, 54)
 
-[node name="BigCog" type="Sprite2D" parent="Logo"]
+[node name="BigCog" type="Sprite2D" parent="Logo" unique_id=983698417]
 position = Vector2(136, 108)
 texture = ExtResource("2_qt26u")
 region_enabled = true
 region_rect = Rect2(0, 0, 97, 97)
 
-[node name="CogCircle" type="Sprite2D" parent="Logo/BigCog"]
+[node name="CogCircle" type="Sprite2D" parent="Logo/BigCog" unique_id=299230801]
 z_index = 1
 texture = ExtResource("2_qt26u")
 region_enabled = true
 region_rect = Rect2(24, 24, 48, 48)
 
-[node name="World" type="Sprite2D" parent="Logo/BigCog/CogCircle"]
+[node name="World" type="Sprite2D" parent="Logo/BigCog/CogCircle" unique_id=167864712]
 z_index = 1
 texture = ExtResource("2_qt26u")
 region_enabled = true
 region_rect = Rect2(181, 29, 39, 38)
 
-[node name="Worlds" type="Sprite2D" parent="Logo"]
+[node name="Worlds" type="Sprite2D" parent="Logo" unique_id=110184771]
 position = Vector2(227, 125)
 texture = ExtResource("2_qt26u")
 region_enabled = true
 region_rect = Rect2(2, 173, 182, 36)
 
-[node name="Arrow1" type="Sprite2D" parent="Logo/Worlds"]
+[node name="Arrow1" type="Sprite2D" parent="Logo/Worlds" unique_id=248137923]
 z_index = -1
 position = Vector2(95, 0)
 texture = ExtResource("2_qt26u")
 region_enabled = true
 region_rect = Rect2(190, 173, 17, 36)
 
-[node name="Arrow2" type="Sprite2D" parent="Logo/Worlds"]
+[node name="Arrow2" type="Sprite2D" parent="Logo/Worlds" unique_id=863039544]
 z_index = -1
 position = Vector2(107, 0)
 texture = ExtResource("2_qt26u")
 region_enabled = true
 region_rect = Rect2(214, 173, 15, 36)
 
-[node name="Arrow3" type="Sprite2D" parent="Logo/Worlds"]
+[node name="Arrow3" type="Sprite2D" parent="Logo/Worlds" unique_id=443066712]
 z_index = -1
 position = Vector2(117, 0)
 texture = ExtResource("2_qt26u")
 region_enabled = true
 region_rect = Rect2(235, 173, 12, 36)
 
-[node name="Sonic" type="Sprite2D" parent="Logo"]
+[node name="Sonic" type="Sprite2D" parent="Logo" unique_id=397442653]
 position = Vector2(243, 98)
 texture = ExtResource("2_qt26u")
 region_enabled = true
 region_rect = Rect2(150, 107, 140, 38)
 
-[node name="Cog" type="Sprite2D" parent="Logo/Sonic"]
+[node name="Cog" type="Sprite2D" parent="Logo/Sonic" unique_id=8921966]
 position = Vector2(-24, 0)
 rotation = 0.271425
 texture = ExtResource("2_qt26u")
 region_enabled = true
 region_rect = Rect2(243, 37, 21, 22)
 
-[node name="Next" type="Sprite2D" parent="Logo"]
+[node name="Next" type="Sprite2D" parent="Logo" unique_id=1912824025]
 position = Vector2(275, 163)
 texture = ExtResource("2_qt26u")
 region_enabled = true
 region_rect = Rect2(142, 235, 128, 33)
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=800549405]
 layer = -1
 
-[node name="Back" type="ColorRect" parent="CanvasLayer"]
+[node name="Back" type="ColorRect" parent="CanvasLayer" unique_id=665333460]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Cover" type="ColorRect" parent="CanvasLayer"]
+[node name="Cover" type="ColorRect" parent="CanvasLayer" unique_id=344303648]
 anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
@@ -302,7 +300,7 @@ anchor_bottom = 0.5
 pivot_offset = Vector2(0, 70)
 color = Color(0.533333, 0.533333, 0.533333, 1)
 
-[node name="Labels" type="Control" parent="CanvasLayer"]
+[node name="Labels" type="Control" parent="CanvasLayer" unique_id=312327067]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -310,7 +308,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Version" type="Label" parent="CanvasLayer/Labels"]
+[node name="Version" type="Label" parent="CanvasLayer/Labels" unique_id=1614380525]
 modulate = Color(1, 1, 0, 1)
 layout_mode = 1
 anchors_preset = 2
@@ -325,7 +323,7 @@ text = "v4.3 GIT MAIN"
 vertical_alignment = 2
 uppercase = true
 
-[node name="Date" type="Label" parent="CanvasLayer/Labels"]
+[node name="Date" type="Label" parent="CanvasLayer/Labels" unique_id=872883043]
 modulate = Color(1, 1, 0, 1)
 layout_mode = 1
 anchors_preset = 3
@@ -342,7 +340,7 @@ text = "2021 2025"
 horizontal_alignment = 2
 vertical_alignment = 2
 
-[node name="PressStart" type="Control" parent="CanvasLayer/Labels"]
+[node name="PressStart" type="Control" parent="CanvasLayer/Labels" unique_id=1602994116]
 modulate = Color(1, 0.831373, 0, 1)
 anchors_preset = 0
 anchor_left = 0.5
@@ -353,7 +351,7 @@ offset_top = -24.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="Text" type="RichTextLabel" parent="CanvasLayer/Labels/PressStart"]
+[node name="Text" type="RichTextLabel" parent="CanvasLayer/Labels/PressStart" unique_id=1115132234]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -372,10 +370,10 @@ text = "
 [center][wave freq=10.0 amp=30.0]PRESS START[/wave][/center]"
 scroll_active = false
 
-[node name="Cover" type="CanvasLayer" parent="."]
+[node name="Cover" type="CanvasLayer" parent="." unique_id=1945709752]
 layer = 0
 
-[node name="Back" type="ColorRect" parent="Cover"]
+[node name="Back" type="ColorRect" parent="Cover" unique_id=1766008915]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -383,19 +381,16 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0)
 
-[node name="TitleAnimate" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_pb3yv")
-}
-autoplay = "TitleAssemble"
+[node name="TitleAnimate" type="AnimationPlayer" parent="." unique_id=1489303087]
+libraries/ = SubResource("AnimationLibrary_pb3yv")
+autoplay = &"TitleAssemble"
 
-[node name="Celebrations" type="CPUParticles2D" parent="."]
-position = Vector2(204, 112)
+[node name="Celebrations" type="CPUParticles2D" parent="." unique_id=1801376428]
+position = Vector2(152, 112)
 emitting = false
 amount = 32
-texture = SubResource("AnimatedTexture_7ffju")
-preprocess = 0.5
 texture = SubResource("AnimatedTexture_lwfnq")
+preprocess = 0.5
 emission_shape = 2
 emission_sphere_radius = 128.0
 direction = Vector2(0, -1)

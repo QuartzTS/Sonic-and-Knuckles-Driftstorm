@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://b4oxfl2msl6e6"]
+[gd_scene format=3 uid="uid://b4oxfl2msl6e6"]
 
 [ext_resource type="Script" uid="uid://dc0yu0c56x2sv" path="res://Scripts/Enemies/Chomper.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://bmiileofyj6xf" path="res://Graphics/Enemies/chomper.png" id="2"]
@@ -6,29 +6,29 @@
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(8, 16)
 
-[node name="Chomper" type="Node2D" groups=["Enemy"]]
+[node name="Chomper" type="Node2D" unique_id=351177027 groups=["Enemy"]]
 
-[node name="Chomper" type="CharacterBody2D" parent="."]
+[node name="Chomper" type="CharacterBody2D" parent="." unique_id=202562739]
 collision_layer = 16384
 collision_mask = 0
 script = ExtResource("1")
 
-[node name="CollissionMask" type="CollisionShape2D" parent="Chomper"]
+[node name="CollissionMask" type="CollisionShape2D" parent="Chomper" unique_id=1861154360]
 shape = SubResource("1")
 
-[node name="DamageArea" type="Area2D" parent="Chomper"]
+[node name="DamageArea" type="Area2D" parent="Chomper" unique_id=2030359644]
 collision_layer = 0
 collision_mask = 8916992
 
-[node name="HitBox" type="CollisionShape2D" parent="Chomper/DamageArea"]
+[node name="HitBox" type="CollisionShape2D" parent="Chomper/DamageArea" unique_id=1538222470]
 modulate = Color(1, 0, 0, 1)
 shape = SubResource("1")
 
-[node name="Chomper" type="Sprite2D" parent="Chomper"]
+[node name="Chomper" type="Sprite2D" parent="Chomper" unique_id=1568498229]
 texture = ExtResource("2")
 hframes = 2
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="." unique_id=186909436]
 z_index = -100
 position = Vector2(-1.90735e-06, -132)
 scale = Vector2(3.2, 15.6)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://c155bdyqqmmpl"]
+[gd_scene format=3 uid="uid://c155bdyqqmmpl"]
 
 [ext_resource type="Script" uid="uid://dp4tmi8vq2ute" path="res://Scripts/Enemies/Orbinaut.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://ca8c5sryvf1j2" path="res://Graphics/Enemies/orbinaut.png" id="2"]
@@ -7,45 +7,45 @@
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(16, 16)
 
-[node name="Orbinaut" type="CharacterBody2D" groups=["Enemy"]]
+[node name="Orbinaut" type="CharacterBody2D" unique_id=147054650 groups=["Enemy"]]
 collision_layer = 16384
 collision_mask = 0
 script = ExtResource("1")
 
-[node name="CollissionMask" type="CollisionShape2D" parent="."]
+[node name="CollissionMask" type="CollisionShape2D" parent="." unique_id=628876679]
 shape = SubResource("1")
 
-[node name="DamageArea" type="Area2D" parent="."]
+[node name="DamageArea" type="Area2D" parent="." unique_id=226459698]
 collision_layer = 0
 collision_mask = 8916992
 
-[node name="HitBox" type="CollisionShape2D" parent="DamageArea"]
+[node name="HitBox" type="CollisionShape2D" parent="DamageArea" unique_id=1971866950]
 modulate = Color(1, 0, 0, 1)
 shape = SubResource("1")
 
-[node name="Orb" type="Area2D" parent="."]
+[node name="Orb" type="Area2D" parent="." unique_id=1796227906]
 position = Vector2(0, -16)
 collision_layer = 0
 collision_mask = 4096
 script = ExtResource("3")
 
-[node name="HitBox" type="CollisionShape2D" parent="Orb"]
+[node name="HitBox" type="CollisionShape2D" parent="Orb" unique_id=1321530416]
 modulate = Color(1, 0, 0, 1)
 shape = SubResource("1")
 
-[node name="orb" type="Sprite2D" parent="Orb"]
+[node name="orb" type="Sprite2D" parent="Orb" unique_id=1822094320]
 texture = ExtResource("2")
 hframes = 2
 vframes = 2
 frame = 3
 
-[node name="orbinaut" type="Sprite2D" parent="."]
+[node name="orbinaut" type="Sprite2D" parent="." unique_id=73417907]
 texture = ExtResource("2")
 hframes = 2
 vframes = 2
 frame = 2
 
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="." unique_id=567777889]
 z_index = -100
 position = Vector2(-1.90735e-06, -1.90735e-06)
 scale = Vector2(3.2, 3.2)

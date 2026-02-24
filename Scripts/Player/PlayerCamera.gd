@@ -40,7 +40,7 @@ func _init(p_player: PlayerChar) -> void:
 	player = p_player
 	player.get_parent().call_deferred(&"add_child",self)
 	
-	enabled = (player.playerControl == 1)
+	enabled = (player.playerControl == 1 or player.playerControl == -1)
 	var view_size: Vector2 = player.get_viewport_rect().size
 	drag_left_margin =   dist.x/view_size.x
 	drag_right_margin =  dist.x/view_size.x

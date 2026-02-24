@@ -21,7 +21,7 @@ class_name Level extends Node2D
 @export var defaultBottomBoundry = 100000000
 
 @export var player: PlayerChar ## Reference for player node, for no reason lol /j
-@export var spawn_position: Vector2
+#@export var spawn_position: Vector2
 
 ## A dictionary that stores the time intervals in a Vector2 format, where x is the startpoint and y is the endpoint
 @export var attract_reel_intervals: Dictionary[String,Vector2]
@@ -88,19 +88,18 @@ func level_reset_data(playCard = true):
 	if setDefaultBottom:
 		Global.hardBorderBottom = defaultBottomBoundry
 	
-	Global.currentZone = Global.get_level_path(level_id)
 
 	MusicController.reset_music_themes()
 	if music != null:
 		MusicController.set_level_music(music, music_alt)
 	# set next zone
-	Global.nextZone = nextZone
+	#Global.nextZone = nextZone
 	
 	# set pausing to true
 	Main.sceneCanPause = true
 	# set animals
 	Global.animals = [animal1,animal2]
-	Global.level_id = level_id
+	#Global.level_id = level_id
 	Global.discord_rpc_customize(Global.get_level_label(level_id), "Attract Reel Mode" if Global.attract_reel else "Just playing a lil..")
 	# if global hud and play card, run hud ready script
 	if playCard and is_instance_valid(Global.hud):

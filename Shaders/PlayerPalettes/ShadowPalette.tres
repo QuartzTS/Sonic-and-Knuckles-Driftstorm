@@ -1,6 +1,6 @@
-[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://eb1tnh10ipr5"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://eb1tnh10ipr5"]
 
-[ext_resource type="Shader" path="res://Shaders/PaletteSwapRow.gdshader" id="1_obcw2"]
+[ext_resource type="Shader" uid="uid://bodkhe1q04vcr" path="res://Shaders/PaletteSwapRow.gdshader" id="1_obcw2"]
 [ext_resource type="Texture2D" uid="uid://lv4qey45t23s" path="res://Graphics/Palettes/SuperSonicPal.png" id="2_q5sfo"]
 
 [resource]

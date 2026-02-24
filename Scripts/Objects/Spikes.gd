@@ -22,7 +22,7 @@ func _physics_process(delta):
 # Collision check (this is where the player gets hurt, OW!)
 func physics_collision(body: PlayerChar, hitVector):
 	if hitVector.is_equal_approx((Vector2.DOWN*scale.sign()).rotated(deg_to_rad(snapped(rotation_degrees,90)))):
-		body.hit_player(global_position, 0, 4)
+		body.hit_player(global_position, Global.HAZARDS.NORMAL, 4)
 		return true
 
 

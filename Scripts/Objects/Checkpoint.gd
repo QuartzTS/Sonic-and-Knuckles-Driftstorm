@@ -22,7 +22,7 @@ func activate():
 	
 	# set checkpoint to self (and set any checkpoitns with a lower ID to active)
 	for i in Global.checkPoints:
-		if i != null and i.get("checkPointID") != null and i.checkPointID < checkPointID and Global.players[0].currentState != PlayerChar.STATES.DEBUG:
+		if i != null and i.get("checkPointID") != null and i.checkPointID < checkPointID and Global.players[0].get_state() != PlayerChar.STATES.DEBUG:
 			i.active = true
 			i.get_node("Spinner").play("flash")
 

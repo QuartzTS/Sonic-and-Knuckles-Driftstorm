@@ -1,10 +1,10 @@
 [gd_resource type="TileSet" format=3 uid="uid://uplqwsi0o4gi"]
 
-[ext_resource type="Texture2D" uid="uid://qsl2efivw8sw" path="res://Graphics/Tiles/EHZ_HTZ/EHZ_Blocks.png" id="1_2oi3q"]
-[ext_resource type="Texture2D" uid="uid://yj68lfisg50k" path="res://Graphics/Tiles/EHZ_HTZ/EHZ_AniTiles.png" id="2_03d2m"]
-[ext_resource type="Texture2D" uid="uid://qmdyovv477vd" path="res://Graphics/Tiles/EHZ_HTZ/EHZFalls_Blocks.png" id="3_qhe4r"]
-[ext_resource type="Texture2D" uid="uid://d1tmmpsxyvfn4" path="res://Graphics/Tiles/EHZ_HTZ/HTZ_Lava.png" id="4_54mrb"]
-[ext_resource type="Texture2D" uid="uid://xaragbm3j1l8" path="res://Graphics/Tiles/EHZ_HTZ/HTZ_Zips.png" id="5_pvffk"]
+[ext_resource type="Texture2D" uid="uid://0swx3ra5yphj" path="res://Graphics/Tiles/EHZ_HTZ/EHZ_Blocks.png" id="1_2oi3q"]
+[ext_resource type="Texture2D" uid="uid://bjuaihlgo2hl4" path="res://Graphics/Tiles/EHZ_HTZ/EHZ_AniTiles.png" id="2_03d2m"]
+[ext_resource type="Texture2D" uid="uid://di6jpsevuy01a" path="res://Graphics/Tiles/EHZ_HTZ/EHZFalls_Blocks.png" id="3_qhe4r"]
+[ext_resource type="Texture2D" uid="uid://ckdgq5s51r4b4" path="res://Graphics/Tiles/EHZ_HTZ/HTZ_Lava.png" id="4_54mrb"]
+[ext_resource type="Texture2D" uid="uid://cyfa53uupkiaf" path="res://Graphics/Tiles/EHZ_HTZ/HTZ_Zips.png" id="5_pvffk"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_syoxf"]
 tile_data = PackedInt32Array(0, 1179648, 13, 65536, 1179648, 13, 131072, 1179648, 13, 196608, 1179648, 13, 262144, 1179648, 13, 327680, 1179648, 13, 393216, 1179648, 13, 458752, 1179648, 13, 3, 1179648, 13, 65539, 1179648, 13, 131075, 1179648, 13, 196611, 1179648, 13, 262147, 1179648, 13, 327683, 1179648, 13, 393219, 1179648, 13, 458755, 1179648, 13)

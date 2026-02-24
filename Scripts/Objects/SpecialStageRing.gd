@@ -9,7 +9,7 @@ var player: PlayerChar = null
 func _ready() -> void:
 	# check that the current ring hasn't already been collected and all 7 emeralds aren't collected
 	# the emerald check is so that it'll spawn if you have all emeralds anyway
-	if Global.nodeMemory.has(get_path()) and Global.emeralds < Global.EMERALDS.ALL and Global.players[0].currentState != PlayerChar.STATES.DEBUG:
+	if Global.nodeMemory.has(get_path()) and Global.emeralds < Global.EMERALDS.ALL and Global.players[0].current_state != PlayerChar.STATES.DEBUG:
 		queue_free()
 
 func _process(delta: float) -> void:
@@ -28,9 +28,9 @@ func _process(delta: float) -> void:
 			# when entering special stage
 			player.airTimer = player.defaultAirTime
 			
-			Global.bonusStageSavedPosition = global_position
-			Global.bonusStageSavedRings = player.rings
-			Global.bonusStageSavedTime = Global.levelTime
+			Global.bonus_stage_saved_position = global_position
+			Global.bonus_stage_saved_rings = player.rings
+			Global.bonus_stage_saved_time = Global.levelTime
 			
 			# Mark as destroyed
 			Global.nodeMemory.append(get_path())

@@ -1,12 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://jwp6krrgjfn7"]
+[gd_scene format=3 uid="uid://jwp6krrgjfn7"]
 
 [ext_resource type="Script" uid="uid://dxgt2pgq1qsq0" path="res://Scripts/Objects/FallingBlockPlat.gd" id="1_uva5p"]
 
-[node name="FallingBlockPlat" type="Sprite2D"]
+[node name="FallingBlockPlat" type="Sprite2D" unique_id=1316945836]
 centered = false
 region_enabled = true
 region_rect = Rect2(0, 0, 16, 16)
 script = ExtResource("1_uva5p")
 
-[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=845472947]
 scale = Vector2(6.4, 6.4)
