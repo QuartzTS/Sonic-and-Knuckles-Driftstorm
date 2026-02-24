@@ -1,18 +1,10 @@
 class_name MainGameScene
 extends Node2D
 
-## this gets emited when the scene fades, used to load in level details and data to hide it from the player
+# this gets emited when the scene fades, used to load in level details and data to hide it from the player
 signal scene_faded
 ## And this one gets emitted when an animated cutscene ends
 signal video_finished
-## signal that emits when volume fades
-signal volume_set
-
-# note: volumes can be set with set_volume(), these variables are just for volume control reference
-var startVolumeLevel = 0 ## used as reference for when a volume change started
-var setVolumeLevel = 0 ## where to fade the volume to
-var volumeLerp = 0 ## current stage between start and set for volume level
-var volumeFadeSpeed = 1 ## speed for volume changing
 
 ## was paused enables menu control when the player pauses manually so they don't get stuck (get_tree().paused may want to be used by other intances)
 var wasPaused = false
@@ -20,38 +12,8 @@ var wasPaused = false
 var sceneCanPause = false
 
 func _ready():
-	# global object references
-	Global.musicParent = get_node_or_null("Music")
-	Global.music = get_node_or_null("Music/Music")
-	Global.bossMusic = get_node_or_null("Music/BossTheme")
-	Global.effectTheme = get_node_or_null("Music/EffectTheme")
-	Global.drowning = get_node_or_null("Music/Drowning")
-	Global.life = get_node_or_null("Music/Life")
 	# initialize game data using global reset (it's better then assigning variables twice)
-	reset_game_values()
-
-func _process(delta):
-	# verify scene isn't paused
-	if !get_tree().paused and Global.music != null:
-		# pause main music if effect theme, boss music or drowning songs are playing
-		Global.music.stream_paused = Global.effectTheme.playing or Global.drowning.playing or Global.bossMusic.playing
-		# pause boss music if drowning
-		Global.bossMusic.stream_paused = Global.drowning.playing
-		# pause effect music if drowning
-		Global.effectTheme.stream_paused = Global.drowning.playing or Global.bossMusic.playing
-		
-		# check that volume lerp isn't transitioned yet
-		if volumeLerp < 1:
-			# move volume lerp to 1
-			volumeLerp = move_toward(volumeLerp,1,delta*volumeFadeSpeed)
-			# use volume lerp to set the effect volume
-			Global.music.volume_db = lerp(float(startVolumeLevel),float(setVolumeLevel),float(volumeLerp))
-			# copy the volume to other songs (you'll want to add yours here if you add more)
-			Global.effectTheme.volume_db = Global.music.volume_db
-			Global.drowning.volume_db = Global.music.volume_db
-			Global.bossMusic.volume_db = Global.music.volume_db
-			if volumeLerp >= 1:
-				volume_set.emit()
+	reset_values()
 
 func _input(event):
 	# Pausing
@@ -77,17 +39,12 @@ func reset_game():
 	# remove the was paused check
 	wasPaused = false
 	sceneCanPause = false
-	Global.effectTheme.stop()
-	Global.bossMusic.stop()
-	Global.music.stop()
-	Global.soundChannel.stop()
-	set_volume(0)
 	change_scene(Global.startScene)
-	await Main.scene_faded
 	# reset game values
-	reset_game_values()
+	reset_values()
 	# unpause scene (if it was)
 	get_tree().paused = false
+	
 
 ## Function for playing pre-rendered animated videos, mostly within cutscenes (cuz that's just a game design choice bruh..)
 func play_video(video: VideoStream) -> void:
@@ -111,7 +68,7 @@ func change_scene(scene: String, fade_anim: String = "FadeOut", do_fade_in: bool
 	await get_tree().process_frame
 	get_tree().paused = false
 	$GUI/Pause.hide()
-	Global.music.stop()
+	MusicController.stop_all_music_themes()
 	get_tree().change_scene_to_file(scene)
 	# reset data level data, if reset data is true
 	if reset_data:
@@ -140,7 +97,7 @@ func change_scene_by_level_id(level_id: Global.LEVELS, fade_anim: String = "Fade
 	await get_tree().process_frame
 	get_tree().paused = false
 	$GUI/Pause.hide()
-	Global.music.stop()
+	MusicController.stop_all_music_themes()
 	Global.currentZone = Global.get_level_path(level_id)
 	Global.nextZone = Global.get_level_path((level_id+1) % Global.LEVELS.size())
 	Global.level_id = level_id
@@ -167,7 +124,7 @@ func change_scene_by_level_id(level_id: Global.LEVELS, fade_anim: String = "Fade
 	#await get_tree().process_frame
 	#get_tree().paused = false
 	#$GUI/Pause.hide()
-	##Global.music.stop()
+	##MusicController.stop_all_music_themes()
 
 ## Plays a fade_in animation (fading in without fading out would be funny ngl)
 func fade_in(fade_anim: String, length: float = 1.0) -> void:
@@ -175,23 +132,25 @@ func fade_in(fade_anim: String, length: float = 1.0) -> void:
 	$GUI/Fader.play_backwards(fade_anim)
 
 
+
+
+## Clear dynamic variable when loading a level. Only use this when not loading from a special/bonus stage.
 func clear_dynamic_level_variables():
 	Global.players.clear()
 	Global.checkPoints.clear()
 	Global.waterLevel = null
 	Global.gameOver = false
-	if Global.currentCheckPoint == -1 or Global.stageClearPhase != 0:
-		Global.levelTime = 0
-	if Global.stageClearPhase != 0:
+	if Global.is_in_any_stage_clear_phase():
 		Global.currentCheckPoint = -1
-		Global.checkPointTime = 0
+		Global.levelTime = 0
 		Global.timerActive = false
+	
 	Global.debug_object_cursor = 0
 	Global.bonus_stage_saved_position = Vector2.ZERO
 	Global.bonus_stage_saved_rings = 0
 	Global.bonus_stage_saved_time = 0.0
-	Global.globalTimer = 0
-	Global.stageClearPhase = 0
+	
+	Global.reset_stage_clear_phase()
 	Global.nodeMemory.clear()
 	if Global.nextZone == Global.startScene:
 		Global.score = 0
@@ -199,41 +158,19 @@ func clear_dynamic_level_variables():
 	Global.get_level_path((Global.level_id+1) % Global.LEVELS.size()) == Global.nextZone:
 		Global.cool_value = 10000
 
-
-# reset values, self explanatory, put any variables to their defaults in here
-func reset_game_values():
+## reset values, self explanatory, put any variables to their defaults in here
+func reset_values():
 	Global.PlayerChar1 = Global.CHARACTERS.SONIC
 	Global.PlayerChar2 = Global.CHARACTERS.KNUCKLES
 	Global.lives = 3
 	Global.score = 0
 	Global.continues = 0
 	Global.levelTime = 0
-	Global.timerActive = false
-	Global.attract_reel = false
 	Global.emeralds = 0
 	Global.specialStageID = 0
 	Global.checkPoints.clear()
 	Global.checkPointTime = 0
 	Global.currentCheckPoint = -1
-	Global.cool_value = 10000
-	Global.animals = [0,1]
+	Global.animals = [Animal.ANIMAL_TYPE.BIRD, Animal.ANIMAL_TYPE.SQUIRREL]
 	Global.nodeMemory.clear()
 	Global.nextZone = "res://Scene/Zones/BaseZone.tscn"
-
-
-# executed when life sound has finished
-func _on_Life_finished():
-	# set volume level to default
-	set_volume()
-
-# set the volume level
-func set_volume(volume = 0, fadeSpeed = 1):
-	# set the start volume level to the curren volume
-	startVolumeLevel = Global.music.volume_db
-	# set the volume level to go to
-	setVolumeLevel = volume
-	# set volume transition
-	volumeLerp = 0
-	# set the speed for the transition
-	volumeFadeSpeed = fadeSpeed
-	# this is continued in _process() as it needs to run during gameplay

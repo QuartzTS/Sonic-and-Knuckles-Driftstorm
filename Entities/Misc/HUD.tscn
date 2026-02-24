@@ -1,12 +1,13 @@
 [gd_scene format=3 uid="uid://c30uceea18q1w"]
 
-[ext_resource type="Texture2D" uid="uid://dloxtqer7p78l" path="res://Graphics/HUD/hud_lives.png" id="2_cfvjc"]
 [ext_resource type="Material" uid="uid://bveqi5m5ihsgj" path="res://Shaders/PlayerPalette.tres" id="2_xy7bp"]
 [ext_resource type="FontFile" uid="uid://cj70hn8i05uo5" path="res://Graphics/HUD/hud_lives_numerals.png" id="3_eauoj"]
+[ext_resource type="Texture2D" uid="uid://djle3p8pihhv4" path="res://Graphics/HUD/hud_lives_sonic.png" id="3_nn5u6"]
 [ext_resource type="Texture2D" uid="uid://c7d6313minexh" path="res://Graphics/HUD/hud_text.png" id="5_kre34"]
 [ext_resource type="Script" uid="uid://exmjft5cgqy2" path="res://Scripts/Misc/HUD.gd" id="6"]
 [ext_resource type="FontFile" uid="uid://cticydrc4dda2" path="res://Graphics/HUD/hud_numerals.png" id="6_synv7"]
 [ext_resource type="Texture2D" uid="uid://gswo6rq3uyy8" path="res://Graphics/HUD/LevelCards/Banner.png" id="7_ccygi"]
+[ext_resource type="FontFile" uid="uid://3dtk7ug486gi" path="res://Graphics/HUD/hud_numerals_hyper.png" id="7_fiwnx"]
 [ext_resource type="FontFile" uid="uid://v4hx32xo1ema" path="res://Graphics/HUD/LevelCards/font/largefont4.png" id="7_uj3el"]
 [ext_resource type="Texture2D" uid="uid://c7a17v25ap4ow" path="res://Graphics/HUD/LevelCards/ActCards.png" id="9_3i4aq"]
 [ext_resource type="FontFile" uid="uid://qan4ss21y5gp" path="res://Graphics/HUD/LevelCards/font/smallfont3.png" id="10_8dyi8"]
@@ -16,7 +17,6 @@
 [ext_resource type="PackedScene" uid="uid://bass3w6af55vw" path="res://Tools/Timing/ProcessTimer.tscn" id="13_g84gd"]
 [ext_resource type="Texture2D" uid="uid://60ak1q0xrn1s" path="res://Graphics/HUD/hud_gametimeover.png" id="15_oja0m"]
 [ext_resource type="AudioStream" uid="uid://dh4rsaka62ph4" path="res://Audio/SFX/Gimmicks/Switch.wav" id="16"]
-[ext_resource type="AudioStream" uid="uid://dnyw7remih6op" path="res://Audio/Soundtrack/8. SWD_GameOver.ogg" id="16_vq3lx"]
 [ext_resource type="AudioStream" uid="uid://clgobastngtvy" path="res://Audio/SFX/Misc/Score.wav" id="17"]
 
 [sub_resource type="Animation" id="Animation_fiwnx"]
@@ -753,9 +753,8 @@ grow_vertical = 0
 
 [node name="Icon" type="Sprite2D" parent="LifeCounter" unique_id=1382488643]
 material = ExtResource("2_xy7bp")
-texture = ExtResource("2_cfvjc")
+texture = ExtResource("3_nn5u6")
 centered = false
-vframes = 7
 
 [node name="LifeText" type="Label" parent="LifeCounter/Icon" unique_id=1664565615]
 offset_left = 48.0
@@ -801,7 +800,16 @@ offset_bottom = 51.0
 theme_override_fonts/font = ExtResource("6_synv7")
 text = "0"
 
-[node name="Time" type="Sprite2D" parent="Counters/Text" unique_id=1564865548]
+[node name="BlueRingCount" type="Label" parent="Counters/Text"]
+visible = false
+offset_left = 40.0
+offset_top = 32.0
+offset_right = 64.0
+offset_bottom = 51.0
+theme_override_fonts/font = ExtResource("7_fiwnx")
+text = "AB0"
+
+[node name="Time" type="Sprite2D" parent="Counters/Text"]
 visible = false
 position = Vector2(0, 16)
 texture = ExtResource("5_kre34")
@@ -888,7 +896,8 @@ vframes = 2
 [node name="PatternLeft" type="Control" parent="LevelCard" unique_id=392958040]
 anchors_preset = 0
 anchor_bottom = 1.0
-offset_bottom = 14816.0
+offset_top = -32.0
+offset_bottom = 14784.0
 
 [node name="PatternLeft" type="TextureRect" parent="LevelCard/PatternLeft" unique_id=899979748]
 layout_mode = 1
@@ -930,10 +939,12 @@ grow_vertical = 2
 texture = ExtResource("10_xpi0a")
 stretch_mode = 1
 
-[node name="CardMover" type="AnimationPlayer" parent="LevelCard" unique_id=104523440]
-libraries/ = SubResource("AnimationLibrary_15hsr")
-autoplay = &"Slider"
-speed_scale = 4.0
+[node name="CardMover" type="AnimationPlayer" parent="LevelCard"]
+process_mode = 1
+libraries = {
+"": SubResource("AnimationLibrary_15hsr")
+}
+autoplay = "Slider"
 
 [node name="CardPlayer" type="AnimationPlayer" parent="LevelCard" unique_id=26400794]
 libraries/ = SubResource("AnimationLibrary_fgko3")
@@ -954,9 +965,9 @@ size_flags_vertical = 2
 [node name="Passed" type="Label" parent="LevelClear" unique_id=1346593522]
 layout_mode = 0
 offset_left = -256.0
-offset_top = 56.0
+offset_top = 64.0
 offset_right = -103.0
-offset_bottom = 82.0
+offset_bottom = 90.0
 theme_override_fonts/font = ExtResource("10_8dyi8")
 text = "SONIC got"
 uppercase = true
@@ -964,9 +975,9 @@ uppercase = true
 [node name="Through" type="Label" parent="LevelClear" unique_id=1455838355]
 layout_mode = 0
 offset_left = -256.0
-offset_top = 80.0
+offset_top = 108.0
 offset_right = -137.0
-offset_bottom = 106.0
+offset_bottom = 134.0
 theme_override_fonts/font = ExtResource("10_8dyi8")
 text = "through"
 uppercase = true
@@ -1071,11 +1082,7 @@ frame = 2
 [node name="GameOver" type="AnimationPlayer" parent="GameOver" unique_id=849192118]
 libraries/ = SubResource("AnimationLibrary_dmnhc")
 
-[node name="GameOverMusic" type="AudioStreamPlayer" parent="GameOver" unique_id=2015381748]
-stream = ExtResource("16_vq3lx")
-bus = &"Music"
-
-[node name="Water" type="CanvasLayer" parent="." unique_id=1828803288]
+[node name="Water" type="CanvasLayer" parent="."]
 
 [node name="WaterOverlay" type="ColorRect" parent="Water" unique_id=558196970]
 visible = false

@@ -29,6 +29,7 @@ Global="*res://Scripts/Global/Global.gd"
 GlobalFunctions="*res://Scripts/Global/GlobalFunctions.gd"
 Main="*res://Scene/Main.tscn"
 DiscordRPCLoader="*res://addons/discord-rpc-gd/nodes/discord_autoload.gd"
+MusicController="*uid://bkmjj32kqdb3l"
 
 [debug]
 

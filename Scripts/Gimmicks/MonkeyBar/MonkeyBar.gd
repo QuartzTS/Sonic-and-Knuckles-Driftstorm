@@ -95,21 +95,24 @@ func connect_player(player : PlayerChar, allowSwap: bool = false) -> void:
 		
 	player_mounted.emit(player)
 
-	player.set_state(player.STATES.ANIMATION)
+	player.set_state(player.STATES.GIMMICK)
 	
 	if check_brachiate(player):
 		return
 
 	reposition_player_static(player)
-	player.play_animation("hang")
+	player.get_avatar().get_animator().play("hang")
 
 	# Is there anything we need to track as far as variables go? Maybe later.
 	pass
 	
 func disconnect_player(player : PlayerChar) -> void:
 	player.unset_active_gimmick()
-	player.play_animation("roll")
-	player.set_state(player.STATES.JUMP)
+	
+	if player.get_state() == PlayerChar.STATES.GIMMICK:
+		player.get_avatar().get_animator().play("roll")
+		player.set_state(player.STATES.JUMP)
+		
 	player.unset_gimmick_var("brachiate_target_cur")
 	player_dismounted.emit(player)
 	pass
@@ -141,7 +144,7 @@ func get_collision_target(hitbox_offset : int) -> Vector2:
 ## This function repositions the player between the current connected brachiato
 ##   and the one the player is attempting to move to.
 func brachiate_reposition_player(player : PlayerChar, player_brachiation_target : Brachiatable):
-	var animator = player.get_animator()
+	var animator = player.get_avatar().get_animator()
 	var cur_anim = animator.get_current_animation()
 	
 	# Don't do anything if the player isn't in the brachiate animation
@@ -150,18 +153,18 @@ func brachiate_reposition_player(player : PlayerChar, player_brachiation_target 
 		
 	var percent_complete = animator.get_current_animation_position() / animator.get_current_animation_length()
 	
-	var hitbox_offset = (player.get_current_hitbox().NORMAL.y / 2.0) - 19 # 0'd for Sonic/Knux, 4 for Tails/Amy I think?
+	var hitbox_offset = (player.get_predefined_hitbox(PlayerChar.HITBOXES.NORMAL).y / 2.0) - 19 # 0'd for Sonic/Knux, 4 for Tails/Amy I think?
 	var getPose = get_collision_target(hitbox_offset)
 	var getPose2 = player_brachiation_target.get_collision_target(hitbox_offset)
 	var truePose = lerp(getPose, getPose2, transform_linear_to_exponential(percent_complete, 0.65))
 
 	player.set_global_position(truePose)
 	player.set_movement(Vector2.ZERO)
-	player.cam_update()
+	player.get_camera().update()
 
 ## Used when repositioning the player while not brachiating
 func reposition_player_static(player : PlayerChar):
-		var hitbox_offset = (player.get_current_hitbox().NORMAL.y / 2.0) - 19 # 0'd for Sonic/Knux, 4 for Tails/Amy I think?
+		var hitbox_offset = (player.get_predefined_hitbox(PlayerChar.HITBOXES.NORMAL).y / 2.0) - 19 # 0'd for Sonic/Knux, 4 for Tails/Amy I think?
 		var getPose = $MonkeyBarHanger.global_position + Vector2(0, 13 - hitbox_offset)
 		
 		# verify position change won't clip into objects
@@ -169,7 +172,7 @@ func reposition_player_static(player : PlayerChar):
 			player.set_global_position(getPose)
 		
 		player.set_movement(Vector2.ZERO)
-		player.cam_update()	
+		player.get_camera().update()
 	
 func _physics_process(_delta: float) -> void:
 	for player : PlayerChar in Global.get_players_on_gimmick(self):
@@ -232,15 +235,17 @@ func brachiate_connect(player : PlayerChar, brachiate_target : Brachiatable) -> 
 
 	# Play the animation associated with your current brachiation arm
 	if next_arm == ARM_SELECTION.RIGHT:
-		player.play_animation("brachiateRight", -1, brachiate_target.brachiate_speed)
+		player.get_avatar().get_animator().play("brachiateRight", -1,
+		                                        brachiate_target.brachiate_speed)
 	else:
-		player.play_animation("brachiateLeft", -1, brachiate_target.brachiate_speed)
+		player.get_avatar().get_animator().play("brachiateLeft", -1,
+		                                        brachiate_target.brachiate_speed)
 
 ## Checks if the player can swing like a monkey from one monkeybar to another
 ## and if so, starts the process.
 func check_brachiate(player : PlayerChar):
 	# Don't allow check_brachiate while the player is brachiating already!
-	var cur_anim = player.get_animator().get_current_animation()
+	var cur_anim = player.get_avatar().get_animator().get_current_animation()
 	if cur_anim == "brachiateLeft" or cur_anim == "brachiateRight":
 		return false
 	
@@ -332,7 +337,7 @@ func temp_lock_gimmick(player) -> void:
 	var unlock_func = func ():
 		player.clear_single_locked_gimmick(self)
 	
-	var timer:SceneTreeTimer = get_tree().create_timer(0.5)
+	var timer:SceneTreeTimer = get_tree().create_timer(0.5, false)
 	timer.timeout.connect(unlock_func, CONNECT_DEFERRED)
 	
 	player.add_locked_gimmick(self)

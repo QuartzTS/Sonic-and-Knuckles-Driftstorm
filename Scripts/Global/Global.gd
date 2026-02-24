@@ -4,32 +4,32 @@ extends Node
 var players: Array[PlayerChar] = []
 ## hud object reference
 var hud = null
+
 ## checkpoint memory
 var checkPoints: Array = []
 ## reference for the current checkpoint
 var currentCheckPoint: int = -1
-## the current level time when touching a Checkpoint or special ring
+## the current level time when touching a Checkpoint
 var checkPointTime: float = 0
 
-## Saved position when accessing a special stage
+## Special Stage/Bonus Stage room preservation
+## Saved position when touching a special ring
 var bonus_stage_saved_position: Vector2 = Vector2.ZERO
-## Ring count when accessing a special stage
+## Ring count when touching a special ring
 var bonus_stage_saved_rings: int = 0
-## Time when accessing a special stage
-var bonus_stage_saved_time: float = 0.0
+## Saved time when touching a special ring
+var bonus_stage_saved_time: float = 0
+## Memory of interacted objects from the current saved zone.
+var nodeMemory = []
+## TODO: Seperate memory for the special rings, they should not come back after dying.
 
 ## the starting room, this is loaded on game resets, you may want to change this
 var startScene: String = "res://Scene/Presentation/Title.tscn"
 ## Path to the current level, for returning from special stages.
 var currentZone: String = ""
-## Path to the first level in the game (set in "reset_game_values")
-var nextZone: String = "res://Scene/Zones/BaseZone.tscn"
-# use this to store the current state of the room, changing scene will clear everythin
-#var stageInstanceMemory = null
-#var stageLoadMemory = null
+## Path to the first level in the game (set in "reset_values")
+var nextZone: String = ""
 
-# score instace for add_score()
-var Score = preload("res://Entities/Misc/Score.tscn")
 # order for score combo
 const SCORE_COMBO = [1,2,3,4,4,4,4,4,4,4,4,4,4,4,4,5]
 
@@ -38,51 +38,54 @@ var timerActive = false
 var gameOver = false
 
 # stage clear is used to identify the current state of the stage clear sequence
-# this is reference in
+# this is referenced in
+# res://Scripts/Global/Main.gd
 # res://Scripts/Misc/HUD.gd
+# res://Scripts/Objects/Capsule.gd
 # res://Scripts/Objects/GoalPost.gd
-var stageClearPhase = 0
+# res://Scripts/Player/Player.gd
+enum STAGE_CLEAR_PHASES { NOT_STARTED, STARTED, GOALPOST_SPIN_END, SCORE_TALLY }
+var _stage_clear_phase: STAGE_CLEAR_PHASES = STAGE_CLEAR_PHASES.NOT_STARTED:
+	get = get_stage_clear_phase, set = set_stage_clear_phase
+func get_stage_clear_phase() -> STAGE_CLEAR_PHASES:
+	return _stage_clear_phase
+func set_stage_clear_phase(value: STAGE_CLEAR_PHASES) -> void:
+	_stage_clear_phase = value
+func is_in_any_stage_clear_phase() -> bool:
+	return get_stage_clear_phase() != STAGE_CLEAR_PHASES.NOT_STARTED
+func reset_stage_clear_phase() -> void:
+	set_stage_clear_phase(Global.STAGE_CLEAR_PHASES.NOT_STARTED)
 
-# TODO: There's not much point in having seperate music, bossMusic, and effectThemes,
-# These seperate sound banks can never play at the same time, so should be unified.
-# life having its own bank is fine as the position of the previous track needs to be recalled.
-# Music
-var musicParent = null
-var music = null
-var bossMusic = null
-var effectTheme = null
-var drowning = null
-var life = null
-# TODO: Normal Level theme, boss theme, and Super theme could be here too.
-## song themes to play for things like invincibility and speed shoes
-var themes = [
-	preload("res://Audio/Soundtrack/1. SWD_Invincible.ogg"),
-	preload("res://Audio/Soundtrack/2. SWD_SpeedUp.ogg"),
-	preload("res://Audio/Soundtrack/4. SWD_StageClear.ogg")]
-# index for current theme
-var currentTheme = 0
 
 # Sound, used for play_sound (used for a global sound, use this if multiple nodes use the same sound)
 var soundChannel = AudioStreamPlayer.new()
 
 # Gameplay values
-## Current Score.
-var score = 0
-## The current Life Count of the player
+var score: int = 0
 var lives = 3
 ## Not actually implimented.
 var continues = 0
-## Chaos emeralds use bitwise flag operations, the equivelent for 7 emeralds would be 128
-var emeralds = 0
-## emerald bit flags
-enum EMERALD {RED = 1, BLUE = 2, GREEN = 4, YELLOW = 8, CYAN = 16, SILVER = 32, PURPLE = 64}
-## ID of the upcoming special stage.
+# emerald bit flags
+enum EMERALDS {
+	RED    = 1 << 0,
+	BLUE   = 1 << 1,
+	GREEN  = 1 << 2,
+	YELLOW = 1 << 3,
+	CYAN   = 1 << 4,
+	SILVER = 1 << 5,
+	PURPLE = 1 << 6,
+	ALL = (1 << 7) - 1
+}
+# emeralds use bitwise flag operations, the equivalent for 7 emeralds would be 127
+var emeralds: int = (func() -> int:
+	# make sure EMERALDS.ALL holds a correct value
+	assert(EMERALDS.ALL == (1 << EMERALDS.size() - 1) - 1)
+	return 0
+).call()
 var specialStageID = 0
-## the timer that counts down while the level isn't completed or in a special ring
-var levelTime: float = 0
-## global timer, used as reference for animations
-var globalTimer: float = 0
-## Time limit in levels
+var level = null # reference to the currently active level
+var levelTime = 0 # the timer that counts down while the level isn't completed or in a special ring
+var globalTimer = 0 # global timer, used as reference for animations
 const maxTime: int = 60*10
 ## Additional score that rewards players for not taking damage
 var cool_value: int = 10000
@@ -97,10 +100,50 @@ var setWaterLevel = 0
 ## How fast to move the water to different levels
 var waterScrollSpeed = 64
 
-## Characters (if you want more you should add one here, see the player script too for more settings)
-enum CHARACTERS {NONE,SONIC,TAILS,KNUCKLES,AMY}
-var PlayerChar1 = CHARACTERS.SONIC
-var PlayerChar2 = CHARACTERS.KNUCKLES
+# characters (if you want more you should add one here, see the player script too for more settings)
+enum CHARACTERS {NONE,SONIC,TAILS,KNUCKLES,AMY,SHADOW}
+
+var _player_shaders := [
+	preload("res://Shaders/PlayerPalette.tres"), # NONE should never come into play
+	preload("res://Shaders/PlayerPalettes/SonicPalette.tres"),
+	preload("res://Shaders/PlayerPalettes/TailsPalette.tres"),
+	preload("res://Shaders/PlayerPalettes/KnucklesPalette.tres"),
+	preload("res://Shaders/PlayerPalettes/AmyPalette.tres"),
+	preload("res://Shaders/PlayerPalettes/ShadowPalette.tres"),
+]
+
+func get_material_for_character(character: CHARACTERS) -> Material:
+	return _player_shaders[character]
+
+## Which multiplayer mode is in use alters some aspects of how the second (and on if that's ever
+## implemented) works. Note that this is separate from concepts like split screen and it does not
+## inherently set up a competitive 
+##
+## This is also a work in progress, not all intended features are currently implemented.
+##
+## NORMAL - Additional players are partner characters. They can't collect monitors. Rings they
+##          collect are given to player 1. They don't die on hit. If the second controller is idle
+##          for an extended period of time, Partner automation will take over. This is the normal
+##          'little brother mode' multiplayer that you have in single player mode from the Genesis
+##          games.
+##  PEERS - Additional players are their own players. They can collect monitors. They get their
+##          own rings. They take damage normally. They never get taken over by automation. They
+##          have their own score count.
+##          the main difference between this mode and VERSUS mode is that partner actions (and
+##          Tails being able to carry a player around is the only one of these) work in this mode.
+##          Also, when an act is finished, both players pass at the same time.
+## VERSUS - Same as PEERS, but partner actions are disabled. When a Sign Post victory condition is
+##          passed, the level does not immediately end and score is not tallied. Instead the final
+##          time and ring bonus are stored for use in a results screen.
+enum MULTIMODE {NORMAL = 0, PEERS = 1, VERSUS = 2}
+var multiplayer_mode = MULTIMODE.NORMAL
+
+# autofill the array with capitalized names from enum CHARACTERS
+var character_names: Array = \
+	CHARACTERS.keys().map(func(char_name: String): return char_name.capitalize())
+
+var PlayerChar1: CHARACTERS = CHARACTERS.SONIC
+var PlayerChar2: CHARACTERS = CHARACTERS.KNUCKLES
 
 
 ## Enum for levels (Documenting the enum elements is gonna be preferred)
@@ -136,8 +179,9 @@ var hardBorderRight = 100000000
 var hardBorderTop = -100000000
 var hardBorderBottom = 100000000
 
+
 ## Animal spawn type reference, see the level script for more information on the types
-var animals = [0,1]
+var animals: Array[Animal.ANIMAL_TYPE] = [Animal.ANIMAL_TYPE.BIRD, Animal.ANIMAL_TYPE.SQUIRREL]
 
 ## Emited when a stage gets started
 signal stage_started
@@ -151,11 +195,8 @@ signal cycle_property
 ## Emitted when all variations of te object are previewed in debug mode
 signal cycle_object
 
-## Memory of interacted objects from the current zone saved zone.
-var nodeMemory = []
-
 # Game settings
-var zoom_size = 2
+var zoom_size = 2.0
 var smooth_rotation = 0
 enum TIME_TRACKING_MODES { STANDARD, SONIC_CD }
 var time_tracking: TIME_TRACKING_MODES = TIME_TRACKING_MODES.STANDARD
@@ -163,7 +204,7 @@ var time_limit = 1
 var extended_camera = 0
 var discord_rpc = 0
 
-# Hazard type references
+## Hazard type references
 enum HAZARDS {NORMAL, FIRE, ELEC, WATER}
 
 # Layers references
@@ -176,48 +217,30 @@ func _ready():
 	soundChannel.bus = "SFX"
 	# load game data
 	load_settings()
-	get_tree().paused = false
-	
 
 func _process(delta):
 	# do a check for certain variables, if it's all clear then count the level timer up
-	if stageClearPhase == 0 and !gameOver and !get_tree().paused and timerActive:
+	if !is_in_any_stage_clear_phase() and !gameOver and !get_tree().paused and timerActive:
 		levelTime += delta
 	# count global timer if game isn't paused
 	if !get_tree().paused:
 		globalTimer += delta
+	
 
 
-# use this to play a sound globally, use load("res:..") or a preloaded sound
-func play_sound(sound = null):
+## use this to play a sound globally, use load("res:..") or a preloaded sound
+func play_sound(sound = null) -> void:
 	if sound != null:
 		soundChannel.stream = sound
 		soundChannel.play()
 
-# add a score object, see res://Scripts/Misc/Score.gd for reference
-func add_score(position = Vector2.ZERO,value = 0):
-	var scoreObj = Score.instantiate()
-	scoreObj.scoreID = value
-	scoreObj.global_position = position
-	add_child(scoreObj)
 
-# use a check function to see if a score increase would go above 50,000
-func check_score_life(scoreAdd = 0):
-	if fmod(score,50000) > fmod(score+scoreAdd,50000):
-		life.play()
+## use a check function to see if a score increase would go above 50,000
+func check_score_life(score_add: int = 0) -> void:
+	if score / 50000 < (score + score_add) / 50000:
+		MusicController.play_music_theme(MusicController.MusicTheme._1UP)
 		lives += 1
-		effectTheme.volume_db = -100
-		music.volume_db = -100
-		bossMusic.volume_db = -100
 
-# use this to set the stage clear theme, only runs if stageClearPhase isn't 0
-func stage_clear():
-	if stageClearPhase == 0:
-		currentTheme = 2
-		music.stream = themes[currentTheme]
-		music.play()
-		effectTheme.stop()
-		bossMusic.stop()
 
 func emit_stage_start() -> void:
 	stage_started.emit()
@@ -249,9 +272,15 @@ func get_level_label(id: LEVELS = level_id) -> String:
 func get_level_act_number(id: LEVELS = level_id) -> int:
 	return level_info[id].act
 
+## use this to set the stage clear theme, only runs if stage clear phase is NONE
+func stage_clear() -> void:
+	if !is_in_any_stage_clear_phase():
+		MusicController.stop_music_theme(MusicController.MusicTheme.LEVEL_THEME)
+		MusicController.play_music_theme(MusicController.MusicTheme.STAGE_CLEAR)
 
-# save data settings
-func save_settings():
+
+## save data settings
+func save_settings() -> void:
 	var file = ConfigFile.new()
 	# save settings
 	file.set_value("Volume","SFX",AudioServer.get_bus_volume_db(AudioServer.get_bus_index("SFX")))
@@ -268,12 +297,13 @@ func save_settings():
 	# save config and close
 	file.save("user://Settings.cfg")
 
-# load settings
-func load_settings():
+
+## load settings
+func load_settings() -> void:
 	var file = ConfigFile.new()
 	var err = file.load("user://Settings.cfg")
 	if err != OK:
-		return false # Return false as an error
+		return
 	
 	if file.has_section_key("Volume","SFX"):
 		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"),file.get_value("Volume","SFX"))
@@ -293,10 +323,7 @@ func load_settings():
 	
 	if file.has_section_key("Resolution","Zoom"):
 		zoom_size = file.get_value("Resolution","Zoom")
-		var window = get_window()
-		var newSize = Vector2i((get_viewport().get_visible_rect().size*zoom_size).round())
-		window.set_position(window.get_position()+(window.size-newSize)/2)
-		window.set_size(newSize)
+		resize_window(zoom_size)
 	
 	if file.has_section_key("Gameplay","SmoothRotation"):
 		smooth_rotation = file.get_value("Gameplay","SmoothRotation")
@@ -333,31 +360,54 @@ func discord_rpc_customize(game_state: String, game_details: String, _large_imag
 		DiscordRPC.refresh()
 
 
+
+func resize_window(new_zoom_size):
+	var window = get_window()
+	var new_size = Vector2i((get_viewport().get_visible_rect().size*new_zoom_size).round())
+	window.set_position(window.get_position()+(window.size-new_size)/2)
+	window.set_size(new_size)
+	zoom_size = new_zoom_size
+	
+	
+func get_zoom_size() -> float:
+	return zoom_size
+
+
+## Gets the main player.
+func get_first_player() -> PlayerChar:
+	return players[0]
+
+
 ## Useful for checking triggers that require specifically the first player to be on a gimmick	
-func get_first_player_gimmick():
+func get_first_player_gimmick() -> ConnectableGimmick:
 	return players[0].get_active_gimmick()
 
+
 ## Useful for gimmicks that can activate if any player is attached that don't need data about
-## the specific player
-func is_any_player_on_gimmick(gimmick):
+## the specific player. A simple boolean of whether or not there is a player on a given
+## ConnectableGimmick.
+func is_any_player_on_gimmick(gimmick: ConnectableGimmick) -> bool:
 	for player in players:
 		if player.get_active_gimmick() == gimmick:
 			return true
 	return false
 
+
 ## Useful for gimmicks that need to potentially iterate through all attached players
-func get_players_on_gimmick(gimmick):
-	var players_on_gimmick = []
+func get_players_on_gimmick(gimmick) -> Array[PlayerChar]:
+	var players_on_gimmick: Array[PlayerChar] = []
 	for player in players:
 		if player.get_active_gimmick() == gimmick:
 			players_on_gimmick.append(player)
 	return players_on_gimmick
 
+
 ## Simple check to see if the player is the first char
-func is_player_first(player : PlayerChar):
+func is_player_first(player : PlayerChar) -> bool:
 	if players[0] == player:
 		return true
 	return false
+
 
 ## Gets the index of the player selected
 ## @param player Which player you are checking
@@ -365,5 +415,59 @@ func is_player_first(player : PlayerChar):
 ##             being later players
 ## @retval -1 if the player isn't in the inbox. That should be impossible unless
 ##            you make an orphaned player for some reason.
-func get_player_index(player : PlayerChar):
+func get_player_index(player : PlayerChar) -> int:
 	return players.find(player)
+
+
+## get the current active camera
+func getCurrentCamera2D() -> Camera2D:
+	var viewport = get_viewport()
+	if not viewport:
+		return null
+	var camerasGroupName = "__cameras_%d" % viewport.get_viewport_rid().get_id()
+	var cameras = get_tree().get_nodes_in_group(camerasGroupName)
+	for camera in cameras:
+		if camera is Camera2D and camera.enabled:
+			return camera
+	return null
+
+
+## the original game logic runs at 60 fps, this function is meant to be used to help calculate this,
+## usually a division by the normal delta will cause the game to freak out at different FPS speeds
+func div_by_delta(delta) -> float:
+	return 0.016667*(0.016667/delta)
+
+
+## get window size resolution as a vector2
+func get_screen_size() -> Vector2:
+	return get_viewport().get_visible_rect().size
+	
+	
+## Sets the current level (used as part of a level ready script usually)
+func set_level(new_level: Level) -> void:
+	self.level = new_level
+
+
+## Gets the current level (useful for always knowing where the active level root is)
+func get_level() -> Level:
+	return self.level
+
+
+## Gets the name of a character
+func get_character_name(which: CHARACTERS) -> String:
+	return character_names[which]
+
+
+## Gets the current multiplayer mode	
+func get_multimode() -> MULTIMODE:
+	return multiplayer_mode
+
+
+## Sets the multiplayer mode to the requested value
+func set_multimode(new_multimode: MULTIMODE) -> void:
+	self.multiplayer_mode = new_multimode
+
+
+## Cycles the multiplayer mode
+func cycle_multimode() -> void:
+	self.multiplayer_mode = (self.multiplayer_mode + 1) % MULTIMODE.size() as MULTIMODE

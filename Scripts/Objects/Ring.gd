@@ -7,6 +7,7 @@ var player
 var magnet = null
 var magnetShape = null
 var ringacceleration = [0.75,0.1875]
+var value: int = 1
 var Particle = preload("res://Entities/Misc/GenericParticle.tscn")
 var big = false
 
@@ -20,17 +21,21 @@ func _process(delta):
 		if big:
 			z_index = 100
 		$RingSprite.speed_scale = lifetime / MAX_LIFETIME + 1
-		if lifetime > 0:
+		if lifetime > 0.0:
 			lifetime -= delta
-		elif lifetime <= 0 or (lifetime <= 192.0/60.0 and big):
+			# make the ring blink at the end of its lifetime
+			if lifetime <= 1.0:
+				visible = !visible
+		elif lifetime <= 0 or (lifetime <= 192.0/60.0 and big)
 			queue_free()
 	if player:
 		# collect ring
 		if player.ringDisTime <= 0 and (player.invTime*60 <= 90 or scattered):
 			z_index = 1
 			# get ring to player
-			player.get_ring()
+			player.give_ring(value)
 			if !scattered:
+				# Mark as destroyed
 				Global.nodeMemory.append(get_path())
 			var part = Particle.instantiate()
 			get_parent().add_child(part)
@@ -55,16 +60,16 @@ func _physics_process(delta):
 		
 	elif magnet:
 		#relative positions
-		var sx = sign(magnet.global_position.x - global_position.x)
-		var sy = sign(magnet.global_position.y - global_position.y)
+		var pos_sign: Vector2 = (magnet.global_position-global_position).sign()
 		
 		#check relative movement
-		var tx = int(sign(velocity.x) == sx)
-		var ty = int(sign(velocity.y) == sy)
+		var vel_sign: Vector2 = velocity.sign()
 		
 		#add to speed
-		velocity.x += (ringacceleration[tx] * sx)/GlobalFunctions.div_by_delta(delta)
-		velocity.y += (ringacceleration[ty] * sy)/GlobalFunctions.div_by_delta(delta)
+		velocity += Vector2(
+				ringacceleration[int(vel_sign.x == pos_sign.x)],
+				ringacceleration[int(vel_sign.y == pos_sign.y)]
+			) * pos_sign / GlobalFunctions.div_by_delta(delta)
 		translate(velocity*delta)
 		if magnetShape.disabled:
 			scattered = true

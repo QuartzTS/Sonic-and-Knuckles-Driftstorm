@@ -2,7 +2,6 @@ extends PlayerState
 
 # this is for respawning a second player
 var targetPoint = Vector2.ZERO
-
 var spawnTicker = (1.0/64.0)*60.0
 
 var knux_turn_timer = 0
@@ -12,15 +11,16 @@ func _ready():
 	invulnerability = true # ironic
 
 func state_activated():
-	targetPoint = parent.partner.global_position
+	targetPoint = parent.get_partner().global_position
 	if parent.character == Global.CHARACTERS.KNUCKLES:
 		knux_turn_timer = 0 if parent.movement.x > 0 else 180
 
-func _process(delta):
+func state_process(delta):
 	# Animation
+	var animator: PlayerCharAnimationPlayer = parent.get_avatar().get_animator()
 	match(parent.character):
 		Global.CHARACTERS.TAILS:
-			parent.animator.play("swim" if parent.water else "fly")
+			animator.play("swim" if parent.water else "fly")
 		Global.CHARACTERS.KNUCKLES:
 			parent.animator.play("glide")
 			# Turning, copied from Glide.gd
@@ -37,24 +37,37 @@ func _process(delta):
 			var animSize = parent.animator.current_animation_length
 			var offset = knux_turn_timer/180
 			
-			parent.animator.advance(-parent.animator.current_animation_position+(animSize*offset))
+			animator.advance(-parent.animator.current_animation_position+(animSize*offset))
 		Global.CHARACTERS.AMY:
-			parent.animator.play("dropDash")
+			animator.play("dropDash")
 		_:
-			parent.animator.play("roll")
+			animator.play("roll")
 
 
 
-func _physics_process(delta):
+
+func state_physics_process(delta: float) -> void:
+	var partner: PlayerChar = parent.get_partner()
 	parent.allowTranslate = true
 	# slowly move the target point towards the player based on distance
-	targetPoint = targetPoint.lerp(parent.partner.global_position,(targetPoint.distance_to(parent.partner.global_position)/32)*delta)
+	targetPoint = targetPoint.lerp(partner.global_position,(targetPoint.distance_to(partner.global_position)/32)*delta)
 	
-	# if player is in range or is in a valid state, return to normal
-	var goToNormal = (parent.global_position.distance_to(targetPoint) <= 64 and round(parent.global_position.y) == round(targetPoint.y)
-		or parent.global_position.distance_to(parent.partner.global_position) <= 16) and (
-		parent.partner.currentState == parent.STATES.NORMAL or parent.partner.currentState == parent.STATES.AIR
-		or parent.partner.currentState == parent.STATES.JUMP or parent.partner.currentState == parent.STATES.ANIMATION)
+	# If player is in range or in a valid state, return to normal
+	var is_close_to_target = parent.global_position.distance_to(targetPoint) <= 64
+	var is_aligned_vertically = round(parent.global_position.y) == round(targetPoint.y)
+
+	var is_partner_nearby = parent.global_position.distance_to(partner.global_position) <= 16.0
+
+	var partner_state = partner.get_state()
+	var is_partner_in_valid_state = (
+		partner_state == parent.STATES.NORMAL or
+		partner_state == parent.STATES.AIR or
+		partner_state == parent.STATES.JUMP or
+		partner_state.currentState == parent.STATES.ANIMATION
+	)
+
+	var goToNormal = ((is_close_to_target and is_aligned_vertically) or is_partner_nearby) and \
+		is_partner_in_valid_state
 	
 	var layerMemory = parent.collision_layer
 	# set parent layer to collide with terrain
@@ -71,12 +84,12 @@ func _physics_process(delta):
 		parent.movement.y = 0
 		# move to Sonic's Y position...
 		parent.global_position.y = move_toward(parent.global_position.y,targetPoint.y,delta*60)
-		#if Global.waterLevel != null:
-			##Block Tails from going underwater in this state
-			#parent.global_position.y = min(parent.global_position.y,Global.waterLevel-16)
-		#else:
+		# if (Global.waterLevel != null):
+		# 	#Block Tails from going underwater in this state
+		# 	parent.global_position.y = min(parent.global_position.y,Global.waterLevel-16)
+		# else:
 		#Block Tails from going out of bounds, in case Sonic is dead.
-		parent.global_position.y = min(parent.global_position.y,parent.limitBottom-16)
+		parent.global_position.y = minf(parent.global_position.y,parent.get_camera().target_limit_bottom-16.0)
 		
 		var distance = targetPoint.x-parent.global_position.x
 		# if far then fly by distance
@@ -89,25 +102,26 @@ func _physics_process(delta):
 		if abs(distance)/16 > abs(parent.movement.x/60):
 			parent.movement.x = (distance/16)*60
 		
-		if distance != 0:
-			parent.direction = sign(distance)
-		parent.sprite.flip_h = parent.direction < 0 if parent.character != Global.CHARACTERS.KNUCKLES else false
+		if parent.character != Global.CHARACTERS.KNUCKLES
+			parent.set_direction_signed(signf(distance))
 	else: # Go back to normal
 		# restore layer
 		parent.collision_layer = layerMemory
 		parent.set_state(parent.STATES.AIR)
 
 func state_exit() -> void:
-	parent.groundSpeed = 0
-	parent.animator.play("freefall")
+	parent.set_ground_speed(0.0)
+	parent.get_avatar().get_animator().play("walk")
 	parent.allowTranslate = false
-	parent.partnerPanic = 0
 	parent.collision_layer = parent.defaultLayer
 	parent.collision_mask = parent.defaultMask
+	parent.set_state(parent.STATES.AIR)
 	parent.movement = Vector2.ZERO
-	parent.collissionLayer = parent.partner.collissionLayer
+	parent.collissionLayer = partner.collissionLayer
 	# copy limits to avoid out of bounds errors
-	parent.limitLeft = parent.partner.limitLeft
-	parent.limitRight = parent.partner.limitRight
-	parent.limitTop = parent.partner.limitTop
-	parent.limitBottom = parent.partner.limitBottom
+	var camera: PlayerCamera = parent.get_camera()
+	var partner_camera: PlayerCamera = partner.get_camera()
+	camera.target_limit_left = partner_camera.target_limit_left
+	camera.target_limit_right = partner_camera.target_limit_right
+	camera.target_limit_top = partner_camera.target_limit_top
+	camera.target_limit_bottom = partner_camera.target_limit_bottom

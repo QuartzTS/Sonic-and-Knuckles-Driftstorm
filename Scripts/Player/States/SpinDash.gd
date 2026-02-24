@@ -2,18 +2,20 @@ extends PlayerState
 
 
 func state_exit():
-	parent.get_node("HitBox").shape.size = parent.currentHitbox.NORMAL
-	
+	parent.get_node("HitBox").shape.size = parent.get_predefined_hitbox(PlayerChar.HITBOXES.NORMAL)
+
+
 func state_activated():
 	parent.get_node("HitBox").position = parent.hitBoxOffset.crouch
-	
-func _process(delta):
-	
+
+
+func state_process(delta: float) -> void:
+	var animator: PlayerCharAnimationPlayer = parent.get_avatar().get_animator()
 	# Charging up (if your character does something different for button 2 or 3 you'll want to adjust this)
 	if parent.inputs[parent.INPUTS.ACTION] == 1 or parent.inputs[parent.INPUTS.ACTION2] == 1:
 		# reset animation
-		parent.animator.stop()
-		parent.animator.play("spinDash")
+		animator.stop()
+		animator.play("spinDash")
 		# play rev sound
 		parent.sfx[2].play()
 		# increase dash power
@@ -28,17 +30,17 @@ func _process(delta):
 	dash.offset.x = abs(dash.offset.x)*sign(-1+int(dash.flip_h)*2)
 	
 	# release
-	if parent.inputs[parent.INPUTS.YINPUT] <= 0 and parent.ground:
-		parent.movement.x = (8+(floor(parent.spindashPower) / 2))*60*parent.direction
+	if (parent.inputs[parent.INPUTS.YINPUT] <= 0):
+		parent.movement.x = (8.0+(floorf(parent.spindashPower)/2.0))*60*parent.get_direction_multiplier()
 		parent.sfx[3].play()
 		parent.sfx[2].stop()
 		parent.sfx[2].pitch_scale = 1
 		parent.set_state(parent.STATES.ROLL)
 		
 		# Lock camera
-		parent.lock_camera((parent.spindashPower+8)/60.0)
+		parent.get_camera().lock((parent.spindashPower+8.0)/60.0)
 		
-		parent.animator.play("roll")
+		animator.play("roll")
 		
 		var dust = parent.Particle.instantiate()
 		dust.play("DropDash")
@@ -46,11 +48,14 @@ func _process(delta):
 		dust.z_index = dash.z_index
 		dust.scale.x = parent.direction
 		parent.get_parent().add_child(dust)
+		animator.play("roll")
 	
 	# decrease the dash power for next frame
 	parent.spindashPower -= ((parent.spindashPower / 0.125) / (256))*60*delta
 
-func _physics_process(delta):
+## Physics function that the player invokes while this state is active
+## Override this when creating your state if you need this funcitonality
+func state_physics_process(_delta: float) -> void:
 	# Gravity
 	if !parent.ground:
 		#parent.set_state(parent.STATES.AIR)

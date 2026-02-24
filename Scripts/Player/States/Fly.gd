@@ -10,9 +10,11 @@ var carryHitBox
 var carryBox
 
 func _ready():
+	super()
 	flyHitBox = parent.get_node("TailsFlightHitArea/HitBox")
 	carryHitBox = parent.get_node("TailsCarryBox/HitBox")
 	carryBox = parent.get_node("TailsCarryBox")
+
 
 func state_activated():
 	flightTime = 8
@@ -20,10 +22,12 @@ func state_activated():
 	flyHitBox.disabled = false
 	carryHitBox.disabled = false
 	actionPressed = true
-	
+
+
 func state_exit():
-	flyHitBox.call_deferred("set","disabled",true)
-	carryHitBox.call_deferred("set","disabled",true)
+	carryBox.disconnect_all()
+	flyHitBox.set_deferred("disabled",true)
+	carryHitBox.set_deferred("disabled",true)
 	# stop flight sound
 	parent.sfx[21].stop()
 	parent.sfx[22].stop()
@@ -31,26 +35,26 @@ func state_exit():
 	if $FlyBugStop.is_inside_tree():
 		$FlyBugStop.start(0.1)
 
-func _process(_delta):
+
+func state_process(_delta: float) -> void:
 	# Animation
+	var animator: PlayerCharAnimationPlayer = parent.get_avatar().get_animator()
 	if parent.water:
 		if carryBox.get_player_contacting_count() != 0:
-			parent.animator.play("swimCarry")
+			animator.play("swimCarry")
 		elif flightTime > 0:
-			parent.animator.play("swim")
+			animator.play("swim")
 		else:
-			parent.animator.play("swimTired")
+			animator.play("swimTired")
 	else:
-		if flightTime > 0:
-			if carryBox.get_player_contacting_count() == 0:
-				parent.animator.play("fly")
-			else:
-				if parent.movement.y >= 0:
-					parent.animator.play("flyCarry")
-				else:
-					parent.animator.play("flyCarryUP")
+		if flightTime <= 0.0:
+			animator.play("tired")
+		elif carryBox.get_player_contacting_count() == 0:
+			animator.play("fly")
+		elif parent.movement.y >= 0.0:
+			animator.play("flyCarry")
 		else:
-			parent.animator.play("tired")
+			animator.play("flyCarryUP")
 	
 	# flight sound (verify we are not underwater)
 	if !parent.water:
@@ -64,10 +68,10 @@ func _process(_delta):
 	else:
 		parent.sfx[21].stop()
 		parent.sfx[22].stop()
-	
+	pass
 
-func _physics_process(delta):
-	
+
+func state_physics_process(delta: float) -> void:
 	# If carrying another player, 
 	var carriedPlayer = null
 	
@@ -78,10 +82,9 @@ func _physics_process(delta):
 	if carriedPlayer != null:
 		if carriedPlayer.poleGrabID == carryBox:
 			carriedPlayer.movement = parent.movement
-			carriedPlayer.stateList[parent.STATES.AIR].lockDir = true
+			carriedPlayer.get_state_object(parent.STATES.AIR).lockDir = true
 			# set carried player direction
-			carriedPlayer.direction = parent.direction
-			carriedPlayer.sprite.flip_h = (parent.direction < 0)
+			carriedPlayer.set_direction_signed(parent.get_direction_multiplier(),false)
 		
 		# set immediate inputs if ai
 		if parent.playerControl == 0:
@@ -97,37 +100,36 @@ func _physics_process(delta):
 	
 	# air movement
 	if (parent.get_x_input() != 0):
-		
-		if (parent.movement.x*parent.get_x_input() < parent.top):
-			if (abs(parent.movement.x) < parent.top):
-				parent.movement.x = clamp(parent.movement.x+parent.air/GlobalFunctions.div_by_delta(delta)*parent.get_x_input(),-parent.top,parent.top)
+		var top_speed = parent.get_physics().top_speed
+		if (parent.movement.x*parent.get_x_input() < top_speed):
+			if (abs(parent.movement.x) < top_speed):
+				var air_accel = parent.get_physics().air_acceleration
+				parent.movement.x = clamp(parent.movement.x + air_accel / GlobalFunctions.div_by_delta(delta) * parent.get_x_input(), -top_speed, top_speed)
 				
 	# Air drag
-	if (parent.movement.y < 0 and parent.movement.y > -parent.releaseJmp*60):
+	if (parent.movement.y < 0 and parent.movement.y > -parent.get_physics().release_jump*60):
 		parent.movement.x -= ((parent.movement.x / 0.125) / 256)*60*delta
 	
 	# Change parent direction
-	if (parent.get_x_input() != 0):
-		parent.direction = parent.get_x_input()
+	var x_input: float = parent.get_x_input()
+	if (x_input != 0.0):
+		parent.set_direction_signed(x_input)
 		if carriedPlayer != null:
-			carriedPlayer.direction = parent.direction
-	
-	# set facing direction
-	parent.sprite.flip_h = (parent.direction < 0)
+			carriedPlayer.set_direction_signed(parent.get_direction_multiplier(),false)
 	
 	# Flight logic
 	parent.movement.y += flyGrav/GlobalFunctions.div_by_delta(delta)
 	
 	flightTime -= delta
 	# Button press
-	if parent.movement.y >= -1*60 and flightTime > 0 and !parent.roof and parent.position.y >= parent.limitTop+16:
+	if parent.movement.y >= -1.0*60.0 and flightTime > 0.0 and !parent.roof and parent.position.y >= parent.get_camera().target_limit_top+16.0:
 		if parent.any_action_held_or_pressed() and (!actionPressed or parent.get_y_input() < 0) and (carryBox.get_player_contacting_count() == 0 or !parent.water):
 			flyGrav = -0.125
 	# return gravity to normal after velocity is less then -1
 	else:
 		flyGrav = 0.03125
 	
-	if parent.position.y < parent.limitTop+16:
+	if parent.position.y < parent.get_camera().target_limit_top+16.0:
 		parent.movement.y = max(0,parent.movement.y)
 	
 	# set actionPressed to prevent input repeats
@@ -136,7 +138,7 @@ func _physics_process(delta):
 	# Reset state if on ground
 	if (parent.ground):
 		parent.set_state(parent.STATES.NORMAL)
-
+		
 
 func _on_FlyBugStop_timeout():
 	parent.sfx[21].stop()

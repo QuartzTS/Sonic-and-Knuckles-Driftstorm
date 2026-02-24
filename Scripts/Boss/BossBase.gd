@@ -1,6 +1,6 @@
 class_name BossBase extends CharacterBody2D
 
-@export_enum("Normal", "Fire", "Elec", "Water") var damageType = 0
+@export var damage_type: Global.HAZARDS = Global.HAZARDS.NORMAL
 var playerHit = []
 
 @export var hp = 8
@@ -27,36 +27,34 @@ func _physics_process(delta):
 			flash_finished.emit()
 	# if not flashing do damage routine
 	elif hp > 0 and active:
-		# checks if player hit has players inside
-		if playerHit.size() > 0:
-			# loop through players as i
-			for i in playerHit:
-				# check if damage entity is on or supertime is bigger then 0
-				if i.get_collision_layer_value(20) or i.supTime > 0 or forceDamage:
-					if !i.get_collision_layer_value(24):
-						i.movement *= -0.5
-					# hit
-					if hp > 0:
-						$Hit.play()
-						flashTimer = hitTime
-						got_hit.emit()
-						hp -= 1
-						# check if gliding, if they are force them to fall
-						if i.get("currentState") != null:
-							if i.currentState == i.STATES.GLIDE:
-								i.animator.play("glideFall")
-								# reset player hitbox
-								i.set_hitbox(i.currentHitbox.NORMAL)
-								i.reflective = false
-								if i.get_node_or_null("States/Glide") != null:
-									i.get_node("States/Glide").isFall = true
-					# check if dead
-					if hp <= 0:
-						defeated.emit()
-				# if destroying the enemy fails and hit player exists then hit player
-				elif i.has_method("hit_player"):
-					if i.hit_player(global_position,damageType):
-						hit_player.emit()
+		# loop through players as i
+		for i: PlayerChar in playerHit:
+			# check if damage entity is on or supertime is bigger then 0
+			if i.get_collision_layer_value(20) or i.supTime > 0 or forceDamage:
+				if !i.get_collision_layer_value(24):
+					i.movement *= -0.5
+				# hit
+				if hp > 0:
+					$Hit.play()
+					flashTimer = hitTime
+					got_hit.emit()
+					hp -= 1
+					# check if gliding, if they are force them to fall
+					
+					if i.get_state() == PlayerChar.STATES.GLIDE:
+						i.get_avatar().get_animator().play("glideFall")
+						# reset player hitbox
+						i.set_predefined_hitbox(PlayerChar.HITBOXES.NORMAL)
+						i.reflective = false
+						# XXX Modifying player state directly from another object seems a little odd to me
+						i.get_state_object(PlayerChar.STATES.GLIDE).is_fall = true
+				# check if dead
+				if hp <= 0:
+					defeated.emit()
+			# if destroying the enemy fails and hit player exists then hit player
+			elif i.has_method("hit_player"):
+				if i.hit_player(global_position,damage_type):
+					hit_player.emit()
 
 func _on_body_entered(body):
 	# add to player list
@@ -66,8 +64,7 @@ func _on_body_entered(body):
 
 func _on_body_exited(body):
 	# remove from player list
-	if playerHit.has(body):
-		playerHit.erase(body)
+	playerHit.erase(body)
 
 
 func _on_DamageArea_area_entered(area):
@@ -81,5 +78,4 @@ func _on_DamageArea_area_entered(area):
 func _on_HitBox_area_exited(area):
 	# remove from damage area
 	if area.get("parent") != null:
-		if playerHit.has(area.parent):
-			playerHit.erase(area.parent)
+		playerHit.erase(area.parent)

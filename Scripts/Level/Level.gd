@@ -1,13 +1,13 @@
-extends Node2D
+class_name Level extends Node2D
 
 @export var level_id: Global.LEVELS = Global.LEVELS.BZ1
-var act: int
-@export var music = preload("res://Audio/Soundtrack/6. SWD_TLZa1.ogg")
+@export var music: AudioStream = preload("res://Audio/Soundtrack/6. SWD_TLZa1.ogg")
 @export var bossMusic = preload("res://Audio/Soundtrack/5. SWD_Boss.ogg")
+@export var music_alt: AudioStream = null
 @export var nextZone: String = "res://Scene/Zones/BaseZone.tscn"
 
-@export_enum("Bird", "Squirrel", "Rabbit", "Chicken", "Penguin", "Seal", "Pig", "Eagle", "Mouse", "Monkey", "Turtle", "Bear")var animal1 = 0
-@export_enum("Bird", "Squirrel", "Rabbit", "Chicken", "Penguin", "Seal", "Pig", "Eagle", "Mouse", "Monkey", "Turtle", "Bear")var animal2 = 1
+@export var animal1: Animal.ANIMAL_TYPE = Animal.ANIMAL_TYPE.BIRD
+@export var animal2: Animal.ANIMAL_TYPE = Animal.ANIMAL_TYPE.SQUIRREL
 
 # Boundries
 @export var setDefaultLeft = true
@@ -41,12 +41,9 @@ var attract_reel_inputs_arr: Array[Array]
 			attract_reel_inputs_arr.append(input_arr)
 
 func _ready():
-	act = Global.get_level_act_number(level_id)
-	if (act != 2 and !Global.force_act_2) or (act == 2 and Global.force_act_2):
-		level_reset_data(false)
-		
-	Global.stage_ended.connect(Callable(self,"level_reset_data"))
+	level_reset_data(false)
 	set_process(Global.attract_reel) # Only call _process if attract reel is on
+	Global.set_level(self)
 
 # Attract reel mechanics (coded by yours truly lol)
 func _process(_delta: float) -> void:
@@ -75,27 +72,14 @@ func _process(_delta: float) -> void:
 
 # used for stage starts, act transitions (sorta..) and returning from special stages
 func level_reset_data(playCard = true):
-	if Global.players and player and ((act != 2 and !Global.force_act_2) or (act == 2 and Global.force_act_2)) and !Global.act_transition and Global.currentCheckPoint == -1:
-		player.global_position = spawn_position
-		player.camera.global_position = spawn_position
-		if player.partner:
-			player.partner.global_position = spawn_position-Vector2(24,0)
-			player.partner.camera.global_position = spawn_position
+	# if Global.players and player and ((act != 2 and !Global.force_act_2) or (act == 2 and Global.force_act_2)) and !Global.act_transition and Global.currentCheckPoint == -1:
+	# 	player.global_position = spawn_position
+	# 	player.camera.global_position = spawn_position
+	# 	if player.partner:
+	# 		player.partner.global_position = spawn_position-Vector2(24,0)
+	# 		player.partner.camera.global_position = spawn_position
 	# music handling
-	Global.bossMusic.stop()
-	if Global.music != null:
-		if music != null:
-			Global.music.stream = music
-			Global.music.play()
-			Global.music.stream_paused = false
-		else:
-			Global.music.stop()
-			Global.music.stream = null
-	
-	if Global.bossMusic != null and bossMusic != null:
-		Global.bossMusic.stream = bossMusic
-	
-	if setDefaultLeft and ((act != 2 and !Global.force_act_2) or (act == 2 and Global.force_act_2)) and !Global.act_transition:
+	if setDefaultLeft:
 		Global.hardBorderLeft = defaultLeftBoundry
 	if setDefaultRight:
 		Global.hardBorderRight = defaultRightBoundry
@@ -105,10 +89,14 @@ func level_reset_data(playCard = true):
 		Global.hardBorderBottom = defaultBottomBoundry
 	
 	Global.currentZone = Global.get_level_path(level_id)
+
+	MusicController.reset_music_themes()
+	if music != null:
+		MusicController.set_level_music(music, music_alt)
 	# set next zone
-	if nextZone != null:
-		Global.nextZone = nextZone
+	Global.nextZone = nextZone
 	
+	# set pausing to true
 	Main.sceneCanPause = true
 	# set animals
 	Global.animals = [animal1,animal2]

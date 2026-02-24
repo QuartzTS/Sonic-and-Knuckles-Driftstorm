@@ -17,12 +17,14 @@
 ##     left
 ## m - Gives the player some rings
 ## , - Cycles through available shields
+## . - Toggles physics slowdown to 1/8th scale
+## / - Forces the partner to 'respawn'
 
 extends Node2D
 
 var brick_movement = Vector2(0, 0)
 var teleport_location = null
-@onready var ring = $Ring
+var be_slow = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -31,7 +33,7 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	$BigMovingBrick.global_position += brick_movement
 	
-func try_cheat():
+func try_cheat() -> Key:
 	# Hurt the player tool
 	if Input.is_key_pressed(KEY_K):
 		Global.players[0].hit_player()
@@ -49,7 +51,7 @@ func try_cheat():
 		
 	if Input.is_key_pressed(KEY_SEMICOLON):
 		if teleport_location == null:
-			return 0
+			return KEY_NONE
 		
 		Global.players[0].global_position = teleport_location
 		if Global.players.size() > 1:
@@ -58,13 +60,13 @@ func try_cheat():
 
 	if Input.is_key_pressed(KEY_M) and Global.players[0].playerControl == 1:
 		Global.players[0].rings += 3
-		ring.play()
+		Global.players[0].sfx[0].play()
 		return KEY_M
 		
 	if Input.is_key_pressed(KEY_COMMA):
-		var shield_id: PlayerChar.SHIELDS = Global.players[0].shield + 1 as PlayerChar.SHIELDS
-		Global.players[0].set_shield(Global.players[0].SHIELDS.BUBBLE if Global.players[0].water and \
-			(shield_id == PlayerChar.SHIELDS.FIRE or shield_id == PlayerChar.SHIELDS.ELEC) else shield_id % Global.players[0].SHIELDS.COUNT)
+		var shield_id: PlayerChar.SHIELDS = Global.players[0].get_shield() + 1 as PlayerChar.SHIELDS
+		Global.players[0].set_shield(Global.players[0].SHIELDS.BUBBLE if Global.players[0].is_in_water() and \
+									(shield_id == PlayerChar.SHIELDS.FIRE or shield_id == PlayerChar.SHIELDS.ELEC) else shield_id % PlayerChar.SHIELDS.COUNT)
 		return KEY_COMMA
 		
 	# Place the test block below the player and make it move upwards
@@ -99,20 +101,27 @@ func try_cheat():
 		Global.levelTime += 60
 		return KEY_Y
 		
-	return 0
+	if Input.is_key_pressed(KEY_PERIOD):
+		if be_slow:
+			Engine.time_scale = 1.0
+			be_slow = false
+		else:
+			Engine.time_scale = 0.125
+			be_slow = true
+		return KEY_PERIOD
+	
+	if Input.is_key_pressed(KEY_SLASH) and Global.players.size() > 1:
+		Global.players[1].respawn()
+		return KEY_SLASH
+	
+	
+	return KEY_NONE
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-var just_pressed = null
+var just_pressed: Key = KEY_NONE
 func _process(_delta: float) -> void:
 	
-	if just_pressed != null and Input.is_key_pressed(just_pressed):
+	if just_pressed != KEY_NONE and Input.is_key_pressed(just_pressed):
 		return
 		
-	just_pressed = null
-	
-	var got_back = try_cheat()
-	
-	if got_back != 0:
-		just_pressed = got_back
-	
-	pass
+	just_pressed = try_cheat()

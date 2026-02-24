@@ -13,6 +13,8 @@ var spinOffset = 0
 
 func _ready():
 	if !Engine.is_editor_hint():
+		# Check if the badnik was previously destroyed.
+		check_if_destroyed()
 		# make frame use the correct Orbinaut design
 		$orbinaut.frame = int(classicOrbi)*2
 		$Orb/orb.frame = 1+int(classicOrbi)*2
@@ -24,8 +26,9 @@ func _ready():
 			scale.x = sign(-velocity.x)*abs(scale.x)
 		
 		# create duplicates of the surrounding orbs based on the total
+		var orb: Hazard = $Orb
 		for _i in range(orbs-1):
-			var newOrb = $Orb.duplicate()
+			var newOrb = orb.duplicate()
 			add_child(newOrb)
 			orbList.append(newOrb)
 
@@ -43,23 +46,31 @@ func _physics_process(delta):
 		if classicOrbi:
 			spinOffset += speed*delta
 			# rotate the orbs based on spinOffset
-			for i in range(orbList.size()):
-				var getOrb = orbList[i]
-				getOrb.position = (Vector2.RIGHT*distance).rotated(deg_to_rad(spinOffset+((360.0/orbs)*i)))
+			var vec_right: Vector2 = Vector2(distance, 0.0)
+			var degrees_per_orb: float = 360.0/orbs
+			for i in orbs:
+				orbList[i].position = vec_right.rotated(deg_to_rad(spinOffset+(degrees_per_orb*i)))
 		# Launch base behaviour
 		else:
 			# check player exists
 			if Global.players.size() > 0:
+				var sprite: Sprite2D = $orbinaut
 				var player = Global.players[0]
 				
 				# set scale based on direction
-				if sign(global_position.x-player.global_position.x) != 0:
-					$orbinaut.scale.x = sign(global_position.x-player.global_position.x)
+				var direction: float = signf(global_position.x-player.global_position.x)
+				if direction != 0:
+					sprite.scale.x = direction
 				
 				# do movement
-				velocity.x = moveSpeed*$orbinaut.scale.x*abs(sign(player.movement.x*int(player.ground)))
+				velocity.x = moveSpeed*sprite.scale.x if (player.movement.x != 0.0 and player.ground) else 0.0
 				
-				spinOffset += speed*5*delta*sign(abs(velocity.x))*$orbinaut.scale.x
-				for i in range(orbList.size()):
-					var getOrb = orbList[i]
-					getOrb.position = (Vector2.RIGHT*distance).rotated(deg_to_rad(spinOffset+((360.0/orbs)*i)))
+				# update orb positions, but only if the player is on ground and moving
+				# (velocity.x != 0.0), or if the orbs are at their initial position
+				# (which means they were never updated since their creation)
+				if velocity.x != 0.0 or orbList[0].position == orbList[1].position:
+					spinOffset += speed*5*delta*signf(absf(velocity.x))*sprite.scale.x
+					var vec_right: Vector2 = Vector2(distance, 0.0)
+					var degrees_per_orb: float = 360.0/orbs
+					for i in orbs:
+						orbList[i].position = vec_right.rotated(deg_to_rad(spinOffset+(degrees_per_orb*i)))

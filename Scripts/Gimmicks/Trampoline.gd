@@ -1,5 +1,7 @@
 # Ice Cap Zone Trampolines
 # by DimensionWarped (February 2023)
+#
+# TODO - Rewrite as Connectable Gimmick (yep, even though it's not a state driven gimmick)
 
 @tool
 extends "res://Tools/Graphics/AnimatedTextureDrawer.gd"
@@ -101,7 +103,8 @@ func physics_process_game(delta):
 		passedMidpoint = true
 
 	if (launchEnabled and passedMidpoint):
-		for i in players:
+		for i:PlayerChar in players:
+			var animator = i.get_avatar().get_animator()
 			i.set_state(i.STATES.AIR)
 			i.movement.y += yVelocity * bounceFactor
 			i.animator.play("spring")
@@ -161,7 +164,10 @@ func draw_tool():
 		draw_at_pos_internal(Vector2(-ringsMargin - (n * ringsBetween), yOffset))
 		draw_at_pos_internal(Vector2(ringsMargin + (n * ringsBetween), yOffset))
 		
-	draw_texture(platformSprite, Vector2(0 - platformSprite.get_width() / 2.0 , 0 - (platformSprite.get_height() / 2.0) + platformOffset))
+	draw_texture(platformSprite, Vector2(0 - platformSprite.get_width() / 2.0,
+	                                     platformOffset - (platformSprite.get_height() / 2.0)
+	                                     )
+	            )
 
 	return
 

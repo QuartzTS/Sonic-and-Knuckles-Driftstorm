@@ -4,7 +4,6 @@ var getCam = null
 
 @onready var screenXSize = get_viewport_rect().size.x
 
-var Animal = preload("res://Entities/Misc/Animal.tscn")
 var animalTrackers = []
 var checkAnimals = false
 var timerActive = false
@@ -14,72 +13,59 @@ func _physics_process(delta):
 	if timerActive and timer > 0:
 		# every 8/60 steps spawn an animal in the animal ground with an alarm of 12/60
 		if wrapf(timer,0,8.0/60.0) < wrapf(timer-delta,0,8.0/60.0):
-			var animal = Animal.instantiate()
-			# set animal sprite
-			animal.animal = Global.animals[round(randf())]
-			# deactivate animal to stop movement
-			animal.active = false
-			# random directions
-			animal.forceDirection = false
-			get_parent().add_child(animal)
+			# set a random position within a (-20,20) range
+			var pos: Vector2 = global_position+Vector2(randf_range(-20.0,20.0),0)
+			# set alarms, starting at 12.0/60.0 (converting the original timer)
+			const time: float = 1.0/60.0
+			var animal: Animal = Animal.create(get_parent(), pos, time, false)
 			animalTrackers.append(animal)
-			# set animal position, starting from -28 on the x position and increasing by 8 per animal
-			animal.global_position = global_position+Vector2(randf_range(-20,20),0)
-			# set alarms, starting at 1.0/60.0
-			animal.get_node("ActivationTimer").start(1.0/60.0)
 		
 		timer -= delta
 		
-	# after flickes are gone, set stage clear to 3 (2's for running off screen, see the goal post)
+	# after flickies are gone, set stage clear phase to SCORE_TALLY
+	# (GOALPOST_SPIN_END is for running off screen, see GoalPost.gd)
 	if checkAnimals and animalTrackers.size() > 0:
 		
 		for i in animalTrackers:
 			if i != null and i.active:
 				animalTrackers.erase(i)
 		
-		if animalTrackers.size() <= 0:
-			# temporarily set stage clear to 0 so that the music can play
-			Global.stageClearPhase = 0
+		if animalTrackers.is_empty():
+			# temporarily set stage clear to NOT_STARTED so that the music can play
+			Global.reset_stage_clear_phase()
 			Global.stage_clear()
-			# set stage clear to 3 to continue playing the level clear phase
-			Global.stageClearPhase = 3
+			# set stage clear to SCORE_TALLY to continue playing the level clear phase
+			Global.set_stage_clear_phase(Global.STAGE_CLEAR_PHASES.SCORE_TALLY)
 			checkAnimals = false
 
 
 func activate():
 	# check if to clear level
-	if Global.stageClearPhase == 0:
+	if !Global.is_in_any_stage_clear_phase():
 		$Animator.play("Open")
 		$Explode.play()
-		# set global stage clear phase to 1, 1 is used to stop the timer (see HUD script)
-		Global.stageClearPhase = 1
-		Main.sceneCanPause = false
+		# set global stage clear phase to START, this is used to stop the timer (see HUD script)
+		Global.set_stage_clear_phase(Global.STAGE_CLEAR_PHASES.STARTED)
 		
 		# set player camera limits
+		var camera: PlayerCamera
 		for i in Global.players:
+			camera = i.get_camera()
 			# Camera limit set
-			i.limitLeft = global_position.x -screenXSize/2
-			i.limitRight = global_position.x +screenXSize/2
-			#i.camera.global_position.x = global_position.x
+			camera.target_limit_left = global_position.x-screenXSize/2.0
+			camera.target_limit_right = global_position.x+screenXSize/2.0
 
 
 
 func spawn_animals():
 	# Spawn animals
 	for i in range(8):
-		var animal = Animal.instantiate()
-		# set animal sprite
-		animal.animal = Global.animals[round(randf())]
-		# deactivate animal to stop movement
-		animal.active = false
-		# random directions
-		animal.forceDirection = false
-		get_parent().add_child(animal)
-		animalTrackers.append(animal)
-		# set animal position, starting from -28 on the x position and increasing by 8 per animal
-		animal.global_position = global_position+Vector2(-28+(7*i),0)
+		# set animal position, starting from -28 on the x position and increasing by 7 per animal
+		var pos: Vector2 = global_position+Vector2(7.0*(i-4), 0.0)
 		# set alarms, starting at 154.0/60.0 (converting the original timer) and counting down by 8.0/60.0 for each animal
-		animal.get_node("ActivationTimer").start((154.0/60.0)-((8.0/60.0)*i))
+		var time: float = float(154-8*i)/60.0
+		var animal: Animal = Animal.create(get_parent(), pos, time, false)
+		animalTrackers.append(animal)
 	
 	checkAnimals = true
 	timerActive = true

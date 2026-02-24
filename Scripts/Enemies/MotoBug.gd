@@ -9,6 +9,8 @@ var animTime = 0
 var Particle = preload("res://Entities/Misc/GenericParticle.tscn")
 
 func _ready():
+	# Check if the badnik was previously destroyed.
+	check_if_destroyed()
 	defaultMovement = false
 	direction = -sign(scale.x)
 
@@ -40,7 +42,6 @@ func _physics_process(delta):
 	
 	# Velocity movement
 	set_velocity(velocity)
-	# TODOConverter40 looks that snap in Godot 4.0 is float, not vector like in Godot 3 - previous value `Vector2.DOWN`
 	set_up_direction(Vector2.UP)
 	move_and_slide()
 	velocity = velocity

@@ -1,13 +1,18 @@
 @tool
 extends Node2D
 
+static var _orig_texture: Texture2D = null
+
+static var _1up_textures: Array[Texture2D] = []
+
+static var _orig_vframes: int
+static var _orig_hframes: int
+
 var physics = false
 var grv = 0.21875
 var yspeed = 0
-var playerTouch = null
+var playerTouch: PlayerChar = null
 var isActive = true
-@export_enum("Ring", "Speed Shoes", "Invincibility", "Shield", "Elec Shield", "Fire Shield",
-"Bubble Shield", "Super", "Blue Ring", "Boost", "1up", "Robotnik") var item = 0
 @onready var monitor_body = $MonitorBody
 @onready var item_icon = $MonitorBody/Item
 var lock_x_pos = false
@@ -16,22 +21,66 @@ var prev_pos = Vector2.ZERO
 
 var Explosion = preload("res://Entities/Misc/BadnickSmoke.tscn")
 
+enum ITEMS {
+	# when adding new item types, please make sure
+	# 1up is the last item in the list
+	RING, SPEED_SHOES, INVINCIBILITY, SHIELD, ELEC_SHIELD, FIRE_SHIELD,
+	BUBBLE_SHIELD, SUPER, _1UP, ROBOTNIK, HYPER_RING
+}
+@export var item: ITEMS = ITEMS.RING:
+	set(value):
+		item = value
+		if _orig_texture != null:
+			_set_item_frame()
+
+func _set_item_frame():
+	if item == ITEMS._1UP:
+		$Item.hframes = 1
+		$Item.vframes = 1
+		$Item.frame = 0
+		$Item.texture = _1up_textures[0 if Engine.is_editor_hint() else Global.PlayerChar1]
+		if !Engine.is_editor_hint():
+			$Item.material = Global.get_material_for_character(Global.PlayerChar1)
+	else:
+		$Item.vframes = _orig_vframes
+		$Item.hframes = _orig_hframes
+		$Item.frame = item - int(item > ITEMS._1UP) # skip 1up
+		$Item.texture = _orig_texture
 
 func _ready():
-	# set frame
-	$MonitorBody/Item.frame = item+2
-	if !Engine.is_editor_hint():
-		# Life Icon (life icons are a special case)
-		if item == 10:
-			$MonitorBody/Item.frame = item+1+Global.PlayerChar1
-		if item == 11:
-			$MonitorBody/Item.frame = item+6
-		if Global.nodeMemory.has(get_path()):
-			set_destroyed()
-		# Connect the monitor bounce function to the global screen shake signal.
-		# Now whenever the camera shakes (like when Knuckles drilldives, for example), the monitor will automatically bounce..
-		Global.screen_shake.connect(Callable(self,"monitor_bounce"))
+	var in_editor: bool = Engine.is_editor_hint()
+	if _orig_texture == null:
+		# back up the original texture and the number of frames in it
+		_orig_texture = $Item.texture as Texture2D
+		_orig_vframes = $Item.vframes
+		_orig_hframes = $Item.hframes
+		# resize the 1up textures array
+		var char_names: Array = Global.CHARACTERS.keys()
+		var num_characters: int = char_names.size()
+		_1up_textures.resize(1 if in_editor else num_characters)
+		# replace "NONE" with the name of the 1'st character from the list,
+		# for development purposes (e.g. when we implement a new game mode
+		# and PlayerChar1 is not set, so Godot won't throw a ton of errors)
+		char_names[0] = char_names[1]
+		# load textures for character-specific frames
+		# (if we are in the editor, only load the icon for the 1'st character
+		# from the list, as the other icons won't be shown in the editor anyway)
+		for i: int in (1 if in_editor else num_characters):
+			_1up_textures[i] = load("res://Graphics/Items/monitor_icon_%s.png" % char_names[i].to_lower()) as Texture2D
 
+	# when in the editor, frame 0 in the monitor sprite sheet overlaps the item icon
+	# with static, which is why we need to set the 1'st frame for the monitor sprite,
+	# so the item icon could be seen through the transparent part of that frame
+	if in_editor:
+		$Monitor.play("", 0.0)
+		$Monitor.set_frame_and_progress(1, 0.0)
+		set_physics_process(false)
+
+	# set item frame
+	_set_item_frame()
+	#Outside of Editor mode, if the monitor was already broken, set as destroyed.
+	if !in_editor and Global.nodeMemory.has(get_path()):
+		set_destroyed()
 
 #func debug_change_property():
 	#item += int(Input.is_action_just_pressed("gm_action2"))-int(Input.is_action_just_pressed("gm_action3"))
@@ -43,22 +92,15 @@ func _ready():
 	#if item == -1 or item == 12:
 		#Global.emit_cycle_object()
 
-
-func _process(_delta):
-	# update for editor
-	if Engine.is_editor_hint():
-		$MonitorBody/Item.frame = item+2
-		if item == 11:
-			$MonitorBody/Item.frame = item+6
-	elif item_icon != null: # Check if the icon still exists
-		# Change the icon when character switching
-		if item == 10:
-			item_icon.frame = item+1+Global.PlayerChar1
-		# If lockXPos set to true after monitor destruction, reset the x global position to the previously stored value, to avoid being
-		# moved by the new moving parent, which is gonna be a platform, most of the time. (Was that even needed, tho?)
-		if lock_x_pos: 
-			item_icon.global_position.x = prev_pos.x 
-
+# func _process(_delta):
+# 	if item_icon != null: # Check if the icon still exists
+# 		# Change the icon when character switching
+# 		if item == 10:
+# 			item_icon.frame = item+1+Global.PlayerChar1
+# 		# If lockXPos set to true after monitor destruction, reset the x global position to the previously stored value, to avoid being
+# 		# moved by the new moving parent, which is gonna be a platform, most of the time. (Was that even needed, tho?)
+# 		if item_icon != null and lock_x_pos: 
+# 			item_icon.global_position.x = prev_pos.x 
 
 func destroy():
 	# skip if not activated
@@ -71,6 +113,8 @@ func destroy():
 	# deactivate
 	isActive = false
 	monitor_bounce() # Bounce the monitor as a reaction for getting hit
+	Global.nodeMemory.append(get_path())
+	
 	# set item to have a high Z index so it overlays a lot
 	item_icon.z_index += 1000
 	prev_pos = item_icon.global_position # Set previous position of the icon before removing it
@@ -95,55 +139,51 @@ func destroy():
 	await $Animator.animation_finished
 	# enable effect
 	match (item):
-		0: # Rings
-			playerTouch.rings += 10
-			$SFX/Ring.play()
-		1: # Speed Shoes
+		ITEMS.RING:
+			playerTouch.give_ring(10)
+		ITEMS.SPEED_SHOES:
 			if !playerTouch.get("isSuper"):
 				playerTouch.shoeTime = 20
 				playerTouch.switch_physics()
-				if playerTouch.get("partner") != null and !playerTouch.partner.get("isSuper"): # Hey.. can't we give that powerup to the partner as well?
-					playerTouch.partner.shoeTime = 20
-					playerTouch.partner.switch_physics()
-				Global.currentTheme = 1
-				Global.effectTheme.stream = Global.themes[Global.currentTheme]
-				Global.effectTheme.play()
-		2: # Invincibility
+				if playerTouch.get_partner() != null and !playerTouch.get_partner().get("isSuper"): # Hey.. can't we give that powerup to the partner as well?
+					var partner = playerTouch.get_partner()
+					partner.shoeTime = 20
+					partner.switch_physics()
+				MusicController.play_music_theme(MusicController.MusicTheme.SPEED_UP)
+		ITEMS.INVINCIBILITY:
 			if !playerTouch.get("isSuper"):
 				playerTouch.supTime = 20
 				playerTouch.shieldSprite.visible = false # turn off barrier for stars
 				playerTouch.get_node("InvincibilityBarrier").visible = true
-				Global.currentTheme = 0
-				Global.effectTheme.stream = Global.themes[Global.currentTheme]
-				Global.effectTheme.play()
-		3: # Shield
+				MusicController.play_music_theme(MusicController.MusicTheme.INVINCIBLE)
+		ITEMS.SHIELD:
 			playerTouch.set_shield(playerTouch.SHIELDS.NORMAL)
-		4: # Elec
+		ITEMS.ELEC_SHIELD:
 			playerTouch.set_shield(playerTouch.SHIELDS.ELEC)
-		5: # Fire
+		ITEMS.FIRE_SHIELD:
 			playerTouch.set_shield(playerTouch.SHIELDS.FIRE)
-		6: # Bubble
+		ITEMS.BUBBLE_SHIELD:
 			playerTouch.set_shield(playerTouch.SHIELDS.BUBBLE)
-		7: # Super
+		ITEMS.SUPER:
 			playerTouch.rings += 50
 			if !playerTouch.get("isSuper"):
-				playerTouch.set_state(playerTouch.STATES.SUPER)
-				if playerTouch.get("partner") != null: # Turn the partner super as well, cuz why not lol..
-					playerTouch.partner.rings += 50
-					if !playerTouch.partner.get("isSuper"):
-						playerTouch.partner.set_state(playerTouch.partner.STATES.SUPER)
-		10: # 1up
-			Global.life.play()
+				playerTouch.set_state(PlayerChar.STATES.SUPER)
+				if playerTouch.get_partner() != null: # Turn the partner super as well, cuz why not lol..
+					var partner = playerTouch.get_partner()
+					partner.rings += 50
+					if !partner.get("isSuper"):
+						partner.set_state(PlayerChar.STATES.SUPER)
+		ITEMS._1UP:
+			MusicController.play_music_theme(MusicController.MusicTheme._1UP)
 			Global.lives += 1
-			Global.effectTheme.volume_db = -100
-			Global.music.volume_db = -100
-		11:
-			playerTouch.hit_player()
+		ITEMS.ROBOTNIK:
+			playerTouch.hit_player(playerTouch.global_position, Global.HAZARDS.NORMAL, 9, true)
+		ITEMS.HYPER_RING:
+			playerTouch.hyper_ring = true
 	# At this point I'm just depending on tweens, bruh.. That's soooo sad..
 	# Well, this is gonna be just temporary till we make a custom animation for icon disappearence.
 	await create_tween().tween_property(item_icon,"modulate",Color.TRANSPARENT,0.5).finished
 	item_icon.queue_free() # Free the icon from memory
-
 
 func set_destroyed():
 	# deactivate
@@ -151,11 +191,10 @@ func set_destroyed():
 	physics = false
 	$Animator.play("DestroyMonitor")
 
-
 func _physics_process(delta):
 	# if physics are on make em fall
-	if !Engine.is_editor_hint() and physics:
-		var collide = monitor_body.move_and_collide(Vector2(0,yspeed*delta))
+	if physics:
+		var collide = monitor_body.move_and_collide(Vector2(0.0,yspeed*delta))
 		yspeed += grv/GlobalFunctions.div_by_delta(delta)
 		if collide and yspeed > 0:
 			physics = false

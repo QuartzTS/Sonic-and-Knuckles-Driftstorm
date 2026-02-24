@@ -1,34 +1,18 @@
+## The PlayerChar class is our main player controller.
 class_name PlayerChar extends PhysicsObject
 
-const HITBOXESSONIC = {NORMAL = Vector2(9,19)*2, ROLL = Vector2(7,14)*2, CROUCH = Vector2(9,11)*2, GLIDE = Vector2(10,10)*2, HORIZONTAL = Vector2(22,9)*2}
-const HITBOXESTAILS = {NORMAL = Vector2(9,15)*2, ROLL = Vector2(7,14)*2, CROUCH = Vector2(9,9.5)*2, GLIDE = Vector2(10,10)*2, HORIZONTAL = Vector2(22,9)*2}
-const HITBOXESKNUCKLES = {NORMAL = Vector2(9,19)*2, ROLL = Vector2(7,14)*2, CROUCH = Vector2(9,11)*2, GLIDE = Vector2(10,10)*2, HORIZONTAL = Vector2(22,9)*2}
-const HITBOXESAMY = {NORMAL = Vector2(9,15)*2, ROLL = Vector2(7,11)*2, CROUCH = Vector2(9,9.5)*2, GLIDE = Vector2(10,10)*2, HORIZONTAL = Vector2(22,9)*2}
-var currentHitbox = HITBOXESSONIC
-#Knuckles' hitboxes are the same as Sonic's.
+## Enumerator of the various hitbox types
+enum HITBOXES { NORMAL, ROLL, CROUCH, GLIDE, HORIZONTAL, NOCHANGE }
 
-#Sonic's Speed constants
-var acc = 0.046875			#acceleration
-var dec = 0.5				#deceleration
-var frc = 0.046875			#friction (same as acc)
-var rollfrc = frc*0.5		#roll friction
-var rolldec = 0.125			#roll deceleration
-var top = 6*60				#top horizontal speed
-var toproll = 16*60			#top horizontal speed rolling
-var slp = 0.125				#slope factor when walking/running
-var slprollup = 0.078125		#slope factor when rolling uphill
-var slprolldown = 0.3125		#slope factor when rolling downhill
-var fall = 2.5*60			#tolerance ground speed for sticking to walls and ceilings
+var active_physics = preload("res://Scripts/Player/PlayerAvatars/PlayerPhysics/StandardNormal.tres")
 
-#Sonic's Airborne Speed Constants
-var air = 0.09375			#air acceleration (2x acc)
-var jmp = 6.5*60			#jump force (6 for knuckles)
-var grv = 0.21875			#gravity
-var releaseJmp = 4			#jump release velocity
-
+# TODO move this to the Spindash state
 var spindashPower = 0.0
+# TODO Isn't this already in the peelout state?
 var peelOutCharge = 0.0
+# TODO Consider moving this to the jump state
 var abilityUsed = false
+# TODO Consider moving this the Air/Jump states
 var bounceReaction = 0 # for bubble shield
 var defaultBounceReaction = 7.5 # Default bounce reaction for easy bounceReaction resetting
 var invTime = 0
@@ -38,6 +22,12 @@ var shoeTime = 0
 var ringDisTime = 0 # ring collecting disable timer
 var swap_cooldown = 0 # Cooldown for character switching
 var rebound_timer = 0.15 # Rebound timer for detecting the swap/combo button bein pressed or held
+
+var hyper_ring = false:
+	set(value):
+		if not hyper_ring and value:
+			sfx[31].play()
+		hyper_ring = value
 
 # water settings
 var water = false
@@ -53,58 +43,21 @@ var forceDirection = 0
 # collision related values
 var pushingWall = 0
 
+# Used to keep track of a combo level for calculating points when killing enemies and other
+# similar actions
 var enemyCounter = 0
 
-var character = Global.CHARACTERS.SONIC
-
-# physics list
-# order
-# 0 Acceleration
-# 1 Deceleration
-# 2 Friction
-# 3 Top Speed
-# 4 Air Acceleration 
-# 5 Rolling Friction 
-# 6 Rolling Deceleration
-# 7 Gravity
-# 8 Jump release velocity
-
-var physicsList = [
-# 0 Deafult Character properties
-[0.046875, 0.5, 0.046875, 6*60, 0.09375, 0.046875*0.5, 0.125, 0.21875, 4],
-# 1 Shoes (remove *0.5 for original rolling friction)
-[0.09375, 0.5, 0.09375, 12*60, 0.1875, 0.046875*0.5, 0.125, 0.21875, 4],
-# 2 Super Sonic
-[0.1875, 1, 0.046875, 10*60, 0.375, 0.0234375, 0.125, 0.21875, 4],
-# 3 Other Super forms
-[0.09375, 0.75, 0.046875, 8*60, 0.1875, 0.0234375, 0.125, 0.21875, 4],
-]
-
-var waterPhysicsList = [
-# 0 Deafult Character properties
-[0.046875/2.0, 0.5/2.0, 0.046875/2.0, 6.0*60.0/2.0, 0.09375/2.0, 0.046875*0.5, 0.125, 0.0625, 2],
-# 1 Shoes
-[0.046875/2.0, 0.5/2.0, 0.046875/2.0, 6*60/2.0, 0.09375/2.0, 0.046875*0.5, 0.125, 0.0625, 2],
-# 2 Super Sonic
-[0.09375, 0.5, 0.046875, 5*60, 0.1875, 0.046875, 0.125, 0.0625, 2],
-# 3 Super Knuckles
-[0.046875, 0.375, 0.046875, 4*60, 0.09375, 0.0234375, 0.125, 0.0625, 2],
-]
-
-# ================
+# Which character is this player controlling?
+var character: Global.CHARACTERS = Global.CHARACTERS.SONIC
 
 var Ring = preload("res://Entities/Items/Ring.tscn")
+var BigRing = preload("res://Entities/Items/BigRing.tscn")
 var ringChannel = 0
 
 var Particle = preload("res://Entities/Misc/GenericParticle.tscn")
-var Bubble = preload("res://Entities/Misc/Bubbles.tscn")
 var CountDown = preload("res://Entities/Misc/CountDownTimer.tscn")
 var RotatingParticle = preload("res://Entities/Misc/RotatingParticle.tscn")
 var MovingParticle = preload("res://Entities/Misc/MovingParticle.tscn")
-
-var superSprite = load("res://Graphics/Players/SuperSonic.png")
-@onready var normalSprite = $Sonic/Sprite2D.texture
-var playerPal = preload("res://Shaders/PlayerPalette.tres")
 
 # ================
 
@@ -113,77 +66,81 @@ var spriteRotation = 0
 var airControl = true
 
 # States
-enum STATES {NORMAL, AIR, JUMP, ROLL, SPINDASH, PEELOUT, ANIMATION, HIT, DIE, CORKSCREW, JUMPCANCEL,
-SUPER, FLY, RESPAWN, HANG, GLIDE, WALLCLIMB, AMYHAMMER, DRILLDIVE, DEBUG}
-var currentState = STATES.AIR
+enum STATES {NORMAL, AIR, JUMP, ROLL, SPINDASH, PEELOUT, PATHFOLLOW, HIT, DIE, CORKSCREW, 
+SUPER, FLY, RESPAWN, GIMMICK, GLIDE, CHARACTERACTION, DEBUG}
+var current_state = STATES.AIR
 @onready var hitBoxOffset = {normal = $HitBox.position, crouch = $HitBox.position}
 @onready var defaultHitBoxPos = $HitBox.position
 var crouchBox = null
 
-## Shield enumerator - keep COUNT as the last entry since it is used to know how
+## Shield enumerator.[br]
+## Note: Keep [constant COUNT] as the last entry since it is used to know how
 ## many options there are.
 enum SHIELDS {NONE, NORMAL, FIRE, ELEC, BUBBLE, COUNT}
-var shield = SHIELDS.NONE
+var _shield: SHIELDS = SHIELDS.NONE
 @onready var magnetShape = $RingMagnet/CollisionShape2D
-@onready var shieldSprite = $Shields
+@onready var shieldSprite: AnimatedSprite2D = $Shields
 var reflective = false # used for reflecting projectiles
 
 # State array
-@onready var stateList = $States.get_children()
-
+@onready var state_list = $States.get_children()
 
 # Animation related
-@onready var animator: AnimationPlayer = $Sonic/PlayerAnimation
+# XXX This will all be deprecated soon. Use get_avatar() to get at all the sprite/animation stuff instead.
+@onready var _animator: PlayerCharAnimationPlayer = $Sonic/PlayerAnimation 
 @onready var superAnimator = $Sonic/SuperPalette
 @onready var sprite = $Sonic/Sprite2D
-@onready var spriteController = $Sonic
+@onready var player_avatar: PlayerAvatar = $Sonic
 var centerReference = null # center reference is a center reference point used for hitboxes and shields (the sprite node need a node called "CenterReference" for this to work)
 var lastActiveAnimation = ""
 var defaultSpriteOffset = Vector2.ZERO
 
-var camera = Camera2D.new()
-var camDist = Vector2(32,64)
-var camLookDist = [-104,88] # Up and Down
-var camLookAmount = 0
-var camLookOff = 0
-var camAdjust = Vector2.ZERO
-var cameraDragLerp = 0
-var camLockTime = 0
-var cam_shake_time: Vector2
-var cam_shake_strength: float = 1.0
+# var camera = Camera2D.new()
+# var camDist = Vector2(32,64)
+# var camLookDist = [-104,88] # Up and Down
+# var camLookAmount = 0
+# var camLookOff = 0
+# var camAdjust = Vector2.ZERO
+# var cameraDragLerp = 0
+# var camLockTime = 0
+# var cam_shake_time: Vector2
+# var cam_shake_strength: float = 1.0
 
 
-# boundries
-var limitLeft = 0
-var limitRight = 0
-var limitTop = 0
-var limitBottom = 0
+# # boundries
+# var limitLeft = 0
+# var limitRight = 0
+# var limitTop = 0
+# var limitBottom = 0
 
-# screen scroll locking as the camera scrolls
-var rachetScrollLeft = false
-var rachetScrollRight = false
-var rachetScrollTop = false
-var rachetScrollBottom = false
+# # screen scroll locking as the camera scrolls
+# var rachetScrollLeft = false
+# var rachetScrollRight = false
+# var rachetScrollTop = false
+# var rachetScrollBottom = false
+@onready var _camera: PlayerCamera = PlayerCamera.new(self):
+	get = get_camera
+## Returns the camera object attached to the player.
+func get_camera() -> PlayerCamera:
+	return _camera
 
 var rotatableSprites = ["walk", "run", "peelOut", "hammerSwing"]
-var direction = scale.x
+var _direction: float = scale.x
 
 # Ground speed is mostly used for timing and animations, there isn't any functionality to it.
-var groundSpeed = 0
-var ground_angle: float = 0.0
+var _ground_speed: float = 0.0
 
 enum INPUTS {XINPUT, YINPUT, ACTION, ACTION2, ACTION3, SUPER, PAUSE}
 # Input control, 0 = 0ff, 1 = pressed, 2 = held
 # (for held it's best to use inputs[INPUTS.ACTION] > 0)
 # XInput and YInput are directions and are either -1, 0 or 1.
-var inputs = [0,0,0,0,0,0,0,0]
+var inputs = [0,0,0,0,0,0,0]
 const INPUTACTIONS_P1 = [["gm_left","gm_right"],["gm_up","gm_down"],"gm_action","gm_action2","gm_action3","gm_super","gm_pause"]
 const INPUTACTIONS_P2 = [["gm_left_P2","gm_right_P2"],["gm_up_P2","gm_down_P2"],"gm_action_P2","gm_action2_P2","gm_action3_P2","gm_super_P2","gm_pause_P2"]
 var inputActions = INPUTACTIONS_P1
 # 0 = ai, 1 = player 1, 2 = player 2
 var playerControl = 1
-
-var partner: PlayerChar = null
+var _partner: PlayerChar = null
 var partnerPanic = 0
 
 const RESPAWN_DEFAULT_TIME = 5
@@ -219,14 +176,16 @@ var inputMemory = []
 var memoryPosition = 0
 const INPUT_MEMORY_LENGTH = 8
 
-var Player = load("res://Entities/MainObjects/Player.tscn")
+var Player = preload("res://Entities/MainObjects/Player.tscn")
 
-#An array of, well, Arrays, in order of Global.CHARACTERS, skipping 0.
-var playerskins = [
-	[preload("res://Graphics/Players/PlayerAnimations/Sonic.tscn"),HITBOXESSONIC],
-	[preload("res://Graphics/Players/PlayerAnimations/Tails.tscn"),HITBOXESTAILS],
-	[preload("res://Graphics/Players/PlayerAnimations/Knuckles.tscn"),HITBOXESKNUCKLES],
-	[preload("res://Graphics/Players/PlayerAnimations/Amy.tscn"),HITBOXESAMY],
+# Arrays, in order of Global.CHARACTERS
+static var playeravatars = [
+	preload("res://Entities/PlayerAvatars/Sonic.tscn"),
+	preload("res://Entities/PlayerAvatars/Sonic.tscn"),
+	preload("res://Entities/PlayerAvatars/Tails.tscn"),
+	preload("res://Entities/PlayerAvatars/Knuckles.tscn"),
+	preload("res://Entities/PlayerAvatars/Amy.tscn"),
+	preload("res://Entities/PlayerAvatars/Shadow.tscn"),
 ]
 
 # Get sfx list
@@ -244,138 +203,101 @@ var cameraMargin = 16
 var poleGrabID = null # Please don't use this anymore, use active_gimmick instead
 
 ## The current gimmick the player is interacting with if that player is interacting with one.
-## Otherwise NULL. If this gimmick is set, the player will call a secondary process function and a
-## pleyer hysics process function as part of that player's process/phsyics process functions.
+## Otherwise [code]null[/code]. If this gimmick is set, the player will call a secondary process function
+## and a player physics process function as part of that player's process/phsyics process functions.
 var active_gimmick : ConnectableGimmick = null
+
 ## Dictionary of Variables related to the active gimmick (you probably don't need to proactively
-## clear these)
-var gimmick_variables = {}  
+## clear these).
+var gimmick_variables = {}
+
 ## A list of up to max_locked_gimmicks gimmick references that are used to tell that gimmick not to
-## bind to the player Until the player touches grass (IE gets grounded). If more are written,
-## the oldest is cleared first. The list is also completely cleared if the player ever touches the
-## ground or if something else explicitly calls for the list to be cleared.
+## bind to the player until they are reset. As a general rule, you should set up a timer to reset them
+## but you can also reset them menually. Gimmicks are responsible for checking their own locking logic.
 ## Note: Gimmicks must be programmed to check this list in order for it to do anything!
-## XXX TODO IMPLEMENT THIS CONCEPT
-var locked_gimmicks = [null, null, null]
-## Tracks the position that the lost lockedGimmick as added to the locked_gimmicks list.
-var locked_gimmicks_index = 0
+var locked_gimmicks: Array[ConnectableGimmick] = [null, null, null]
+
 ## Constrain the size of the locked gimmicks list to ensure that checking for the presence of a specific
-## locked gimmick within the list remains performant. Make sure this size is in sync with the locked_gimmicks declaration.
-var max_locked_gimmicks = 3
+## locked gimmick within the list remains performant. Make sure this size is in sync with the [member locked_gimmicks] declaration.
+var max_locked_gimmicks: int = 3
+
+## Tracks the position that the lost [member lockedGimmick] as added to the [member locked_gimmicks] list.
+var locked_gimmicks_index: int = 0
+
 
 # Enemy related
 signal enemy_bounced
+signal player_bounced(player: PlayerChar)
+
 
 func _ready():
 	super()
-	# Disable and enable states
-	set_state(currentState)
+
 	Global.players.append(self)
-	
-	var _con = connect("connectFloor",Callable(self,"land_floor"))
-	_con = connect("connectCeiling",Callable(self,"touch_ceiling"))
-	
-	# Camera settings
-	get_parent().call_deferred("add_child", (camera))
-	camera.enabled = playerControl == 1 or playerControl == -1
-	var viewSize = get_viewport_rect().size
-	camera.drag_right_margin = 0
-	camera.drag_left_margin = camDist.x/viewSize.x
-	camera.drag_top_margin = camDist.y/viewSize.y
-	camera.drag_bottom_margin = camDist.y/viewSize.y
-	camera.drag_horizontal_enabled = true
-	camera.drag_vertical_enabled = true
-	_con = connect("positionChanged",Callable(self,"on_position_changed"))
-	camera.global_position = global_position
-	
-	# Tails carry stuff
-	$TailsCarryBox/HitBox.disabled = true
+	var _con = connect("connectFloor",Callable(self,"_land_floor"))
+	_con = connect("connectCeiling",Callable(self,"_touch_ceiling"))
 	
 	# input memory
 	for _i in range(INPUT_MEMORY_LENGTH):
 		inputMemory.append(inputs.duplicate(true))
-	# verify that we're not an ai
-	if playerControl == 1 or playerControl == -1:
+	# verify that we are player 1
+	if playerControl == 1:
+		character = Global.PlayerChar1
 		# Partner (if player character 2 isn't none)
 		if Global.PlayerChar2 != Global.CHARACTERS.NONE:
-			#print("Invoked")
-			partner = Player.instantiate()
-			partner.playerControl = 0
-			partner.z_index = z_index-1
-			get_parent().call_deferred("add_child", (partner))
-			partner.global_position = global_position+Vector2(-24,0)
-			partner.partner = self
-			partner.character = Global.PlayerChar2
-			partner.inputActions = INPUTACTIONS_P2
-		
-		# set my character
-		character = Global.PlayerChar1
-		
-		# set super palettes
-		match (character):
-			Global.CHARACTERS.SONIC:
-				# shader texture sizes need to be to the power of 2
-				playerPal.set_shader_parameter("amount",4)
-				playerPal.set_shader_parameter("palRows",16)
-				playerPal.set_shader_parameter("row",0)
-				playerPal.set_shader_parameter("paletteTexture",load("res://Graphics/Palettes/SuperSonicPal.png"))
-		
-			Global.CHARACTERS.TAILS:
-				playerPal.set_shader_parameter("amount",8)
-				playerPal.set_shader_parameter("palRows",16)
-				playerPal.set_shader_parameter("row",0)
-				playerPal.set_shader_parameter("paletteTexture",load("res://Graphics/Palettes/SuperTails.png"))
-		
-			Global.CHARACTERS.KNUCKLES:
-				playerPal.set_shader_parameter("amount",4)
-				playerPal.set_shader_parameter("palRows",16)
-				playerPal.set_shader_parameter("row",0)
-				playerPal.set_shader_parameter("paletteTexture",load("res://Graphics/Palettes/SuperKnuckles.png"))
-		
-			Global.CHARACTERS.AMY:
-				playerPal.set_shader_parameter("amount",4)
-				playerPal.set_shader_parameter("palRows",8)
-				playerPal.set_shader_parameter("row",0)
-				playerPal.set_shader_parameter("paletteTexture",load("res://Graphics/Palettes/SuperAmy.png"))
-				
-	
+			_partner = Player.instantiate()
+			_partner.playerControl = 0
+			_partner.z_index = z_index-1
+			get_parent().call_deferred("add_child", _partner)
+			_partner.global_position = global_position+Vector2(-24,0)
+			_partner._partner = self
+			_partner.character = Global.PlayerChar2
+			_partner.inputActions = INPUTACTIONS_P2
 	
 	# Checkpoints
 	await get_tree().process_frame
+	Global.levelTime = 0.0
 	for i in Global.checkPoints:
 		if Global.currentCheckPoint == i.checkPointID:
-			global_position = i.global_position+Vector2(0,8)
-			camera.global_position = i.global_position+Vector2(0,8)
+			var pos: Vector2 = i.global_position+Vector2(0.0,8.0)
+			global_position = pos
+			_camera.global_position = pos
 			Global.levelTime = Global.checkPointTime
 			break
 	
-	if Global.bonus_stage_saved_position:
+	if Global.bonus_stage_saved_time:
+		# if bonus_stage_saved_time is not 0, set player's stats to memory
 		global_position = Global.bonus_stage_saved_position
-		camera.global_position = global_position
+		_camera.global_position = global_position
 		rings = Global.bonus_stage_saved_rings
 		Global.levelTime = Global.bonus_stage_saved_time
 
 		while ring_1up_counter < rings:
 			ring_1up_counter += 100
-			if partner != null:
-				partner.ring_1up_counter += 100
-		
-		Global.bonus_stage_saved_time = 0
+			if _partner != null:
+				_partner.ring_1up_counter += 100
+
+		# Clear the memory
 		Global.bonus_stage_saved_position = Vector2.ZERO
 		Global.bonus_stage_saved_rings = 0
+		Global.bonus_stage_saved_time = 0.0
 	
 	# Character settings
-	var skin = playerskins[max(min(character-1,playerskins.size()),0)]
-	currentHitbox = skin[1]
-	spriteController.name = "OldSprite"
-	var newSprite = skin[0].instantiate()
-	add_child(newSprite)
-	sprite = newSprite.get_node("Sprite2D")
-	animator = newSprite.get_node("PlayerAnimation")
-	animator.animation_finished.connect(handle_animation_finished)
-	superAnimator = newSprite.get_node_or_null("SuperPalette")
-	spriteController.queue_free()
-	spriteController = newSprite
+	var avatar = playeravatars[0]
+	if character != Global.CHARACTERS.NONE:
+		avatar = playeravatars[character]
+	
+	player_avatar.name = "OldSprite"
+	var new_avatar: PlayerAvatar = avatar.instantiate()
+	add_child(new_avatar)
+	
+	sprite = new_avatar.get_node("Sprite2D")
+	_animator = new_avatar.get_node("PlayerAnimation")
+	_animator.animation_finished.connect(handle_animation_finished)
+	superAnimator = new_avatar.get_node_or_null("SuperPalette")
+	player_avatar.queue_free()
+	new_avatar.register_state_modifications(self)
+	player_avatar = new_avatar
 	
 	if character == Global.CHARACTERS.AMY:
 		maxCharGroundHeight = 12 # adjust Amy's height distance to prevent clipping off floors
@@ -384,14 +306,14 @@ func _ready():
 	switch_physics()
 	
 	# Set hitbox
-	$HitBox.shape.size = currentHitbox.NORMAL
+	$HitBox.shape.size = player_avatar.get_hitbox(HITBOXES.NORMAL)
 	
-	# connect animator
-	animator.connect("animation_started",Callable(self,"_on_PlayerAnimation_animation_started"))
+	# connect _animator
+	_animator.connect("animation_started",Callable(self,"_on_PlayerAnimation_animation_started"))
 	defaultSpriteOffset = sprite.offset
 	
 	# set secondary hitboxes
-	crouchBox = spriteController.get_node_or_null("CrouchBox")
+	crouchBox = player_avatar.get_node_or_null("CrouchBox")
 	if crouchBox != null:
 		crouchBox.get_parent().remove_child(crouchBox)
 		add_child(crouchBox)
@@ -399,28 +321,24 @@ func _ready():
 		hitBoxOffset.crouch = crouchBox.position
 	
 	# add center reference node
-	centerReference = spriteController.get_node_or_null("CenterReference")
+	centerReference = player_avatar.get_node_or_null("CenterReference")
 	# hide reference
 	if centerReference:
 		centerReference.visible = false
 	
-	# reset camera limits
-	limitLeft = Global.hardBorderLeft
-	limitRight = Global.hardBorderRight
-	limitTop = Global.hardBorderTop
-	limitBottom = Global.hardBorderBottom
-	snap_camera_to_limits()
-	
-	Global.stage_ended.connect(Callable(self,"reset_on_act_transition"))
-	
-	
 	# set partner sounds to share players (prevents sound overlap)
 	if playerControl == 0:
-		partner.sfx = sfx
+		_partner.sfx = sfx
 
 
-
-# 0 not pressed, 1 pressed, 2 held (best to do > 0 when checking input), -1 released
+## Returns the input for a button as a numerical value
+##
+## @param event
+## @param action Which action binding are you checking for
+## @retval 0 not pressed
+## @retval 1 pressed
+## @retval 2 held (best to do > 0 when checking input)
+## @retval -1 released
 func calculate_input(event, action = "gm_action"):
 	return int(event.is_action(action) or event.is_action_pressed(action))-int(event.is_action_released(action))
 
@@ -437,77 +355,83 @@ func _process(delta):
 		memoryPosition = (memoryPosition + 1) % INPUT_MEMORY_LENGTH
 
 		# Partner ai logic
-		if partner != null and partner.playerControl == 0:
+		if _partner != null and _partner.playerControl == 0:
 			# Check if partner panic
 			if partnerPanic <= 0:
-				for i in partner.inputs.size():
+				for i in _partner.inputs.size():
 					# Copy the frame of input from the oldest written portion of the inputMemory
 					# Array into the partner's input for the current frame
-					partner.inputs[i] = inputMemory[memoryPosition][i]
+					_partner.inputs[i] = inputMemory[memoryPosition][i]
 				
 				#TODO: This current implimentation is better than what we had before,
 				#but it's still a little clunky. Will clean up this clode block later. - Ikey Ilex
 				
 				# x distance difference check, try to go to the partner
-				if (partner.inputs[INPUTS.XINPUT] == 0 and partner.inputs[INPUTS.YINPUT] == 0
-					or global_position.distance_to(partner.global_position) > 48 and round(movement.x/300) == 0
-					) and abs(global_position.x-partner.global_position.x) >= 32:
-					partner.inputs[INPUTS.XINPUT] = sign(global_position.x - partner.global_position.x)
+				if (_partner.inputs[INPUTS.XINPUT] == 0 and _partner.inputs[INPUTS.YINPUT] == 0
+					or global_position.distance_to(_partner.global_position) > 48 and round(movement.x/300) == 0
+					) and abs(global_position.x-_partner.global_position.x) >= 32:
+					_partner.inputs[INPUTS.XINPUT] = sign(global_position.x - _partner.global_position.x)
 				
 				#If more than 64 pixels away on X, override AI control to come back.
-				if abs(global_position.x-partner.global_position.x) <= 64:
-					var testPos = round(global_position.x + (0-direction))
-					if sign((partner.global_position.x - testPos)*direction) > 0:
-						partner.inputs[INPUTS.XINPUT] = sign(0-direction)
-					if partner.movement.x == 0 and movement.x == 0 and partner.direction != direction:
-						partner.inputs[INPUTS.XINPUT] = direction
+				if abs(global_position.x-_partner.global_position.x) <= 64:
+					var testPos = round(global_position.x + (0-_direction))
+					if sign((_partner.global_position.x - testPos)*_direction) > 0:
+						_partner.inputs[INPUTS.XINPUT] = sign(0-_direction)
+					if _partner.movement.x == 0 and movement.x == 0 and _partner._direction != _direction:
+						_partner.inputs[INPUTS.XINPUT] = _direction
 				
 				# Jump if pushing a wall, slower then half speed, on a flat surface and is either normal or jumping
-				if (partner.currentState == STATES.NORMAL or partner.currentState == STATES.JUMP) and abs(partner.movement.x) < top/2.0 and snap_angle(partner.angle) == 0 or (partner.pushingWall != 0 and pushingWall == 0):
+				var top_speed = active_physics.top_speed
+				# TODO This condition is a code smell
+				if ((_partner.current_state == STATES.NORMAL or
+					_partner.current_state == STATES.JUMP) and
+					abs(_partner.movement.x) < top_speed/2.0 and
+					snap_angle(_partner.angle) == 0 or
+					(_partner.pushingWall != 0 and pushingWall == 0)):
 					# check partners position, only jump ever 0.25 seconds (prevent jump spam)
-					if global_position.y+32 < partner.global_position.y and partner.inputs[INPUTS.ACTION] == 0 and partner.ground and ground and (fmod(Global.globalTimer+delta,0.25) < fmod(Global.globalTimer,0.25)):
-						partner.inputs[INPUTS.ACTION] = 1
-					elif global_position.y < partner.global_position.y and ground and !partner.ground:
-						partner.inputs[INPUTS.ACTION] = 2
+					if global_position.y+32 < _partner.global_position.y and _partner.inputs[INPUTS.ACTION] == 0 and _partner.is_on_ground() and _ground and (fmod(Global.globalTimer+delta,0.25) < fmod(Global.globalTimer,0.25)):
+						_partner.inputs[INPUTS.ACTION] = 1
+					elif global_position.y < _partner.global_position.y and ground and !_partner.ground:
+						_partner.inputs[INPUTS.ACTION] = 2
 				
-				if currentState == STATES.DEBUG:
-					partner.inputs = [0,0,0,0,0,0,0]
+				if current_state == STATES.DEBUG:
+					_partner.inputs = [0,0,0,0,0,0,0]
 			
 			
 			# panic
 			else:
-				if (partner.currentState == partner.STATES.SPINDASH and \
-				(global_position.distance_to(partner.global_position) <= 48 or partner.direction != sign(global_position.x - partner.global_position.x))) or \
-				(!partner.ground or partner.currentState == partner.STATES.ROLL):
+				if (_partner.current_state == STATES.SPINDASH and \
+				(global_position.distance_to(_partner.global_position) <= 48 or _partner.get_direction_multiplier() != sign(global_position.x - _partner.global_position.x))) or \
+				(!_partner.ground or _partner.current_state == STATES.ROLL):
 					partnerPanic = 0
-				partner.inputs[INPUTS.XINPUT] = 0
-				partner.inputs[INPUTS.YINPUT] = 0
-				if abs(partner.movement.x) <= 1*60 and partner.ground:
-					partner.inputs[INPUTS.XINPUT] = sign(global_position.x - partner.global_position.x) if direction != partner.direction else direction
+				_partner.inputs[INPUTS.XINPUT] = 0
+				_partner.inputs[INPUTS.YINPUT] = 0
+				if abs(_partner.movement.x) <= 1*60 and _partner.ground:
+					_partner.inputs[INPUTS.XINPUT] = sign(global_position.x - _partner.global_position.x) if _direction != _partner.get_direction_multiplier() else _direction
 					partnerPanic -= delta
-					partner.inputs[INPUTS.YINPUT] = 1
+					_partner.inputs[INPUTS.YINPUT] = 1
 					# press action every 0.3 ticks
-					partner.inputs[INPUTS.ACTION] = int(fmod(partnerPanic+delta,0.3) < fmod(partnerPanic,0.3))
+					_partner.inputs[INPUTS.ACTION] = int(fmod(partnerPanic+delta,0.3) < fmod(partnerPanic,0.3))
 
 			# Panic
 			# if partner is locked, and stopped then do a spindash
 			# panic for 128 frames before letting go of spindash
-			if partner.horizontalLockTimer > 0 and partner.currentState == STATES.NORMAL:
+			if _partner.horizontalLockTimer > 0 and _partner.current_state == STATES.NORMAL:
 				partnerPanic = 128/60.0
 				
 
 			# Some conditions for doing the character switching and combo moves..
-			if inputs[INPUTS.ACTION3] > 0 and currentState != STATES.DEBUG and currentState != STATES.DIE and partner.currentState != STATES.DIE and \
-			partner.currentState != STATES.RESPAWN and partner.get_node("ScreenCheck").is_on_screen() and Global.stageClearPhase < 2:
-				if rebound_timer > 0:
-					rebound_timer -= delta # Run the rebound timer to measure the time the ACTION3 button is held
-				# Only perform the combo move when button is confirmed to be held and current Player 1 is in normal state (more on that later..)
-				elif currentState == STATES.NORMAL: 
-					print("Bruh..") # Bruh..
-			else:
-				if rebound_timer > 0 and rebound_timer < 0.15: # Switch characters when timer is more than 0 and less than 0.15 seconds
-					character_swap() # Normal character swap xd
-				rebound_timer = 0.15 # Reset the rebound timer
+			# if inputs[INPUTS.ACTION3] > 0 and current_state != STATES.DEBUG and current_state != STATES.DIE and _partner.current_State != STATES.DIE and \
+			# _partner.current_state != STATES.RESPAWN and _partner.get_node("ScreenCheck").is_on_screen() and Global.stageClearPhase < 2:
+			# 	if rebound_timer > 0:
+			# 		rebound_timer -= delta # Run the rebound timer to measure the time the ACTION3 button is held
+			# 	# Only perform the combo move when button is confirmed to be held and current Player 1 is in normal state (more on that later..)
+			# 	elif current_state == STATES.NORMAL: 
+			# 		print("Bruh..") # Bruh..
+			# else:
+			# 	if rebound_timer > 0 and rebound_timer < 0.15: # Switch characters when timer is more than 0 and less than 0.15 seconds
+			# 		character_swap() # Normal character swap xd
+			# 	rebound_timer = 0.15 # Reset the rebound timer
 
 
 
@@ -518,7 +442,7 @@ func _process(delta):
 		else:
 			if respawnTime > 0:
 				respawnTime -= delta
-			elif partner.currentState != STATES.DEBUG:
+			elif _partner.current_state != STATES.DEBUG:
 				respawn()
 				
 			
@@ -536,7 +460,7 @@ func _process(delta):
 			spriteRotation = min(360,spriteRotation+(168.75*delta))
 	
 	# set the sprite to match the sprite rotation variable if it's in the rotatable Sprites list
-	if rotatableSprites.has(animator.current_animation):
+	if rotatableSprites.has(_animator.current_animation):
 		if Global.smooth_rotation:
 			sprite.rotation = deg_to_rad(spriteRotation-90)-rotation-gravityAngle
 			#if abs(spriteRotation-90) > 35 or rotation != gravityAngle or !ground:
@@ -552,7 +476,7 @@ func _process(delta):
 	else:
 		sprite.rotation = -rotation+gravityAngle
 
-	spriteController.global_position = global_position.round()
+	player_avatar.global_position = global_position.round()
 
 	# Sprite center offset referencing for shields
 	if centerReference != null:
@@ -562,24 +486,23 @@ func _process(delta):
 		horizontalLockTimer -= delta
 
 	# super / invincibility handling
-	if supTime > 0 and currentState != STATES.DEBUG:
+	if supTime > 0 and current_state != STATES.DEBUG:
 		if !isSuper:
 			supTime -= delta
 		else:
 			$InvincibilityBarrier.visible = false
 			# Animate Palette
-			if is_instance_valid(superAnimator) and !superAnimator.is_playing():
-				superAnimator.play("Flash")
 			# check if ring count is greater then 0
 			# deactivate if stage cleared
 			if rings > 0:
-				if Global.stageClearPhase == 0 and (playerControl == 1 or playerControl == -1):
+				if !Global.is_in_any_stage_clear_phase() and (playerControl == 1 or playerControl == -1):
 					rings -= delta
 			else:
+				# Deactivate super
 				cancel_super()
-				
+		
 		if supTime <= 0:
-			if shield != SHIELDS.NONE:
+			if _shield != SHIELDS.NONE:
 				shieldSprite.visible = true
 			$InvincibilityBarrier.visible = false
 			# turn off super palette and physics (if super)
@@ -587,48 +510,35 @@ func _process(delta):
 				isSuper = false
 				superAnimator.play("PowerDown")
 				switch_physics()
-				if partner != null and partner.isSuper:
-					partner.cancel_super()
-			if Global.currentTheme == 0 and Global.effectTheme.is_playing() and (playerControl == 1 or playerControl == -1):
-				Global.music.play()
-				Global.effectTheme.stop()
+				if _partner != null and _partner.isSuper:
+					_partner.cancel_super()
+				
+			if playerControl == 1 or playerControl == -1:
+				MusicController.stop_music_theme(MusicController.MusicTheme.INVINCIBLE)
 	
-	if shoeTime > 0 and currentState != STATES.DEBUG:
+	if shoeTime > 0 and current_state != STATES.DEBUG:
 		shoeTime -= delta
 		if shoeTime <= 0:
 			switch_physics()
-			if Global.currentTheme == 1 and (playerControl == 1 or playerControl == -1):
-				Global.music.play()
-				Global.effectTheme.stop()
+			MusicController.stop_music_theme(MusicController.MusicTheme.SPEED_UP)
 	
 	# Invulnerability timer
-	if invTime > 0 and currentState != STATES.HIT and currentState != STATES.DIE and currentState != STATES.DEBUG:
-		var mod_inv_time = int(invTime) % 2
-		spriteController.visible = int(mod_inv_time)
+	if invTime > 0 and current_state != STATES.HIT and current_state != STATES.DIE and current_state != STATES.DEBUG:
+		var mod_inv_time = (int(invTime)) % 2
+		player_avatar.visible = int(mod_inv_time)
 		invTime -= delta*60
 		if invTime <= 0:
 			invTime = 0
-			spriteController.visible = true
-	if ringDisTime > 0 and currentState != STATES.HIT:
+			player_avatar.visible = true
+	if ringDisTime > 0 and current_state != STATES.HIT:
 		ringDisTime -= delta
-
-	# Rings 1up
-	if rings >= ring_1up_counter:
-		ring_1up_counter += 100
-		if partner != null:
-			partner.ring_1up_counter += 100
-		# award 1up
-		Global.life.play()
-		Global.lives += 1
-		Global.effectTheme.volume_db = -100
-		Global.bossMusic.volume_db = -100
-		Global.music.volume_db = -100
 
 	#Rotating stars
 	if $InvincibilityBarrier.visible:
 		var stars = $InvincibilityBarrier.get_children()
+		var rot_angle: float = deg_to_rad(360.0*delta*4.0)
 		for i in stars:
-			i.position = i.position.rotated(deg_to_rad(360*delta*4))
+			i.position = i.position.rotated(rot_angle)
 			i.visible = visible
 
 		if (fmod(Global.globalTimer,0.1)+delta > 0.1) and visible:
@@ -636,7 +546,7 @@ func _process(delta):
 			var starPart = star.get_node("GenericParticle")
 			star.global_position = global_position
 			starPart.getTarget = self
-			starPart.direction = -direction
+			starPart.direction = -_direction
 			get_parent().add_child(star)
 			var options = ["StarSingle","StarSinglePat2","default"]
 			starPart.play(options[round(randf()*2)])
@@ -645,21 +555,20 @@ func _process(delta):
 			starPart.position = stars[0].global_position-global_position
 
 	# Animator
-	if currentState != STATES.PEELOUT:
-		handle_animation_speed()
+	if current_state != STATES.PEELOUT:
+		_handle_animation_speed()
 	else:
-		handle_animation_speed(peelOutCharge)
+		_handle_animation_speed(peelOutCharge)
 	
-	if animator.current_animation != "":
-		lastActiveAnimation = animator.current_animation
+	if _animator.current_animation != "":
+		lastActiveAnimation = _animator.current_animation
 		
 	# Time over
 	if Global.levelTime >= Global.maxTime and Global.time_limit:
 		kill()
 		
-	
 	# Water timer
-	if water and shield != SHIELDS.BUBBLE and currentState != STATES.RESPAWN:
+	if water and _shield != SHIELDS.BUBBLE and current_state != STATES.RESPAWN:
 		if airTimer > 0:
 			if (playerControl == 1 or playerControl == -1) and snapped(airTimer,airWarning) != snapped(airTimer-delta,airWarning) and airTimer > panicTime:
 				sfx[24].play()
@@ -669,9 +578,9 @@ func _process(delta):
 					var count = CountDown.instantiate()
 					get_parent().add_child(count)
 					count.countTime = clamp(round(airTimer/1.8)-2,0,5)
-					count.global_position = global_position+Vector2(8*direction,0)
+					count.global_position = global_position+Vector2(8.0*_direction,0.0)
 			airTimer -= delta
-		elif currentState != STATES.DIE: # Drown (kill checks if air timer is greater then 0)
+		elif current_state != STATES.DIE: # Drown (kill checks if air timer is greater then 0)
 			$BubbleTimer.start(0.1)
 			kill()
 	else:
@@ -694,49 +603,57 @@ func _process(delta):
 	
 	
 	# Set player inputs
-	set_inputs()
+	_set_inputs()
 	
 	if active_gimmick != null:
 		active_gimmick.player_process(self, delta)
 	
 	# Victory animation
 	# Check if the stage is finished, grounded (lol) and looped victory animation ain't playing yet
-	if Global.stageClearPhase >= 2 and ground and animator.current_animation != "victoryLoop":
-		movement = Vector2.ZERO # Stop movement ENTIRELY
-		set_state(STATES.ANIMATION) # Set state to animation state, for no reason
-		animator.play("victory") # Play initial victory animation
-		animator.queue("victoryLoop") # Queue the looped victory animation
+	# if Global.stageClearPhase >= 2 and ground and animator.current_animation != "victoryLoop":
+	# 	movement = Vector2.ZERO # Stop movement ENTIRELY
+	# 	set_state(STATES.ANIMATION) # Set state to animation state, for no reason
+	# 	animator.play("victory") # Play initial victory animation
+	# 	animator.queue("victoryLoop") # Queue the looped victory animation
 	
 	
+		
+	state_list[current_state].state_process_entry(delta)
+
+
 func _physics_process(delta):
 	super(delta)
 	
 	if ground and forceRoll > 0:
 		if (movement*Vector2(1,0)).is_equal_approx(Vector2.ZERO):
 			movement.x = 2*sign(-1+(forceDirection*2))*60.0
-		if currentState != STATES.ROLL:
+		if current_state != STATES.ROLL:
 			set_state(STATES.ROLL)
-			animator.play("roll")
+			_animator.play("roll")
 			sfx[1].play()
 			sfx[32].stop()
+			
+	
+	# TODO - DW's Note - I feel like we should either let the state control whether the
+	#        player is 'attacking' rather than animation checks.
 	
 	# Attacking is for rolling type animations
 	var attacking = false
 	# lists to check through for attack animations
 	var currentAnimChecks = [
-	"roll","dropDash","spinDash","glide","drillDive"
+	"roll","dropDash","spinDash","glide","stomp","drillDive"
 	]
 	var lastActiveAnimCheck = [
 	"glide","glideSlide"
 	]
-	# if any animations match up turn on attacking flag
-	for i in currentAnimChecks:
-		if animator.current_animation == i and currentState != STATES.RESPAWN and currentState != STATES.DEBUG:
-			attacking = true
 	
-	for i in lastActiveAnimCheck:
-		if lastActiveAnimation == i and currentState != STATES.RESPAWN and currentState != STATES.DEBUG:
-			attacking = true
+	# if any animations match up turn on attacking flag
+	if _animator.current_animation in currentAnimChecks and current_state != STATES.RESPAWN and current_state != STATES.DEBUG:
+		attacking = true
+	
+	
+	if lastActiveAnimation in lastActiveAnimCheck and current_state != STATES.RESPAWN and current_state != STATES.DEBUG:
+		attacking = true
 	
 	# physics sets
 	# collide with solids if not rolling layer
@@ -748,12 +665,12 @@ func _physics_process(delta):
 	# damage mask bit
 	set_collision_layer_value(20,attacking)
 	# water surface running
-	set_collision_mask_value(23,ground and abs(groundSpeed) >= 7*60 and !water)
+	set_collision_mask_value(23,ground and absf(_ground_speed) >= 7*60 and !water)
 	# Knuckles Drilldive
-	set_collision_layer_value(24,character == Global.CHARACTERS.KNUCKLES and currentState == STATES.DRILLDIVE)
+	# set_collision_layer_value(24,character == Global.CHARACTERS.KNUCKLES and current_state == STATES.DRILLDIVE)
 	
 	if ground:
-		groundSpeed = movement.x
+		_ground_speed = movement.x
 		
 	# wall detection
 	if horizontalSensor.is_colliding() or is_on_wall():
@@ -763,7 +680,7 @@ func _physics_process(delta):
 		
 		# give pushingWall a buffer otherwise this just switches on and off
 		pushingWall = getDir*2
-		if sign(movement.x) == sign(horizontalSensor.target_position.x) and currentState != STATES.DEBUG:
+		if sign(movement.x) == sign(horizontalSensor.target_position.x) and current_state != STATES.DEBUG:
 			movement.x = 0
 		# disable pushing wall
 		if inputs[INPUTS.XINPUT] != sign(pushingWall):
@@ -773,98 +690,18 @@ func _physics_process(delta):
 		# count down pushingwall
 		pushingWall -= sign(pushingWall)
 	
-	
-	
 	# Camera settings
-	if camera != null:
-		
-		# Lerp camera scroll based on if on floor
-		var playerOffset = ((abs(global_position.y-camera.get_target_position().y)*2)/camDist.y)
-		var scrollSpeed = 4.0*60.0*delta
-		
-		cameraDragLerp = max(int(!ground),min(cameraDragLerp,playerOffset)-6*delta)
-		
-		# Looking/Lag
-		# camLookDist is the distance, 0 is up, 1 is down
-		camLookAmount = clamp(camLookAmount,-1,1)
-		camLookOff = lerp(0,camLookDist[0],min(0,-camLookAmount))+lerp(0,camLookDist[1],min(0,camLookAmount))
-		
-		if camLookAmount != 0:
-			var tmpScrollSpeed = sign(camLookAmount)*delta*2
-			if sign(camLookAmount - tmpScrollSpeed) == sign(camLookAmount):
-				camLookAmount -= sign(camLookAmount)*delta*2
-			else:
-				camLookAmount = 0
-		
-		# Camera Lock
-		
-		if camLockTime > 0:
-			camLockTime -= delta
-		
-		# Boundry handling
-		# Pan camera limits to boundries
-		
-		var viewSize = get_viewport_rect().size
-		var viewPos = camera.get_screen_center_position()
-		
-		# Left
-		# snap the limit to the edge of the camera if snap out of range
-		if limitLeft > viewPos.x-viewSize.x*0.5:
-			camera.limit_left = max(viewPos.x-viewSize.x*0.5,camera.limit_left)
-		# if limit is inside the camera then pan over
-		if abs(camera.limit_left-(viewPos.x-viewSize.x*0.5)) <= viewSize.x*0.5:
-			camera.limit_left = move_toward(camera.limit_left,limitLeft,scrollSpeed)
-		# else just snap the camera limit since it's not going to move the camera
-		else:
-			camera.limit_left = limitLeft
-		
-
-		# Right
-		# snap the limit to the edge of the camera if snap out of range
-		if limitRight < viewPos.x+viewSize.x*0.5:
-			camera.limit_right = min(viewPos.x+viewSize.x*0.5,camera.limit_right)
-		# if limit is inside the camera then pan over
-		if abs(camera.limit_right-(viewPos.x+viewSize.x*0.5)) <= viewSize.x*0.5:
-			camera.limit_right = move_toward(camera.limit_right,limitRight,scrollSpeed)
-		# else just snap the camera limit since it's not going to move the camera
-		else:
-			camera.limit_right = limitRight
-
-		# Top
-		# snap the limit to the edge of the camera if snap out of range
-		if limitTop > viewPos.y-viewSize.y*0.5:
-			camera.limit_top = max(viewPos.y-viewSize.y*0.5,camera.limit_top)
-		# if limit is inside the camera then pan over
-		if abs(camera.limit_top-(viewPos.y-viewSize.y*0.5)) <= viewSize.y*0.5:
-			camera.limit_top = move_toward(camera.limit_top,limitTop,scrollSpeed)
-		# else just snap the camera limit since it's not going to move the camera
-		else:
-			camera.limit_top = limitTop
-		
-
-		# Bottom
-		# snap the limit to the edge of the camera if snap out of range
-		if limitBottom < viewPos.y+viewSize.y*0.5:
-			camera.limit_bottom = min(viewPos.y+viewSize.y*0.5,camera.limit_bottom)
-		# if limit is inside the camera then pan over
-		if abs(camera.limit_bottom-(viewPos.y+viewSize.y*0.5)) <= viewSize.y*0.5:
-			camera.limit_bottom = move_toward(camera.limit_bottom,limitBottom,scrollSpeed)
-		# else just snap the camera limit since it's not going to move the camera
-		else:
-			camera.limit_bottom = limitBottom
-		
-		# Death at border bottom
-		if global_position.y > limitBottom:
-			kill()
+	_camera.finalize(delta)
 	
-	
-	
+	# Death at border bottom
+	if global_position.y > _camera.target_limit_bottom:
+		kill()
 	
 	# Stop movement at borders
-	if global_position.x < limitLeft+cameraMargin or global_position.x > limitRight-cameraMargin:
+	if (global_position.x < _camera.target_limit_left+cameraMargin or global_position.x > _camera.target_limit_right-cameraMargin):
 		movement.x = 0
 	# Clamp position
-	global_position.x = clamp(global_position.x,limitLeft+cameraMargin,limitRight-cameraMargin)
+	global_position.x = clampf(global_position.x,_camera.target_limit_left+cameraMargin,_camera.target_limit_right-cameraMargin)
 	
 	
 	# center offsets (only moves hitbox if the centers moved)
@@ -873,14 +710,14 @@ func _physics_process(delta):
 		$HitBox.position = centerReference.position
 	
 	# Water
-	if Global.waterLevel != null and currentState != STATES.DIE and currentState != STATES.DEBUG:
+	if Global.waterLevel != null and current_state != STATES.DIE and current_state != STATES.DEBUG:
 		# Enter water
 		if global_position.y > Global.waterLevel and !water:
 			water = true
 			movement.x *= 0.5
 			movement.y *= 0.25
 			switch_physics()
-			if currentState != STATES.RESPAWN and movement.y != 0:
+			if current_state != STATES.RESPAWN and movement.y != 0:
 				sfx[17].play()
 				var splash = Particle.instantiate()
 				splash.behaviour = splash.TYPE.FOLLOW_WATER_SURFACE
@@ -904,7 +741,7 @@ func _physics_process(delta):
 			get_parent().add_child(splash)
 	
 	# We don't check for crushing if the player is in an invulnerable state (note that invulernable means immune to crushing/death by falling)
-	if !stateList[currentState].get_state_invulnerable():
+	if !state_list[current_state].get_invulnerability():
 		var crushSensorLeft = $CrushSensorLeft
 		var crushSensorRight = $CrushSensorRight
 		var crushSensorUp = $CrushSensorUp
@@ -928,8 +765,11 @@ func _physics_process(delta):
 	if active_gimmick != null:
 		active_gimmick.player_physics_process(self, delta)
 
-# Input buttons
-func set_inputs():
+	state_list[current_state].state_physics_process(delta)
+
+
+# Reads the controller state for the player
+func _set_inputs():
 	# player control inputs
 	# check if ai or player 2
 	if playerControl == 0 or playerControl == 2:
@@ -962,13 +802,17 @@ func set_inputs():
 		inputs[INPUTS.XINPUT] = -int(Input.is_action_pressed(inputActions[INPUTS.XINPUT][0]))+int(Input.is_action_pressed(inputActions[INPUTS.XINPUT][1]))
 		inputs[INPUTS.YINPUT] = -int(Input.is_action_pressed(inputActions[INPUTS.YINPUT][0]))+int(Input.is_action_pressed(inputActions[INPUTS.YINPUT][1]))
 
+
 # Controller scan functions -- so you don't have to dig into the inputs to check controller state
+## Returns [code]true[/code] if any of the three action buttons were just pressed this frame.
 func any_action_pressed():
 	if (inputs[INPUTS.ACTION] == 1
 	or inputs[INPUTS.ACTION2] == 1):
 		return true
 	return false
 
+
+## Returns [code]true[/code] if any of the action buttons have been held for more than one frame.
 func any_action_held():
 	if inputs[INPUTS.ACTION] == 2:
 		return true
@@ -978,6 +822,7 @@ func any_action_held():
 		#return true
 	return false
 
+## Returns [code]true[/code] if any of the three action buttons are currently held/pressed.
 func any_action_held_or_pressed():
 	if inputs[INPUTS.ACTION] > 0:
 		return true
@@ -987,8 +832,9 @@ func any_action_held_or_pressed():
 		#return true
 	return false
 
+
 ## This probably seems really niche, but it's useful to prevent
-## Certain jump actions from instantly turning into player specific double
+## certain jump actions from instantly turning into player specific double
 ## jump abilities.
 func convert_pressed_action_btns_to_held():
 	if inputs[INPUTS.ACTION] == 1:
@@ -998,122 +844,64 @@ func convert_pressed_action_btns_to_held():
 	#if inputs[INPUTS.ACTION2] == 1:
 		#inputs[INPUTS.ACTION2] = 2
 
-# Note that there is no way to check the 'pressed' vs 'held' status of X/Y inputs.
+
+## Check the Y input of the player's controller.
 func get_y_input():
 	return inputs[INPUTS.YINPUT]
-	
+
+
+## Check the if the player is holding [kbd]Up[/kbd] on their controller.[br]
+## Note: a press and a hold are the same thing for directions — no effort is made to track the
+## difference for these.
 func is_up_held():
 	return inputs[INPUTS.YINPUT] < 0
-	
+
+
+## Check the if the player is holding [kbd]Down[/kbd] on their controller.[br]
+## Note: a press and a hold are the same thing for directions — no effort is made to track the
+## difference for these.
 func is_down_held():
 	return inputs[INPUTS.YINPUT] > 0
-	
+
+
+## Check the X input of the player's controller.
 func get_x_input():
 	return inputs[INPUTS.XINPUT]
-	
+
+
+## Check the if the player is holding [kbd]Left[/kbd] on their controller.[br]
+## Note: a press and a hold are the same thing for directions — no effort is made to track the
+## difference for these.
 func is_left_held():
 	return inputs[INPUTS.XINPUT] < 0
-	
+
+
+## Check the if the player is holding [kbd]Right[/kbd] on their controller.[br]
+## Note: a press and a hold are the same thing for directions — no effort is made to track the
+## difference for these.
 func is_right_held():
 	return inputs[INPUTS.XINPUT] > 0
-	
-func get_state():
-	return currentState
 
-func set_state(newState, forceMask = Vector2.ZERO):
-	defaultHitBoxPos = hitBoxOffset.normal
-	$HitBox.position = defaultHitBoxPos
-	# reset the center offset
-	if centerReference != null:
-		centerReference.position = Vector2.ZERO
-	
-	if currentState != newState:
-		var lastState = currentState
-		currentState = newState
-		stateList[lastState].state_exit()
-		stateList[newState].state_activated()
-	
-	for i in stateList:
-		i.set_process(i == stateList[newState])
-		i.set_physics_process(i == stateList[newState])
-		i.set_process_input(i == stateList[newState])
-	
-	var forcePoseChange = Vector2.ZERO
-	
-	if forceMask == Vector2.ZERO:
-		match(newState):
-			STATES.JUMP, STATES.ROLL:
-				# adjust y position
-				forcePoseChange = ((currentHitbox.ROLL-$HitBox.shape.size)*Vector2.UP).rotated(rotation)*0.5
-				
-				# change hitbox size
-				$HitBox.shape.size = currentHitbox.ROLL
-			STATES.SPINDASH:
-				# change hitbox size
-				$HitBox.shape.size = currentHitbox.CROUCH
-				
-			_:
-				# adjust y position
-				forcePoseChange = ((currentHitbox.NORMAL-$HitBox.shape.size)*Vector2.UP).rotated(rotation)*0.5
-				
-				# change hitbox size
-				$HitBox.shape.size = currentHitbox.NORMAL
-	else:
-		# adjust y position
-		forcePoseChange = ((forceMask-$HitBox.shape.size)*Vector2.UP).rotated(rotation)*0.5
-		# change hitbox size
-		$HitBox.shape.size = forceMask
-	
-	position += forcePoseChange
-	
-	sprite.get_node("DashDust").visible = false
 
-# sets the hitbox mask shape, referenced in other states
-func set_hitbox(mask = Vector2.ZERO, forcePoseChange = false):
-	# adjust position if on floor or force pose change
-	if ground or forcePoseChange:
-		position += ((mask-$HitBox.shape.size)*Vector2.UP).rotated(rotation)*0.5
-	
-	$HitBox.shape.size = mask
-
-# set shields
-func set_shield(setShieldID, playSound = true):
-	magnetShape.disabled = true
-	# verify not in water and shield compatible
-	if water and (setShieldID == SHIELDS.FIRE or setShieldID == SHIELDS.ELEC):
+## Hits the player. This usually causes loss of shield, loss of rings, or death.[br]
+## [param damagePoint] — a position vector that can be included to indicate where the hit came from
+##                       this affects knockback of the player, but only in the sense that if the hit
+##                       comes from the right the player will be knocked back left
+##                       and if the hit comes from the left, the player will be knocked back right.[br]
+## [param damageType] — defines the hit as belonging to an element. Elemental hits will be ignored if
+##                      the player being hit has a shield that would block that element.[br]
+## [param soundID] — if set, changes which of the player sounds is used for the hit. Note that the
+##                   alternate hit sound is only played if ring loss wouldn't be played instead.
+##                   The main use for this is when the player interacts with spikes in which case
+##                   the spike sound is used instead. To know which sounds are available, check the
+##                   SFX object in the Player.tscn — streamers in there are indexed in order of their
+##                   position in the list starting from 0.[br]
+## [param ignoreInstaShield] — if true, ignores Sonic's Insta-Shield.
+func hit_player(damagePoint:Vector2 = global_position, damageType: Global.HAZARDS = Global.HAZARDS.NORMAL, soundID:int = 6, ignoreInstaShield: bool = false):
+	if damageType != Global.HAZARDS.NORMAL and _shield == damageType+1:
 		return false
-	
-	shield = setShieldID
-	# make shield visible if not super and the invincibility barrier isn't going
-	shieldSprite.visible = !isSuper and !$InvincibilityBarrier.visible
-	match (shield):
-		SHIELDS.NORMAL:
-			shieldSprite.play("Default")
-			if playSound:
-				sfx[5].play()
-		SHIELDS.ELEC:
-			shieldSprite.play("Elec")
-			if playSound:
-				sfx[10].play()
-			magnetShape.disabled = false
-		SHIELDS.FIRE:
-			shieldSprite.play("Fire")
-			if playSound:
-				sfx[11].play()
-		SHIELDS.BUBBLE:
-			shieldSprite.play("Bubble")
-			if playSound:
-				sfx[12].play()
-		_: # disable
-			shieldSprite.visible = false
-
-
-
-# see Global for damage types, 0 = none, 1 = Fire, 2 = Elec, 3 = Water
-func hit_player(damagePoint = global_position, damageType = 0, soundID = 6):
-	if damageType != 0 and shield == damageType+1:
-		return false
-	if currentState != STATES.HIT and invTime <= 0 and supTime <= 0 and (shieldSprite.get_node("InstaShieldHitbox/HitBox").disabled or character != Global.CHARACTERS.SONIC):
+	if current_state != STATES.HIT and invTime <= 0 and supTime <= 0 and \
+	   (shieldSprite.get_node("InstaShieldHitbox/HitBox").disabled or character != Global.CHARACTERS.SONIC or ignoreInstaShield):
 		movement.x = sign(global_position.x-damagePoint.x)*2*60
 		movement.y = -4*60
 		if movement.x == 0:
@@ -1124,43 +912,78 @@ func hit_player(damagePoint = global_position, damageType = 0, soundID = 6):
 
 		angle = 0
 		force_detach()
-		disconect_from_floor()
+		disconnect_from_floor()
 		set_state(STATES.HIT)
-		invTime = 120 # Ivulnerable for 2 seconds. Starts counting *after* landing.
+		invTime = 2.0*60 # Invulnerable for 2 seconds. Starts counting *after* landing.
 		# Ring loss
-		if shield == SHIELDS.NONE and rings > 0 and (playerControl == 1 or playerControl == -1):
+		if (_shield == SHIELDS.NONE and rings > 0 and is_independent()):
 			sfx[9].play()
 			ringDisTime = 30.0/60.0 # ignore rings for 30 frames after landing
-			var ringCount = 0
-			var ringAngle = 101.25
-			var ringAlt = false
-			var ringSpeed = 4
-			while (ringCount < min(rings,48)):
+			const RING_STARTING_ANGLE: float = deg_to_rad(101.25)
+			const RING_ANGLE_STEP: float = deg_to_rad(22.5)
+			var ring_angle: float = RING_STARTING_ANGLE
+			var ring_angle_step: float = RING_ANGLE_STEP
+			var ring_speed: float = 4.0*60
+			var ring_count: int = 0
+			var max_count: int = 48
+			var phase_2_count: int = 16
+			var phase_3_count: int = 32
+			var ring_class: PackedScene = Ring
+			var accumulated_value: float = 0.0
+			var ring_velocity: Vector2
+			if hyper_ring:
+				ring_class = BigRing
+				max_count = 8
+				phase_2_count = 4
+				# adjust the angle step accordingly, as we generate 4 times less rings
+				ring_angle_step = RING_ANGLE_STEP * 4
+			var num_generated_rings: int = min(rings, max_count)
+			var value_per_hyper_ring: float = (float(rings) / num_generated_rings) if hyper_ring else 0.0
+			while ring_count < num_generated_rings:
 				# Create ring
-				var ring = Ring.instantiate()
+				var ring = ring_class.instantiate()
 				ring.global_position = global_position
-				ring.scattered = ringCount < 32
-				ring.big = ringCount >= 32
-				ring.velocity.y = -sin(deg_to_rad(ringAngle))*ringSpeed*60
-				ring.velocity.x = cos(deg_to_rad(ringAngle))*ringSpeed*60
+				ring.scattered = ring_count < phase_3_count
+				ring.big = ring_count >= phase_3_count
+				ring.scattered = true
 				ring.scale = Vector2(256.0/60.0,256.0/60.0) if ring.big else Vector2.ONE
 
-				if ringAlt:
-					ring.velocity.x *= -1
-					ringAngle += 22.5
-				ringAlt = !ringAlt
-				ringCount += 1
+				if hyper_ring:
+					# In Sonic Mania, Hyper Ring generates up to 8 large rings, each worth a fraction
+					# of the player's total amount of rings. In our implementation, instead of
+					# naively rounding down the value of each ring when converting from float to int,
+					# we'll accumulate the fractional part of the value in `accumulated_value`,
+					# so if the total number of rings does not divide by 8 entirely, we'd still
+					# be able to get back the same amount when collecting the scattered rings.
+					# For example, if there was 84 rings, we'd still get all 84 of them
+					# (10+11+10+11+10+11+10+11), instead of just 80 (10+10+10+10+10+10+10+10)
+					# if we were simply rounding down.
+					accumulated_value += value_per_hyper_ring
+					ring.value = floori(accumulated_value)
+					accumulated_value -= ring.value
+
+				if ring_count % 2 == 0:
+					ring_velocity = Vector2(cos(ring_angle), -sin(ring_angle)) * ring_speed
+				else:
+					# reuse the velocity of the previous ring, but flip it by the X axis
+					ring_velocity.x *= -1
+					# proceed to another angle for the next pair of rings
+					ring_angle += ring_angle_step
+				ring.velocity = ring_velocity
+				ring_count += 1
+
 				# if we're on the second circle, decrease the speed
-				if ringCount == 16:
-					ringSpeed = 2
-					ringAngle = 101.25 # Reset angle
-				if ringCount == 32:
-					ringSpeed = 16
-					ringAngle = 101.25
+				if ring_count == phase_2_count:
+					ring_speed = 2.0*60
+					ring_angle = RING_STARTING_ANGLE # Reset angle
+				if ring_count == phase_3_count:
+					ring_speed = 16.0*60
+					ring_angle = RING_STARTING_ANGLE # Reset angle
 				get_parent().add_child(ring)
 			rings = 0
-		elif shield == SHIELDS.NONE and (playerControl == 1 or playerControl == -1):
-			kill(soundID)
+			hyper_ring = false
+		elif _shield == SHIELDS.NONE and is_independent():
+			kill()
 		else:
 			sfx[soundID].play()
 		# Disable Shield
@@ -1171,175 +994,238 @@ func hit_player(damagePoint = global_position, damageType = 0, soundID = 6):
 		return true
 	return false
 
-func get_ring():
-	if playerControl == 1 or playerControl == -1:
-		rings += 1
+
+## Determines whether the player should be treated like player 1 for the purpose of gimmicks and
+## similar things. This is determined by a combination of whether or not they actually [i]are[/i] player
+## 1 and if the game mode is in one of the more multiplayer-centric modes.
+func is_independent()->bool:
+	# First player is always indepdent
+	if Global.get_first_player() == self:
+		return true
+
+	# Players other than the first are indepdendent in non-standard mutliplayer modes
+	if Global.get_multimode() != Global.MULTIMODE.NORMAL:
+		return true
+	
+	return false
+
+
+## Gives the player a ring by default, overridable to any requested number.[br]
+## [param num_rings] — one by default. This may be negative to take away rings,
+##                     but doing so won't make rings to negative or kill the player.[br]
+## [param play_sound] — optional parameter. If set to [code]false[/code],
+##                      the ring acquisition sound will not be played.
+##                      Particularly useful if you either want to play
+##                      a different sound like with the loss state
+##                      in a slot machine or just no sound at all like with
+##                      the gassed status effect that Toxomister gives you.
+func give_ring(num_rings: int = 1, play_sound: bool = true):
+	# We should come back to this after we decouple player from playerchar
+	# so that we can let a player 2 character get rings if the game is in versus
+	# mode
+	if !is_independent():
+		return Global.get_first_player().give_ring(num_rings, play_sound)
+
+	rings += num_rings
+	
+	# If this is one of those things that takes rings, don't play the ring acquisition sound, don't
+	# bother checking for 
+	if num_rings < 1:
+		# Also floor the rings at 0... don't let it go negative, this isn't Knuckles Chaotix.
+		if rings < 0:
+			rings = 0
+		return
+
+	if play_sound:
 		sfx[7+ringChannel].play()
 		sfx[7].play()
 		ringChannel = int(!ringChannel)
-		
-	elif partner != null:
-		if partner.playerControl == 1 or partner.playerControl == -1: # error prevention
-			partner.get_ring()
 	
-func kill(soundID = 6):
-	#if !(get_tree().current_scene is MainGameScene) and always == false:
-	#	sfx[6].play()
-	#	return false
-	if currentState != STATES.DIE and currentState != STATES.DEBUG:
-		disconect_from_floor()
-		supTime = 0
-		shoeTime = 0
-		allowTranslate = true
-		set_shield(SHIELDS.NONE)
-		# turn off super palette and physics (if super)
-		if is_instance_valid(superAnimator) and isSuper:
-			superAnimator.play("PowerDown")
-			isSuper = false
-		# stop special music
-		if (playerControl == 1 or playerControl == -1) and Global.effectTheme.is_playing():
-			Global.music.play()
-			Global.effectTheme.stop()
-			
-		# If Player 1 dies and a partner exists, initiate respawn flying from current position.
-		if (playerControl == 1 or playerControl == -1) and partner:
-			var savedPos = partner.global_position
-			partner.respawn()
-			partner.global_position = savedPos
-			
-		collision_layer = 0
-		collision_mask = 0
-		z_index = 100
-		if airTimer > 0:
-			water = false
-			switch_physics()
-			movement = Vector2(0,-7*60)
-			animator.play("die")
-			sfx[soundID].play()
-		else:
-			if playerControl == 1 or playerControl == -1:
-				Global.music.stop()
-				Global.effectTheme.stop()
-			movement = Vector2(0,0)
-			animator.play("drown")
-			sfx[25].play()
-		set_state(STATES.DIE,currentHitbox.NORMAL)
-		
-		if playerControl == 1 or playerControl == -1:
-			Main.sceneCanPause = false # stop the ability to pause
-			Global.cool_value = 0
+	# Rings 1up
+	if rings >= ring_1up_counter:
+		ring_1up_counter += 100
+		if _partner != null:
+			_partner.ring_1up_counter += 100
+		# award 1up
+		MusicController.play_music_theme(MusicController.MusicTheme._1UP)
+		Global.lives += 1
 
-func respawn():
-	if partner != null:
-		# cancel function if partner is dead or ai controlled
-		if partner.currentState == STATES.DIE || !(partner.playerControl == 1 or partner.playerControl == -1):
-			return false
+
+## Resets the player's air timer to the default air time value.
+func reset_air() -> void:
+	airTimer = defaultAirTime
+
+
+## Murders the player instantly.
+func kill(sound_id: int = 6):
+	# Already dying
+	if current_state == STATES.DIE or current_state == STATES.DEBUG:
+		return
 		
-		partnerPanic = 0
-		airTimer = 1
-		collision_layer = 0
-		collision_mask = 0
-		z_index = defaultZIndex
-		respawnTime = RESPAWN_DEFAULT_TIME
-		movement = Vector2.ZERO
+	disconnect_from_floor()
+	supTime = 0
+	shoeTime = 0
+	allowTranslate = true
+	set_shield(SHIELDS.NONE)
+	# turn off super palette and physics (if super)
+	if isSuper:
+		player_avatar.end_super()
+		isSuper = false
+		
+	# stop special music
+	if (playerControl == 1 or playerControl == -1) and MusicController.is_music_theme_with_priority_playing(MusicController.PriorityLevel.EFFECT_THEME):
+		MusicController.stop_music_theme_with_priority(MusicController.PriorityLevel.EFFECT_THEME)
+			
+	# If Player 1 dies and a partner exists, initiate respawn flying from current position.
+	if (playerControl == 1 or playerControl == -1) and _partner:
+		var savedPos = _partner.global_position
+		_partner.respawn()
+		_partner.global_position = savedPos
+			
+	collision_layer = 0
+	collision_mask = 0
+	z_index = 100
+	if airTimer > 0:
 		water = false
-		# update physics (prevents player having water physics on respawn)
 		switch_physics()
-		global_position = partner.global_position+Vector2(0,-get_viewport_rect().size.y)
-		limitLeft = partner.limitLeft
-		limitRight = partner.limitRight
-		limitTop = partner.limitTop
-		limitBottom = partner.limitBottom
-		get_node("TailsCarryBox/HitBox").disabled = true
-		set_state(STATES.RESPAWN)
+		movement = Vector2(0,-7*60)
+		_animator.play("die")
+		sfx[sound_id].play()
+	else:
+		if (playerControl == 1 or playerControl == -1):
+			MusicController.stop_music_theme(MusicController.MusicTheme.LEVEL_THEME)
+			MusicController.stop_music_theme_with_priority(MusicController.PriorityLevel.EFFECT_THEME)
+		movement = Vector2(0,0)
+		_animator.play("drown")
+		sfx[25].play()
+
+	set_state(STATES.DIE,player_avatar.get_hitbox(HITBOXES.NORMAL))
+		
+	if playerControl == 1 or playerControl == -1:
+		Main.sceneCanPause = false # stop the ability to pause
+		Global.cool_value = 0
 
 # Code for character switching is here
-func character_swap() -> void:
-	if swap_cooldown <= 0:
-		var saved_values: Array = [playerControl, camera, defaultZIndex] # Save some values in an array instead of having a variable for each
-		# The playerControl is probably the most important variable to switch
-		playerControl = partner.playerControl
-		partner.playerControl = saved_values[0]
-		# Swap camera reference
-		camera = partner.camera
-		partner.camera = saved_values[1]
-		# Swap the default z_index and then set z_index to the new default value
-		defaultZIndex = partner.defaultZIndex
-		partner.defaultZIndex = saved_values[2]
-		partner.z_index = partner.defaultZIndex
-		z_index = defaultZIndex
-		# Give the shield to the partner (no sounds included lol)
-		partner.set_shield(shield, false)
-		set_shield(SHIELDS.NONE, false)
-		# Invincibility handling
-		if supTime > 0 and !isSuper:
-			partner.supTime = supTime
-			supTime = 0
-			partner.shieldSprite.visible = false # Hide the shield for stars
-			partner.get_node("InvincibilityBarrier").visible = true
-			if shield != SHIELDS.NONE:
-				shieldSprite.visible = true
-			$InvincibilityBarrier.visible = false
-		# Give rings to the partner so that both players have an equal share of rings
-		# Btw, the rings value is rounded in case both players are super and the value of their rings is decreasing
-		# Even tho rounding the ring value prevents the value from decreasing, which is kinda funny, but it doesn't matter lol..
-		partner.rings = round(rings)
-		# This is probably the second most important things to swap here.
-		# If not swapped, Player 1 will need to navigate through with Player 2 controls and vice versa xd..
-		inputActions = INPUTACTIONS_P2
-		partner.inputActions = INPUTACTIONS_P1
-		Global.players.reverse() # Simply reverse the order of the players array
-		# Set player 1 to partner and vice versa, just for stuff like the life icon and 1up monitor icons
-		Global.PlayerChar1 = partner.character
-		Global.PlayerChar2 = character
-		# Adjust cooldown so that nobody spams the swap lol
-		partner.swap_cooldown = 0.25
-		# Reset the partner panic so that the other player doesn't automatically spindash after switching lol (I guess?)
-		partnerPanic = 0
-		partner.partnerPanic = 0
-		sfx[35].play() # And finally, play sfx..
-	elif !sfx[35].is_playing():
-		sfx[36].play() # Play swap fail sfx if the swap cooldown isn't off, yet.. also, check if the swap sfx ain't playing, for whatever reason..
+#func character_swap() -> void:
+	#if swap_cooldown <= 0:
+		#var saved_values: Array = [playerControl, _camera, defaultZIndex] # Save some values in an array instead of having a variable for each
+		## The playerControl is probably the most important variable to switch
+		#playerControl = _partner.playerControl
+		#_partner.playerControl = saved_values[0]
+		## Swap camera reference
+		#_camera = partner.get_camera()
+		#_partner.get_camera() = saved_values[1]
+		## Swap the default z_index and then set z_index to the new default value
+		#defaultZIndex = partner.defaultZIndex
+		#_partner.defaultZIndex = saved_values[2]
+		#_partner.z_index = partner.defaultZIndex
+		#z_index = defaultZIndex
+		## Give the shield to the partner (no sounds included lol)
+		#_partner.set_shield(_shield, false)
+		#set_shield(SHIELDS.NONE, false)
+		## Invincibility handling
+		#if supTime > 0 and !isSuper:
+			#partner.supTime = supTime
+			#supTime = 0
+			#partner.shieldSprite.visible = false # Hide the shield for stars
+			#partner.get_node("InvincibilityBarrier").visible = true
+			#if shield != SHIELDS.NONE:
+				#shieldSprite.visible = true
+			#$InvincibilityBarrier.visible = false
+		## Give rings to the partner so that both players have an equal share of rings
+		## Btw, the rings value is rounded in case both players are super and the value of their rings is decreasing
+		## Even tho rounding the ring value prevents the value from decreasing, which is kinda funny, but it doesn't matter lol..
+		#_partner.rings = round(rings)
+		## This is probably the second most important things to swap here.
+		## If not swapped, Player 1 will need to navigate through with Player 2 controls and vice versa xd..
+		#inputActions = INPUTACTIONS_P2
+		#_partner.inputActions = INPUTACTIONS_P1
+		#Global.players.reverse() # Simply reverse the order of the players array
+		## Set player 1 to partner and vice versa, just for stuff like the life icon and 1up monitor icons
+		#Global.PlayerChar1 = _partner.character
+		#Global.PlayerChar2 = character
+		## Adjust cooldown so that nobody spams the swap lol
+		#_partner.swap_cooldown = 0.25
+		## Reset the partner panic so that the other player doesn't automatically spindash after switching lol (I guess?)
+		#partnerPanic = 0
+		#_partner.partnerPanic = 0
+		#sfx[35].play() # And finally, play sfx..
+	#elif !sfx[35].is_playing():
+		#sfx[36].play() # Play swap fail sfx if the swap cooldown isn't off, yet.. also, check if the swap sfx ain't playing, for whatever reason..
 
 ## Simple data reset when act transition happens.. (seriously, why does this exist?)
-func reset_on_act_transition() -> void:
-	Global.players.append(self)
-	set_state(STATES.NORMAL)
-	rings = 0
-	ring_1up_counter = 100
-	Global.cool_value = 10000
-	# reset camera limits (except the left one)
-	limitRight = Global.hardBorderRight
-	limitTop = Global.hardBorderTop
-	limitBottom = Global.hardBorderBottom
-	snap_camera_to_limits()
-	rachetScrollLeft = false
-	rachetScrollTop = false
-	rachetScrollRight = false
-	rachetScrollBottom = false
+# func reset_on_act_transition() -> void:
+# 	Global.players.append(self)
+# 	set_state(STATES.NORMAL)
+# 	rings = 0
+# 	ring_1up_counter = 100
+# 	Global.cool_value = 10000
+# 	# reset camera limits (except the left one)
+# 	limitRight = Global.hardBorderRight
+# 	limitTop = Global.hardBorderTop
+# 	limitBottom = Global.hardBorderBottom
+# 	snap_camera_to_limits()
+# 	rachetScrollLeft = false
+# 	rachetScrollTop = false
+# 	rachetScrollRight = false
+# 	rachetScrollBottom = false
 
 ## This one can be used to quickly transform the player into super form without having to go through the transformation animation
 ## Idk where I can use it, tho..
-func transform_to_super() -> void:
-	if !isSuper:
-		# hide shield
-		shieldSprite.visible = false
-		# swap sprite if sonic
-		if character == Global.CHARACTERS.SONIC:
-			sprite.texture = superSprite
-		isSuper = true
-		switch_physics()
-		supTime = 1
+# func transform_to_super() -> void:
+# 	if !isSuper:
+# 		# hide shield
+# 		shieldSprite.visible = false
+# 		# swap sprite if sonic
+# 		if character == Global.CHARACTERS.SONIC:
+# 			sprite.texture = superSprite
+# 		isSuper = true
+# 		switch_physics()
+# 		supTime = 1
 
 ## This one cancels the super form
 func cancel_super() -> void:
 	# Deactivate super
 	supTime = 0
 	rings = round(rings)
-	if character == Global.CHARACTERS.SONIC:
-		sprite.texture = normalSprite
+	player_avatar.end_super()
 
-func touch_ceiling():
+## Makes a partner character re-enter the scene.
+## TODO: Make this compatible with partners other than Tails.
+func respawn() -> void:
+	if _partner == null:
+		return
+	
+	# cancel function if partner is dead or ai controlled
+	if _partner.current_state == STATES.DIE || _partner.playerControl != 1:
+		return
+		
+	airTimer = 1
+	collision_layer = 0
+	collision_mask = 0
+	z_index = defaultZIndex
+	respawnTime = RESPAWN_DEFAULT_TIME
+	movement = Vector2.ZERO
+	water = false
+	# update physics (prevents player having water physics on respawn)
+	switch_physics()
+	global_position = _partner.global_position+Vector2(0,-get_viewport_rect().size.y)
+	_camera.target_limit_left = _partner._camera.target_limit_left
+	_camera.target_limit_right = _partner._camera.target_limit_right
+	_camera.target_limit_top = _partner._camera.target_limit_top
+	_camera.target_limit_bottom = _partner._camera.target_limit_bottom
+	
+	set_state(STATES.RESPAWN)
+
+
+## Gets the character's partner (note that in the current two-player setup, each player character is
+## the other's partner, so calling get_partner on Sonic in Sonic and Tails mode gets Tails and
+## calling it on Tails gets Sonic.
+func get_partner() -> PlayerChar:
+	return _partner
+
+
+func _touch_ceiling():
 	if getVert != null:
 		var getAngle = wrapf(-rad_to_deg(getVert.get_collision_normal().angle())-90,0,360)
 		if (getAngle > 225 or getAngle < 136):
@@ -1351,7 +1237,8 @@ func touch_ceiling():
 			return true
 	movement.y = 0
 
-func land_floor():
+
+func _land_floor():
 	
 	abilityUsed = false
 	# landing movement calculation
@@ -1372,233 +1259,150 @@ func land_floor():
 # clean animation
 func _on_PlayerAnimation_animation_started(_anim_name):
 	if sprite != null:
-		sprite.flip_v = false
+		sprite.flip_v = false # Won't this make reverse-gravity kind of impossible?
 		sprite.offset = defaultSpriteOffset
-		if animator.speed_scale < 0:
-			animator.speed_scale = abs(animator.speed_scale)
-		elif animator.speed_scale == 0:
-			animator.speed_scale = 1
+		if _animator.speed_scale < 0:
+			_animator.speed_scale = abs(_animator.speed_scale)
+		elif _animator.speed_scale == 0:
+			_animator.speed_scale = 1
 		# reset the center offset
 		if centerReference != null:
 			centerReference.position = Vector2.ZERO
-		animator.advance(0)
+		_animator.advance(0)
 
 
-# return the physics id variable, see physicsList array for reference
-func determine_physics():
-	# get physics from character (if a character has unique properties)
-	match (character):
-		Global.CHARACTERS.SONIC:
-			if isSuper:
-				return 2 # Super Sonic
-	#Anyone who isn't a special case:
-	if isSuper:
-		return 3 # Super besides Sonic
-	elif shoeTime > 0:
-		return 1 # Shoes
-	return 0 #Default
-
-# Return a jump height for the respective context.
-# There are normally only 5 jump height values; 3 above water, with two under.
-# Super Sonic and Knuckles are the onlycharacters with unique jump height, Super sonic above water only.
-func get_jump_property():
-	if !water:
-		match (character):
-			Global.CHARACTERS.SONIC:
-				if isSuper:
-					return 8*60 # Super Sonic Jump Height
-			Global.CHARACTERS.KNUCKLES:
-				return 6*60 # Knuckles Jump Height
-		return 6.5*60 #Default Jump Height
-	else:
-		match (character):
-			Global.CHARACTERS.KNUCKLES:
-				return 3*60 # Knuckles Jump Height underwater
-		return 3.5*60 # Everyone else's Jump Height underwater
+## Gets the currently active physics table.
+func get_physics() -> PlayerPhysics:
+	return active_physics
 
 
-func switch_physics():
-	var physicsID = determine_physics()
-	var getList = physicsList[max(0,physicsID)]
-	if water:
-		getList = waterPhysicsList[max(0,physicsID)]
-	acc = getList[0]
-	dec = getList[1]
-	frc = getList[2]
-	top = getList[3]
-	air = getList[4] #This could also just be getList[0]*2
-	rollfrc = getList[5]
-	rolldec = getList[6]
-	grv = getList[7]
-	releaseJmp = getList[8]
-	jmp = get_jump_property()
+## Resets the PlayerChar's physics attributes based on their
+## current status.
+func switch_physics() -> void:
+	active_physics = get_avatar().get_physics(water, isSuper, shoeTime > 0)
 
 
-func _on_SparkleTimer_timeout():
-	if isSuper and abs(groundSpeed) >= top:
+func _on_SparkleTimer_timeout() -> void:
+	if isSuper and absf(_ground_speed) >= active_physics.top_speed:
 		var sparkle = Particle.instantiate()
 		sparkle.global_position = global_position
 		sparkle.play("Super")
 		get_parent().add_child(sparkle)
 
-func on_position_changed():
-	cam_update(true)
-
-func cam_update(forceMove = false):
-	# Cancel camera movement
-	if currentState == STATES.DIE:
-		return false
-	# Camera vertical drag
-	var viewSize = get_viewport_rect().size
-	
-	camera.drag_top_margin =    lerp(0.0,float(camDist.y/viewSize.y),float(cameraDragLerp))
-	camera.drag_bottom_margin = camera.drag_top_margin
-	
-	# Extra drag margin for rolling
-	match(character):
-		Global.CHARACTERS.TAILS:
-			match($HitBox.shape.size):
-				currentHitbox.ROLL:
-					camAdjust.y = -1
-				_:
-					camAdjust.y = 0
-		_: # default
-			match($HitBox.shape.size):
-				currentHitbox.ROLL:
-					camAdjust.y = -5
-				_:
-					camAdjust.y = 0
-
 	# Extended Camera (code by NeonSRB2)
-	if Global.extended_camera and currentState != STATES.DEBUG:
-		if currentState == STATES.PEELOUT or abs(movement.x) >= 6*60:
-			camAdjust.x += direction*2
-		elif camAdjust.x != 0:
-			camAdjust.x -= sign(camAdjust.x)*2
-		camAdjust.x = clamp(camAdjust.x, -64, 64)
-		camera.drag_horizontal_enabled = false
-	else:
-		camera.drag_horizontal_enabled = true
+	# if Global.extended_camera and currentState != STATES.DEBUG:
+	# 	if currentState == STATES.PEELOUT or abs(movement.x) >= 6*60:
+	# 		camAdjust.x += _direction*2
+	# 	elif camAdjust.x != 0:
+	# 		camAdjust.x -= sign(camAdjust.x)*2
+	# 	camAdjust.x = clamp(camAdjust.x, -64, 64)
+	# 	camera.drag_horizontal_enabled = false
+	# else:
+	# 	camera.drag_horizontal_enabled = true
 
-	if cam_shake_time.x:
-		#cam_shake_time.x -= 1
-		if cam_shake_time.x <= 0:
-			cam_shake_time.x = -1-cam_shake_time.x
-		else:
-			cam_shake_time.x *= -1
-	if cam_shake_time.y:
-		#cam_shake_time.y -= 1
-		if cam_shake_time.y <= 0:
-			cam_shake_time.y = -1-cam_shake_time.y
-		else:
-			cam_shake_time.y *= -1
-	camera.offset = Vector2(sin(cam_shake_time.x),sin(cam_shake_time.y))*cam_shake_strength
+	# if cam_shake_time.x:
+	# 	#cam_shake_time.x -= 1
+	# 	if cam_shake_time.x <= 0:
+	# 		cam_shake_time.x = -1-cam_shake_time.x
+	# 	else:
+	# 		cam_shake_time.x *= -1
+	# if cam_shake_time.y:
+	# 	#cam_shake_time.y -= 1
+	# 	if cam_shake_time.y <= 0:
+	# 		cam_shake_time.y = -1-cam_shake_time.y
+	# 	else:
+	# 		cam_shake_time.y *= -1
+	# camera.offset = Vector2(sin(cam_shake_time.x),sin(cam_shake_time.y))*cam_shake_strength
 
-
-	# Camera lock
-	# remove round() if you are not making a pixel perfect game
-	var getPos = (global_position+Vector2(0,camLookOff)+camAdjust).round()
-	if camLockTime <= 0 and (forceMove or camera.global_position.distance_to(getPos) <= 16):
-		# limit_length speed camera
-		camera.global_position.x = move_toward(camera.global_position.x,getPos.x,16*60*get_physics_process_delta_time())
-		camera.global_position.y = move_toward(camera.global_position.y,getPos.y,16*60*get_physics_process_delta_time())
-		# clamp to region
-		camera.global_position.x = clamp(camera.global_position.x,limitLeft,limitRight)
-		camera.global_position.y = clamp(camera.global_position.y,limitTop,limitBottom)
-		#camera.global_position = camera.global_position.move_toward(getPos,16*60*get_physics_process_delta_time())
-		# uncomment below for immediate camera
-		#camera.global_position = getPos
-	
-	# Ratchet camera scrolling (locks the camera behind the player)
-	if rachetScrollLeft:
-		limitLeft = max(limitLeft,camera.get_screen_center_position().x-viewSize.x/2)
-	if rachetScrollRight:
-		limitRight = max(limitRight,camera.get_screen_center_position().x+viewSize.x/2)
-	
-	if rachetScrollTop:
-		limitTop = max(limitTop,camera.get_screen_center_position().y-viewSize.y/2)
-	if rachetScrollBottom:
-		limitBottom = max(limitBottom,camera.get_screen_center_position().y+viewSize.y/2)
-
-func lock_camera(time = 1):
-	camLockTime = max(time,camLockTime)*int(!Global.extended_camera)
 	
 
 ## A function that makes the camera shake (needs a better description imo..)
-func shake_camera(delta: float, shake_direction: Vector2, shake_power: float = 1.0) -> void:
-	cam_shake_time = shake_direction*480*delta
-	cam_shake_strength = shake_power
-	Global.emit_screen_shake()
-
-
-func snap_camera_to_limits():
-	camera.limit_left = max(limitLeft,Global.hardBorderLeft)
-	camera.limit_right = min(limitRight,Global.hardBorderRight)
-	camera.limit_top = max(limitTop,Global.hardBorderTop)
-	camera.limit_bottom = min(limitBottom,Global.hardBorderBottom)
+# func shake_camera(delta: float, shake_direction: Vector2, shake_power: float = 1.0) -> void:
+# 	cam_shake_time = shake_direction*480*delta
+# 	cam_shake_strength = shake_power
+# 	Global.emit_screen_shake()
 
 # Water bubble timer
 func _on_BubbleTimer_timeout():
 	if water:
 		# Generate Bubble
-		var bub = Bubble.instantiate()
-		bub.z_index = z_index+3
 		if airTimer > 0:
-			bub.global_position = global_position+Vector2(8*direction,0)
+			Bubble.create_small_bubble(get_parent().get_parent(),global_position+Vector2(8.0*_direction,0.0),Vector2.ZERO,0.0,z_index+3)
 			$BubbleTimer.start(max(randf()*3,0.5))
 		elif movement.y < 250:
-			bub.global_position = global_position+Vector2(0,-8)
-			# pick either 0 or 1 for the bubble type (cosmetic)
-			bub.bubbleType = int(round(randf()))
+			Bubble.create_small_or_medium_bubble(get_parent().get_parent(),global_position+Vector2(0,-8),Vector2.ZERO,0.0,z_index+3)
 			$BubbleTimer.start(0.1)
 		else:
-			bub.queue_free()
 			$BubbleTimer.start(max(randf()*3,0.5))
-		get_parent().add_child(bub)
 
-# player actions
 
-# player movements
+## Handles player's standard movement based on controller input — you might call this if you are
+## programming either a state or a gimmick that uses the [constant GIMMICK] state and don't want to take
+## standard directional control away from the player.
 func action_move(delta):
 	# moving left and right, check if left or right is being pressed
 	if inputs[INPUTS.XINPUT] != 0:
 		if horizontalLockTimer <= 0: # skip logic if lock timer is around, friction gets skipped too since the original games worked like that
 			# check if movement is less then the top speed
-			if movement.x*inputs[INPUTS.XINPUT] < top:
+			var top_speed = active_physics.top_speed
+			if movement.x*inputs[INPUTS.XINPUT] < top_speed:
 				# check if the player is pressing the direction they're moving
 				if sign(movement.x) == inputs[INPUTS.XINPUT] or sign(movement.x) == 0:
-					if abs(movement.x) < top:
-						movement.x = move_toward(movement.x,top*inputs[INPUTS.XINPUT],acc/GlobalFunctions.div_by_delta(delta))
+					if abs(movement.x) < top_speed:
+						movement.x = move_toward(movement.x,top_speed*inputs[INPUTS.XINPUT],
+							active_physics.acceleration / GlobalFunctions.div_by_delta(delta))
 				else:
 					# reverse direction
-					movement.x += dec/GlobalFunctions.div_by_delta(delta)*inputs[INPUTS.XINPUT]
+					movement.x += active_physics.deceleration/GlobalFunctions.div_by_delta(delta)*inputs[INPUTS.XINPUT]
 					# implament weird turning quirk
-					if (sign(movement.x) != sign(movement.x-dec/GlobalFunctions.div_by_delta(delta)*inputs[INPUTS.XINPUT])):
+					if (sign(movement.x) != sign(movement.x-active_physics.deceleration/GlobalFunctions.div_by_delta(delta)*inputs[INPUTS.XINPUT])):
 						movement.x = 0.5*60*sign(movement.x)
 	else:
 		# come to a stop if neither left or right is pressed
 		if movement.x != 0:
 			# check that decreasing movement won't go too far
-			if (sign(movement.x - (frc/GlobalFunctions.div_by_delta(delta))*sign(movement.x)) == sign(movement.x)):
-				movement.x -= (frc/GlobalFunctions.div_by_delta(delta))*sign(movement.x)
+			var friction = active_physics.friction
+			if (sign(movement.x - (friction/GlobalFunctions.div_by_delta(delta))*sign(movement.x)) == sign(movement.x)):
+				movement.x -= (friction/GlobalFunctions.div_by_delta(delta))*sign(movement.x)
 			else:
 				movement.x -= movement.x
 
-func action_jump(delta: float, animation = "roll", airJumpControl = true, playSound=true):
+
+## Makes the player jump with their standard jump strength.
+func action_jump(delta: float, animation: String = "roll", air_jump_control: bool = true, play_sound: bool = true):
 	if forceRoll <= 0: # check to prevent jumping in roll tubes
-		animator.play(animation)
-		animator.advance(0)
-		movement.y = -(jmp+grv/GlobalFunctions.div_by_delta(delta))
-		if playSound:
+		_animator.play(animation)
+		_animator.advance(0)
+		movement.y = -(active_physics.jump_strength+active_physics.gravity/GlobalFunctions.div_by_delta(delta))
+		if play_sound:
 			sfx[0].play()
-		airControl = airJumpControl
-		cameraDragLerp = 1
-		disconect_from_floor()
+		airControl = air_jump_control
+		_camera.drag_lerp = 1.0
+		disconnect_from_floor()
 		set_state(STATES.JUMP)
 
+
+## Restores the player's ability to use double jump action. The player still
+## has to be in a state where it is available in the first place to do so.
+func reset_double_jump_action() -> void:
+	abilityUsed = false
+
+
+## Makes the player emit the [signal enemy_bounced] signal.
 func emit_enemy_bounce():
 	enemy_bounced.emit()
 
+
+## Makes the player emit the [signal player_bounce] signal — only if the player bounces off the ground
+## for some reason.
+## TODO - does this occur for anything other than bubble shield in the air state?
+func emit_player_bounce():
+	player_bounced.emit(self)
+
+
+## Makes the player perform water run actions if applicable. Only really has an impact if
+## the player is in contact with the water's surface. You invoke this in any action that
+## water running is allowed from.
 func action_water_run_handle():
 	var dash = $WaterSurface
 	# check for water (check that collision has the water tag)
@@ -1607,7 +1411,6 @@ func action_water_run_handle():
 	if colCheck:
 		touchWater = colCheck.get_collider().get_collision_layer_value(23)
 	
-
 	# enable dash dust if touching water
 	dash.visible = (get_collision_mask_value(23) and touchWater and ground)
 	dash.scale.x = sign(movement.x)
@@ -1620,46 +1423,59 @@ func action_water_run_handle():
 	else:
 		sfx[29].stop()
 
-func handle_animation_speed(gSpeed = groundSpeed):
-	match(animator.current_animation):
+
+# TODO Move to PlayerAvatar
+func _handle_animation_speed(gSpeed = _ground_speed):
+	match(_animator.current_animation):
 		"walk", "run", "peelOut":
-			var duration = floor(max(0,8.0-abs(gSpeed/60.0)))
-			animator.speed_scale = (1.0/(duration+1.0))*(60.0/10.0)
+			if character == Global.CHARACTERS.SHADOW:
+				var duration = floor(max(0,12.0-abs(gSpeed/60.0)))
+				_animator.speed_scale = (1.0/(duration+1.0))*(60.0/10.0)
+			else:
+				var duration = floor(max(0,8.0-abs(gSpeed/60.0)))
+				_animator.speed_scale = (1.0/(duration+1.0))*(60.0/10.0)
 		"roll":
 			var duration = floor(max(0,4.0-abs(gSpeed/60.0)))
-			animator.speed_scale = (1.0/(duration+1.0))*(60.0/10.0)
+			_animator.speed_scale = (1.0/(duration+1.0))*(60.0/10.0)
 		"push":
 			var duration = floor(max(0,8.0-abs(gSpeed/60.0)) * 4)
-			animator.speed_scale = (1.0/(duration+1.0))*(60.0/10.0)
+			_animator.speed_scale = (1.0/(duration+1.0))*(60.0/10.0)
 		"spinDash": #animate at 60fps (fps were animated at 0.1 seconds)
-			animator.speed_scale = 60.0/10.0
+			_animator.speed_scale = 60.0/10.0
 		"dropDash":
-			animator.speed_scale = 20.0/10.0
+			_animator.speed_scale = 20.0/10.0
 		"climb":
-			animator.speed_scale = -movement.y/(40.0*(1.0+float(isSuper)))
+			_animator.speed_scale = -movement.y/(40.0*(1.0+float(isSuper)))
 		_:
-			animator.speed_scale = 1
+			_animator.speed_scale = 1
 
 
 # Standard getters and setters -- for future code, please try to avoid direct
 # access of player variables. Use getters/setters instead. This aids in easing
 # refactoring.
+## Gets the current state value of the player.[br]
+## Note: Gets the enum value only, not the actual state object.
+func get_state() -> PlayerChar.STATES:
+	return current_state
 
-## Gets the player animator -- this is a tad overkill most of the time, but
-## Sometimes you need to control an animation in a more robust way than simply
-## by using play.
-func get_animator() -> AnimationPlayer:
-	return self.animator
+## Use this variant of [method get_state] when you want to check character actions and not standard states.
+func get_state_character_action() -> int:
+	if current_state != STATES.CHARACTERACTION:
+		return -1
+	else:
+		var action_state_obj = state_list[STATES.CHARACTERACTION]
+		return action_state_obj.get_character_action_state_index
+		
 
-## Sets the animation. No frills, just provides a hook to directly call AnimationPlayer.play()
-## for the player animator.
-func play_animation(anim_name: StringName = "", custom_blend: float = -1, custom_speed: float = 1.0,
-					from_end: bool = false) -> void:
-	self.animator.play(anim_name, custom_blend, custom_speed, from_end)
 
 func play_sfx(index: int, pitch_scale: float = 1.0, from_position: float = 0.0) -> void:
 	sfx[index].play(from_position)
 	sfx[index].pitch_scale = pitch_scale
+
+func replace_sfx(start_index: int, end_index: int, pitch_scale: float = 1.0, from_position: float = 0.0) -> void:
+	sfx[end_index].stop()
+	sfx[start_index].play(from_position)
+	sfx[start_index].pitch_scale = pitch_scale
 
 func stop_sfx(index: int) -> void:
 	sfx[index].stop()
@@ -1673,29 +1489,262 @@ func get_player_control() -> int:
 func set_player_control(control_state: int) -> void:
 	playerControl = control_state
 
-## Available directions for the player to use when using set_direction
+
+## Gets a player state object.[br]
+## I don't recommend using this function, but we have some code in the codebase
+## that uses this approach so I'm exposing it anyway. The preferred way
+## to read/manipulate a player's state value is usually going to be to add
+## a new function to the player that does it for you.[br]
+## [param for_state] — which state you want to get the state object for.[br]
+## Returns a [code]PlayerState[/code] object that the [param for_state] value represents.
+func get_state_object(for_state: PlayerChar.STATES) -> PlayerState:
+	return state_list[for_state]
+
+
+## Sets the player's state while performing normal state change operations.[br]
+## Always use this to set the player's state. Don't try to change the player's
+## state directly.[br]
+## [param new_state] — state player is changing to.[br]
+## [param force_mask] — [Vector2] for a mask change. Note that [constant Vector2.ZERO]
+##                      is the default, but it implies change. This needs work.[br]
+## [param skip_supplements] — if this is enabled (and if [method set_state] is called from
+##                            a supplement, it should be), we won't run supplements.[br]
+## [param new_character_state] — should only be used if setting the state to [constant CHARACTERACTION].
+##                               This value is used to set up the [constant CHARACTERACTION] state
+##                               to make it proxy to the new character action state as well
+##                               as to engage enter/exit for the character-specific state and
+##                               to run supplements that might affect that state.
+func set_state(new_state: PlayerChar.STATES,
+		force_mask:Vector2 = Vector2.ZERO,
+		skip_supplements:bool = false,
+		new_character_state: int = -1):	
+	
+	var new_state_obj: PlayerState = null
+	var old_state_obj: PlayerState = state_list[current_state]
+	
+	defaultHitBoxPos = hitBoxOffset.normal
+	$HitBox.position = defaultHitBoxPos
+	
+	if new_state == STATES.CHARACTERACTION:
+		new_state_obj = player_avatar.get_character_state_object(new_character_state)
+		if new_state_obj == null:
+			push_error("Attempted to set CHARACTERACTION with invalid new_character_state")
+			return
+	else:
+		new_state_obj = state_list[new_state]
+	
+	# reset the center offset
+	if centerReference != null:
+		centerReference.position = Vector2.ZERO
+
+	# Run the state exit supplements unless we were told not to. If we are told to bail, do so.
+	if !skip_supplements and old_state_obj.state_exit_entry(new_state, new_character_state) == false:
+		return
+	
+	# Enter the new state. If a supplement tells us to abandon the state change, do so.
+	# TODO XXX Coming later
+	
+	new_state_obj.state_activated()
+	
+	# If we are using a CharacterAction state, we need to set the proxy to the new character action
+	# being proxied now.
+	if new_state == STATES.CHARACTERACTION:
+		var character_action_state: CharacterActionState = state_list[STATES.CHARACTERACTION]
+		character_action_state.set_character_action_state(new_character_state)
+	
+	current_state = new_state
+	
+	var forcePoseChange = Vector2.ZERO
+	
+	if (force_mask == Vector2.ZERO):
+		match(new_state):
+			STATES.JUMP, STATES.ROLL:
+				# adjust y position
+				forcePoseChange = ((player_avatar.get_hitbox(HITBOXES.ROLL)-$HitBox.shape.size)*Vector2.UP).rotated(rotation)*0.5
+				
+				# change hitbox size
+				$HitBox.shape.size = player_avatar.get_hitbox(HITBOXES.ROLL)
+			STATES.SPINDASH:
+				# change hitbox size
+				$HitBox.shape.size = player_avatar.get_hitbox(HITBOXES.CROUCH)
+				
+			_:
+				# adjust y position
+				forcePoseChange = ((player_avatar.get_hitbox(HITBOXES.NORMAL)-$HitBox.shape.size)*Vector2.UP).rotated(rotation)*0.5
+				
+				# change hitbox size
+				$HitBox.shape.size = player_avatar.get_hitbox(HITBOXES.NORMAL)
+	else:
+		# adjust y position
+		forcePoseChange = ((force_mask-$HitBox.shape.size)*Vector2.UP).rotated(rotation)*0.5
+		# change hitbox size
+		$HitBox.shape.size = force_mask
+	
+	position += forcePoseChange
+	
+	sprite.get_node("DashDust").visible = false
+
+
+## Shorthand for setting the character state to character action while also providing
+## a [param new_character_state]. Generally this is preferable to use over the full form version when
+## switching to a character-specific state.
+func set_character_action_state(new_character_state: int,
+		force_mask:Vector2 = Vector2.ZERO,
+		skip_supplements:bool = false,
+	):
+		set_state(STATES.CHARACTERACTION, force_mask, skip_supplements, new_character_state)
+
+
+## Sets the hitbox mask shape, referenced in other states.[br]
+## [param size] — new hitbox size.[br]
+## [param force_pose_change] — normally if the player's hitbox size changes
+##        and they are on the ground, the player's hitbox will be repositioned to
+##        maintain the same bottom position. Using force_pose_change causes this
+##        behavior to be used with this set_hitbox operation even if the player isn't
+##        on the ground.
+func set_hitbox(size = Vector2.ZERO, force_pose_change = false):
+	# adjust position if on floor or force pose change
+	if ground or force_pose_change:
+		position += ((size-$HitBox.shape.size)*Vector2.UP).rotated(rotation)*0.5
+	
+	$HitBox.shape.size = size
+
+
+## Gets the size of the current hitbox.
+func get_hitbox() -> Vector2:
+	return $HitBox.shape.size
+
+
+## Gets the predefined hitbox dimensions for a predefined hitbox.
+## predefined hitboxes are listed in the [enum HITBOXES] enum.[br]
+## TODO -> Just get the avatar and use get_hitbox instead.
+func get_predefined_hitbox(which: PlayerChar.HITBOXES) -> Vector2:
+	return player_avatar.get_hitbox(which)
+
+
+## Sets the hitbox mask shape to one of the predefined shapes.
+func set_predefined_hitbox(which: PlayerChar.HITBOXES, force_pose_change: bool = false):
+	return set_hitbox(get_predefined_hitbox(which), force_pose_change)
+
+
+## Sets the player's shield.[br]
+## [param setShieldID] — which shield the player should get.
+func set_shield(setShieldID: PlayerChar.SHIELDS, play_sound: bool = true) -> void:
+	magnetShape.disabled = true
+	# verify not in water and shield compatible
+	if water and (setShieldID == SHIELDS.FIRE or setShieldID == SHIELDS.ELEC):
+		return
+	
+	_shield = setShieldID
+	# make shield visible if not super and the invincibility barrier isn't going
+	shieldSprite.visible = !isSuper and !$InvincibilityBarrier.visible
+	match (_shield):
+		SHIELDS.NORMAL:
+			shieldSprite.play("Default")
+			if play_sound:
+				sfx[5].play()
+		SHIELDS.ELEC:
+			shieldSprite.play("Elec")
+			if play_sound:
+				sfx[10].play()
+			magnetShape.disabled = false
+		SHIELDS.FIRE:
+			shieldSprite.play("Fire")
+			if play_sound:
+				sfx[11].play()
+		SHIELDS.BUBBLE:
+			shieldSprite.play("Bubble")
+			if play_sound:
+				sfx[12].play()
+		_: # disable
+			shieldSprite.visible = false
+
+
+## Gets the value of the player's current shield. The value will be one of the
+## values of the [enum SHIELDS] enumerator for the player.
+func get_shield() -> PlayerChar.SHIELDS:
+	return _shield
+	
+
+## Returns the current [code]PlayerAvatar[/code] for the player. You should use this to get
+## to character-specific properties and the animator.
+func get_avatar() -> PlayerAvatar:
+	return self.player_avatar
+
+
+## Available directions for the player to use when using [method set_direction].
 enum DIRECTIONS {LEFT, RIGHT} # I'd wager there is already something more appropriate
 
-## Sets the direction of the player's sprite
-func set_direction(new_direction : int) -> void:
+
+## Sets the direction of the player's sprite and direction value.
+func set_direction(new_direction: PlayerChar.DIRECTIONS) -> void:
 	if new_direction == DIRECTIONS.LEFT:
-		direction = -1.0
+		_direction = -1.0
 		sprite.flip_h = true
 		return
-	direction = 1.0
+	_direction = 1.0
 	sprite.flip_h = false
 
-## Gets the current player hitbox.
-## Note that the hitbox object isn't actually the current hitbox active, but
-## rather a dictionary of available hitboxes depending on the player's
-## situation.
-func get_current_hitbox() -> Dictionary:
-	return self.currentHitbox
 
-## Restores the player's ability to use double jump action. The player still
-## has to be in a state where it is available in the first place to do so.
-func reset_double_jump_action() -> void:
-	abilityUsed = false
+## Analog of [member set_direction], but works based on a signed floating-point value.
+## Also, this function can change the movement direction without changing
+## the sprite direction ([code]sprite.flip_h[/code]).[br]
+## [param new_direction] - direction to set for the player.[br]
+## * If [code]new_direction > 0.0[/code], the resulting direction is right.[br]
+## * If [code]new_direction < 0.0[/code], the resulting direction is left.[br]
+## * [b](!) If [code]new_direction == 0.0[/code], this function does nothing.[/b][br]
+## [param change_sprite_direction] - if [code]false[/code], only the movement direction
+## is changed, and the sprite direction ([code]sprite.flip_h[/code]) is kept the same.
+func set_direction_signed(new_direction: float, change_sprite_direction: bool = true) -> void:
+	_direction = signf(new_direction)
+	if change_sprite_direction:
+		sprite.flip_h = (_direction < 0.0)
+
+
+## Flips player's movement direction.[br]
+## [b]Note: This function doesn't change the direction of the player's sprite
+## ([code]sprite.flip_h[/code]).[/b]
+func flip_movement_direction() -> void:
+	_direction = -_direction
+
+
+## Gets the player's direction using the [enum DIRECTIONS] enum.
+func get_direction() -> PlayerChar.DIRECTIONS:
+	return DIRECTIONS.RIGHT if _direction > 0.0 else DIRECTIONS.LEFT
+
+
+## Gets the player's direction in a way that is useful for calculations.[br]
+## Returns [code]-1.0[/code] if left, or [code]1.0[/code] if right.
+func get_direction_multiplier() -> float:
+	return _direction
+
+
+## Gets the player's ground speed.
+func get_ground_speed() -> float:
+	return _ground_speed
+
+
+## Sets the player's ground speed.
+func set_ground_speed(new_ground_speed: float) -> void:
+	_ground_speed = new_ground_speed
+
+
+## Gets whether or not the player is in water.
+func is_in_water() -> bool:
+	return self.water
+
+
+## Sets the player's horizontal lock timer.[br]
+## Note that the horizontal lock timer being above zero will temporarily prevent
+## the player's left/right controls from having an impact.
+func set_horizontal_lock_timer(lock_time: float) -> void:
+	self.horizontalLockTimer = lock_time
+
+
+## Sets whether or not the player currently has air control.
+func set_air_control(control: bool) -> void:
+	self.airControl = control
+
 
 # Player Gimmick Interaction
 #
@@ -1705,27 +1754,25 @@ func reset_double_jump_action() -> void:
 # useful to let the player object be responsible for kicking those kinds of
 # actions off while the gimmick process functions focus more on the motion and
 # actions of the gimmick itself.
-
-# Note: Bindable gimmick objects must have the following functions:
-#   player_process(player, delta) - a function that gets called while the connected player is in
-#     process
-#   player_physics_process(player, delta) - a function that gets called while the connected player
-#     in in physics_process
-#   player_force_detach_callback(player) - This function is invoked if something (usually another
-#     gimmick or trigger of some kind) tells the player to detach from its active gimmick.
+#
+# ConnectableGimmick must be extended for the gimmick in question to use the set_active_gimmick
+# functionality. Setting gimmick variables on the other hand can be done regardless of whether or
+# not the player is on a ConnectableGimmick.
 #
 # Be aware that not all gimmicks should require explicit attachment to the player. Whether or not
 # one does depends primarily on whether or not the gimmick needs to maintain its own state on each
 # player. Gimmicks that can function without continually tracking some kind of per-player state
 # should continue to do so without using these functions.
+#
+# Also be aware that failing to disconnect a gimmick when you should is going to cause lots of
+# problems with other gimmick interactions.
 
-## Binds the player to the requested gimmick
-## @param gimmick gimmick to bind the player to
-## @param allowSwap enable to make the new gimmick execute its on force detach callback and to
-##        allow the new gimmick to replace one that is already attached.
-## @retval true if gimmick was able to be connected
-## @retval false otherwise
-## note: Never returns false if allowSwap is set
+## Binds the player to the requested gimmick.[br]
+## [param gimmick] — gimmick to bind the player to.[br]
+## [param allowSwap] — enable to make the new gimmick execute its on force detach callback and to
+##        allow the new gimmick to replace one that is already attached.[br]
+## Returns [code]true[/code] if gimmick was able to be connected, [code]false[/code] otherwise.[br]
+## Note: Never returns [code]false[/code] if [param allowSwap] is set.
 func set_active_gimmick(gimmick : ConnectableGimmick, allowSwap : bool=false) -> bool:
 	if allowSwap:
 		if active_gimmick != null: # if there is already an active gimmick, we need to run that
@@ -1742,12 +1789,14 @@ func set_active_gimmick(gimmick : ConnectableGimmick, allowSwap : bool=false) ->
 	active_gimmick = gimmick
 	return true
 
-## Unbinds the gimmick from the player (you could just use null on set_active_gimmick too)
+
+## Unbinds the gimmick from the player (you could just use [code]null[/code]
+## on [method set_active_gimmick] too).
 func unset_active_gimmick() -> void:
 	active_gimmick = null
 
-## Unbinds the player from its current gimmick, but only after running its force detach
-## callback
+
+## Unbinds the player from its current gimmick, but only after running its force detach callback.
 func force_detach() -> void:
 	if active_gimmick == null:
 		return
@@ -1755,29 +1804,49 @@ func force_detach() -> void:
 	active_gimmick.player_force_detach_callback(self)
 	active_gimmick = null
 
+
 ## Gets the player's currently active gimmick. Might be useful for certain gimmick<->gimmick
 ## interactions or just for checking if the player is already bound to the gimmick you are checking
 ## from.
 func get_active_gimmick() -> ConnectableGimmick:
 	return active_gimmick
 
-## Sets a value in the player's gimmick variable dictionary. Uses a key value pair.
-func set_gimmick_var(gimmickVarName, gimmickVarValue) -> void:
+
+## Sets a value in the player's gimmick variable dictionary. Uses a key-value pair.
+func set_gimmick_var(gimmickVarName: String, gimmickVarValue) -> void:
 	gimmick_variables[gimmickVarName] = gimmickVarValue
+
 
 ## Removes a variable from the player's gimmick variable dictionary. Provide a key.
 func unset_gimmick_var(gimmickVarName) -> void:
 	gimmick_variables.erase(gimmickVarName)
 
+
 ## Gets a value in the player's gimmick variable dictionary. Provide a key.
 func get_gimmick_var(gimmickVarName, default: Variant = null):
 	return gimmick_variables.get(gimmickVarName, default)
 
-## Removes all currently locked gimmicks from the Player's locked gimmick list.
+
+## Removes all currently locked gimmicks from the player's locked gimmick list.
 func clear_locked_gimmicks():
 	for i in range(max_locked_gimmicks):
 		locked_gimmicks[i] = null
 	locked_gimmicks_index = 0
+
+
+## Locks a gimmick for the player using a timer to unlock it.[br]
+## [param gimmick] — which gimmick should be locked.[br]
+## [param lock_time] — how long should the gimmick be locked in seconds.
+func timed_gimmick_lock(gimmick: ConnectableGimmick, lock_time: float) -> void:
+	var unlock_func = func ():
+		clear_single_locked_gimmick(gimmick)
+	
+	var timer:SceneTreeTimer = get_tree().create_timer(lock_time, false)
+	timer.timeout.connect(unlock_func, CONNECT_DEFERRED)
+	
+	add_locked_gimmick(gimmick)
+	pass
+
 
 ## Removes a single locked gimmick from the player's locked gimmick list if
 ##   present.
@@ -1786,6 +1855,7 @@ func clear_single_locked_gimmick(gimmick : ConnectableGimmick):
 		if locked_gimmicks[i] == gimmick:
 			locked_gimmicks[i] = null
 
+
 ## Adds a gimmick to the player's locked gimmick list. Useful if you want to
 ##   prevent a player from interacting or especially re-interacting with a
 ##   gimmick until that player either lands or you manually clear the locked
@@ -1793,17 +1863,23 @@ func clear_single_locked_gimmick(gimmick : ConnectableGimmick):
 func add_locked_gimmick(gimmick):
 	locked_gimmicks[locked_gimmicks_index] = gimmick
 	locked_gimmicks_index = (locked_gimmicks_index + 1) % max_locked_gimmicks
-	
+
+
+## Removes a locked gimmick from the locked gimmicks list for the player.
+## You can still use this even if the gimmick is no longer in the player's
+## locked gimmicks list, it'll just not actually do anything in that case.
 func remove_locked_gimmick(gimmick):
 	locked_gimmicks.erase(gimmick)
 
-## Checks if the gimmick is locked for the player
+
+## Checks if the gimmick is locked for the player.
 func is_gimmick_locked_for_player(gimmick):
 	if gimmick in locked_gimmicks:
 		return true
 	return false
 
-## Invokes the handle_animation_finished callback for the attached gimmick.
+
+## Invokes the [code]handle_animation_finished[/code] callback for the attached gimmick.
 func handle_animation_finished(animation):
 	if active_gimmick != null:
 		active_gimmick.handle_animation_finished(self, animation)
